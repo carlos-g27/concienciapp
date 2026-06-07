@@ -4,7 +4,9 @@ import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
+import { LoginForm } from "@/components/login-form";
 import { Suspense } from "react";
+import { Sign } from "crypto";
 
 export default function Home() {
   return (
@@ -26,6 +28,7 @@ export default function Home() {
               </Suspense>
             )}
           </div>
+          <LoginForm />
         </nav>
         <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
           <main className="flex-1 flex flex-col gap-6 px-4">
