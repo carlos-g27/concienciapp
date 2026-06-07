@@ -1,0 +1,16 @@
+/* ================================================
+   dashboard.module.css
+   Solo para strokes SVG — todo lo demás está en Tailwind
+   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
+   ================================================ */
+ 
+/* Colores de los donuts — personaliza aquí los pilares */
+.pilarGreen     { stroke: #4ade80; }
+.trackGreen     { stroke: #dcfce7; }
+ 
+.pilarLightBlue { stroke: #9BC7FF; }
+.trackLightBlue { stroke: #DBEBFF; }
+ 
+.pilarBlue      { stroke: #223966; }
+.trackBlue      { stroke: #DBEBFF; }
+ 
