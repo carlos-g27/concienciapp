@@ -1,7 +1,11 @@
+"use client";
+
+import SidebarVisivility from "../../components/dashboard-logic/sidebar-config";
+
 export default function Nutricion() {
     return(
 
-            <h1>Pilar Nutricion</h1>
+            <SidebarVisivility  />
 
     )
 }

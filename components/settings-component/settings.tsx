@@ -1,6 +1,11 @@
+"use client";
+
+import SidebarVisivility from "../../components/dashboard-logic/sidebar-config";
+
 export default function Settings() {
     return(
-
-            <h1>Settings</h1>
+        <>
+            <SidebarVisivility  />
+        </>
     )
 }

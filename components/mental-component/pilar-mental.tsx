@@ -1,7 +1,11 @@
+"use client";
+
+import SidebarVisivility from "../../components/dashboard-logic/sidebar-config";
+
 export default function Mental() {
     return(
 
-            <h1>Pilar Mental</h1>
+            <SidebarVisivility  />
 
     )
 }

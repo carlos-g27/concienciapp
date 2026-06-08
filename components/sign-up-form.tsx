@@ -47,7 +47,10 @@ export function SignUpForm({
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: { name },
+          data: { 
+            name,
+            phone,
+           },
         },
       });
 

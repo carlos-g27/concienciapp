@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 // --- Tipos ---
 interface NavItem {
@@ -10,12 +12,11 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-// --- Datos mock del usuario (reemplazar con Supabase después) ---
-const mockUser = {
-  name: "Johanna Doe",
-  email: "johanna@company.com",
-  initials: "JD",
-};
+interface UserProfile {
+  name: string;
+  email: string;
+  initials: string;
+}
 
 // --- Items de navegación ---
 const navItems: NavItem[] = [
@@ -83,6 +84,17 @@ const settingsItem: NavItem = {
   ),
 };
 
+// --- Helpers ---
+function getInitials(name: string): string {
+  return name
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0].toUpperCase())
+    .join("");
+}
+
 // --- Props ---
 interface SidebarProps {
   isOpen: boolean;
@@ -92,6 +104,41 @@ interface SidebarProps {
 // --- Componente principal ---
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const supabase = createClient();
+
+        // 1. Obtener la sesión activa
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) return;
+
+        // 2. Consultar la tabla profiles con el id del usuario
+        const { data, error: profileError } = await supabase
+          .from("profiles")
+          .select("name, email")
+          .eq("id", user.id)
+          .single();
+
+        if (profileError || !data) return;
+
+        setProfile({
+          name: data.name ?? "Usuario",
+          email: data.email ?? user.email ?? "",
+          initials: getInitials(data.name ?? "U"),
+        });
+      } catch (err) {
+        console.error("Error cargando perfil:", err);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   return (
     <>
@@ -131,14 +178,29 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* Perfil del usuario */}
         <div className="flex flex-col items-center gap-2 px-6 py-6 border-b border-[#DBEBFF]">
-          {/* Avatar */}
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md">
-            {mockUser.initials}
-          </div>
-          <div className="text-center mt-1">
-            <p className="text-sm font-bold text-[#061A33]">{mockUser.name}</p>
-            <p className="text-xs text-[#528ACC] mt-0.5">{mockUser.email}</p>
-          </div>
+          {loadingProfile ? (
+            /* Skeleton mientras carga */
+            <div className="flex flex-col items-center gap-2 w-full animate-pulse">
+              <div className="w-16 h-16 rounded-full bg-[#DBEBFF]" />
+              <div className="h-3.5 w-28 rounded bg-[#DBEBFF] mt-1" />
+              <div className="h-3 w-36 rounded bg-[#DBEBFF]" />
+            </div>
+          ) : (
+            <>
+              {/* Avatar con iniciales reales */}
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none">
+                {profile?.initials ?? "?"}
+              </div>
+              <div className="text-center mt-1">
+                <p className="text-sm font-bold text-[#061A33]">
+                  {profile?.name ?? "Usuario"}
+                </p>
+                <p className="text-xs text-[#528ACC] mt-0.5 truncate max-w-[180px]">
+                  {profile?.email ?? ""}
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Navegación principal */}
@@ -160,7 +222,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   }
                 `}
               >
-                {/* Indicador activo */}
                 <span
                   className={`flex-shrink-0 transition-colors ${
                     isActive ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
@@ -169,7 +230,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   {item.icon}
                 </span>
                 <span className="flex-1">{item.label}</span>
-                {/* Flecha derecha si está activo */}
                 {isActive && (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#223966]">
                     <polyline points="9 18 15 12 9 6" />

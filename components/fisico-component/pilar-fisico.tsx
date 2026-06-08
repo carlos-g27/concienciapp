@@ -1,7 +1,11 @@
-export default function Fisico() {
-    return(
+"use client";
 
-            <h1>Pilar Fisico</h1>
+import SidebarVisivility from "../../components/dashboard-logic/sidebar-config";
+
+export default function Fisico() {
+
+    return (
+            <SidebarVisivility  />  
 
     )
 }
