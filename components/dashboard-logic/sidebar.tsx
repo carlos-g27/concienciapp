@@ -35,18 +35,18 @@ const navItems: NavItem[] = [
     href: "/profile",
     icon: (
       <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 21a8 8 0 0 0-16 0" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 21a8 8 0 0 0-16 0" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
     ),
   },
   {
@@ -223,17 +223,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={`
                   flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                   transition-all duration-150 group
-                  ${
-                    isActive
-                      ? "bg-[#DBEBFF] text-[#223966] font-semibold"
-                      : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
+                  ${isActive
+                    ? "bg-[#DBEBFF] text-[#223966] font-semibold"
+                    : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
                   }
                 `}
               >
                 <span
-                  className={`flex-shrink-0 transition-colors ${
-                    isActive ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
-                  }`}
+                  className={`flex-shrink-0 transition-colors ${isActive ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
+                    }`}
                 >
                   {item.icon}
                 </span>
@@ -256,16 +254,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             className={`
               flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
               transition-all duration-150 group
-              ${
-                pathname === settingsItem.href
-                  ? "bg-[#DBEBFF] text-[#223966] font-semibold"
-                  : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
+              ${pathname === settingsItem.href
+                ? "bg-[#DBEBFF] text-[#223966] font-semibold"
+                : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
               }
             `}
           >
-            <span className={`flex-shrink-0 transition-colors ${
-              pathname === settingsItem.href ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
-            }`}>
+            <span className={`flex-shrink-0 transition-colors ${pathname === settingsItem.href ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
+              }`}>
               {settingsItem.icon}
             </span>
             <span>{settingsItem.label}</span>
