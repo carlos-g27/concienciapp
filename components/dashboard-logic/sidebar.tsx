@@ -1,21 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useProfile, getInitials } from "@/hooks/use-profile";
 
 // --- Tipos ---
 interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
-}
-
-interface UserProfile {
-  name: string;
-  email: string;
-  initials: string;
 }
 
 // --- Items de navegación ---
@@ -34,18 +28,10 @@ const navItems: NavItem[] = [
     label: "Profile",
     href: "/profile",
     icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20 21a8 8 0 0 0-16 0" />
-        <circle cx="12" cy="7" r="4" />
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10" />
+        <line x1="12" y1="20" x2="12" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="14" />
       </svg>
     ),
   },
@@ -83,7 +69,7 @@ const navItems: NavItem[] = [
 
 const settingsItem: NavItem = {
   label: "Settings",
-  href: "/settings",
+  href: "/dashboard/settings",
   icon: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
@@ -91,17 +77,6 @@ const settingsItem: NavItem = {
     </svg>
   ),
 };
-
-// --- Helpers ---
-function getInitials(name: string): string {
-  return name
-    .trim()
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((n) => n[0].toUpperCase())
-    .join("");
-}
 
 // --- Props ---
 interface SidebarProps {
@@ -112,41 +87,7 @@ interface SidebarProps {
 // --- Componente principal ---
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loadingProfile, setLoadingProfile] = useState(true);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const supabase = createClient();
-
-        // 1. Obtener la sesión activa
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) return;
-
-        // 2. Consultar la tabla profiles con el id del usuario
-        const { data, error: profileError } = await supabase
-          .from("profiles")
-          .select("name, email")
-          .eq("id", user.id)
-          .single();
-
-        if (profileError || !data) return;
-
-        setProfile({
-          name: data.name ?? "Usuario",
-          email: data.email ?? user.email ?? "",
-          initials: getInitials(data.name ?? "U"),
-        });
-      } catch (err) {
-        console.error("Error cargando perfil:", err);
-      } finally {
-        setLoadingProfile(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+  const { profile, isLoading: loadingProfile } = useProfile();
 
   return (
     <>
@@ -195,9 +136,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           ) : (
             <>
-              {/* Avatar con iniciales reales */}
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none">
-                {profile?.initials ?? "?"}
+              {/* Avatar: foto si existe, iniciales si no */}
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
+                {profile?.avatar_url ? (
+                  <Image
+                    src={profile.avatar_url}
+                    alt="Foto de perfil"
+                    width={64}
+                    height={64}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  getInitials(profile?.name ?? "?") || "?"
+                )}
               </div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-[#061A33]">
@@ -223,15 +174,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={`
                   flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                   transition-all duration-150 group
-                  ${isActive
-                    ? "bg-[#DBEBFF] text-[#223966] font-semibold"
-                    : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
+                  ${
+                    isActive
+                      ? "bg-[#DBEBFF] text-[#223966] font-semibold"
+                      : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
                   }
                 `}
               >
                 <span
-                  className={`flex-shrink-0 transition-colors ${isActive ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
-                    }`}
+                  className={`flex-shrink-0 transition-colors ${
+                    isActive ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
+                  }`}
                 >
                   {item.icon}
                 </span>
@@ -254,14 +207,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             className={`
               flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
               transition-all duration-150 group
-              ${pathname === settingsItem.href
-                ? "bg-[#DBEBFF] text-[#223966] font-semibold"
-                : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
+              ${
+                pathname === settingsItem.href
+                  ? "bg-[#DBEBFF] text-[#223966] font-semibold"
+                  : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
               }
             `}
           >
-            <span className={`flex-shrink-0 transition-colors ${pathname === settingsItem.href ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
-              }`}>
+            <span className={`flex-shrink-0 transition-colors ${
+              pathname === settingsItem.href ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
+            }`}>
               {settingsItem.icon}
             </span>
             <span>{settingsItem.label}</span>
