@@ -2,10 +2,10 @@
 
 import SidebarLayout from "../../components/dashboard-logic/sidebar-config";
 
-export default function Mental() {
+export default function Profile() {
   return (
-    <SidebarLayout pageTitle="Mental">
-      <></>
+    <SidebarLayout pageTitle="Perfil">
+        <></>
     </SidebarLayout>
   );
 }

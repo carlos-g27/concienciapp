@@ -1,11 +1,11 @@
 "use client";
 
-import SidebarVisivility from "../../components/dashboard-logic/sidebar-config";
+import SidebarLayout from "../../components/dashboard-logic/sidebar-config";
 
 export default function Fisico() {
-
-    return (
-            <SidebarVisivility  />  
-
-    )
+  return (
+    <SidebarLayout pageTitle="Físico">
+      <></>
+    </SidebarLayout>
+  );
 }
