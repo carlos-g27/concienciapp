@@ -1,0 +1,280 @@
+/* ================================================
+   exercise-panel.module.css
+   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
+   ================================================ */
+
+/* Panel contenedor */
+.panel {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-left: 1px solid #DBEBFF;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  padding-bottom: 2rem;
+}
+
+/* Scrollbar del panel */
+.panel::-webkit-scrollbar { width: 4px; }
+.panel::-webkit-scrollbar-track { background: transparent; }
+.panel::-webkit-scrollbar-thumb { background: #DBEBFF; border-radius: 99px; }
+.panel::-webkit-scrollbar-thumb:hover { background: #9BC7FF; }
+
+/* Header */
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #DBEBFF;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 1;
+}
+
+.panelTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #061A33;
+  line-height: 1.3;
+}
+
+.panelMuscle {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #528ACC;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+.closeBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: #9BC7FF;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.closeBtn:hover {
+  background: #DBEBFF;
+  color: #223966;
+}
+
+/* Video placeholder */
+.videoPlaceholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #c8d8ee 0%, #9BC7FF 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.playBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #223966;
+  box-shadow: 0 4px 16px rgba(34, 57, 102, 0.18);
+  padding-left: 3px; /* optical center for play icon */
+}
+
+.videoLabel {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #223966;
+  opacity: 0.7;
+}
+
+/* Series y reps */
+.setsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #DBEBFF;
+}
+
+.setBadge {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.setBadgeValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #223966;
+  line-height: 1;
+}
+
+.setBadgeLabel {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #9BC7FF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.setBadgeDivider {
+  width: 1px;
+  height: 40px;
+  background: #DBEBFF;
+  margin: 0 1rem;
+}
+
+/* Secciones genéricas */
+.section {
+  padding: 1.25rem 1.5rem 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sectionTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #528ACC;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.descriptionText {
+  font-size: 0.875rem;
+  color: #223966;
+  line-height: 1.6;
+}
+
+/* Instrucciones */
+.instructionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.instructionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: #223966;
+  line-height: 1.5;
+}
+
+.instructionDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9BC7FF;
+  flex-shrink: 0;
+  margin-top: 0.45rem;
+}
+
+/* Control de peso */
+.weightControl {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.weightBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1.5px solid #DBEBFF;
+  background: #f4f8ff;
+  color: #223966;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+.weightBtn:hover {
+  background: #DBEBFF;
+  border-color: #9BC7FF;
+}
+
+.weightInputWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: #f4f8ff;
+  border: 1.5px solid #DBEBFF;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s;
+}
+.weightInputWrapper:focus-within {
+  border-color: #528ACC;
+}
+
+.weightInput {
+  width: 60px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #061A33;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.weightInput::-webkit-outer-spin-button,
+.weightInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.weightInput::placeholder { color: #9BC7FF; font-weight: 400; }
+
+.weightUnit {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #9BC7FF;
+}
+
+.saveWeightBtn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: none;
+  background: #223966;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.15s, opacity 0.15s;
+  margin-top: 0.25rem;
+}
+.saveWeightBtn:hover:not(:disabled) { background: #061A33; }
+.saveWeightBtn:disabled { opacity: 0.5; cursor: not-allowed; }
