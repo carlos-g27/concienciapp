@@ -278,3 +278,52 @@
 }
 .saveWeightBtn:hover:not(:disabled) { background: #061A33; }
 .saveWeightBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Historial de pesos */
+.weightHistory {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.weightHistoryTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #528ACC;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.weightHistoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.weightHistoryList::-webkit-scrollbar { width: 4px; }
+.weightHistoryList::-webkit-scrollbar-track { background: transparent; }
+.weightHistoryList::-webkit-scrollbar-thumb { background: #DBEBFF; border-radius: 99px; }
+
+.weightHistoryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f4f8ff;
+  border: 1px solid #DBEBFF;
+  border-radius: 10px;
+  padding: 0.6rem 0.875rem;
+}
+
+.weightHistoryDate {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #528ACC;
+}
+
+.weightHistoryValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #223966;
+}

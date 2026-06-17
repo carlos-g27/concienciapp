@@ -14,6 +14,13 @@ export interface Exercise {
   instructions: string[];
 }
 
+// Estructura lista para mapear a una tabla 'weight_logs' en Supabase
+export interface WeightLog {
+  id: string;
+  weight: number;
+  date: string; // ISO string — se guardaría como timestamp en Supabase
+}
+
 interface ExercisePanelProps {
   exercise: Exercise | null;
   onClose: () => void;
@@ -23,11 +30,22 @@ interface ExercisePanelProps {
 export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps) {
   const [weight, setWeight] = useState<string>("");
   const [saved, setSaved] = useState(false);
+  const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
 
   if (!exercise) return null;
 
   const handleSaveWeight = () => {
     if (!weight) return;
+
+    const newLog: WeightLog = {
+      id: crypto.randomUUID(),
+      weight: parseFloat(weight),
+      date: new Date().toISOString(),
+    };
+
+    // Más reciente primero
+    setWeightLogs((prev) => [newLog, ...prev]);
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -36,6 +54,16 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
     const current = parseFloat(weight) || 0;
     const next = Math.max(0, current + delta);
     setWeight(String(next % 1 === 0 ? next : next.toFixed(1)));
+  };
+
+  // Formatea la fecha de forma corta y legible (ej: "17 jun, 14:32")
+  const formatLogDate = (isoDate: string) => {
+    return new Date(isoDate).toLocaleString("es-ES", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -47,6 +75,16 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
           <h2 className={styles.panelTitle}>{exercise.name}</h2>
           <span className={styles.panelMuscle}>{exercise.muscle}</span>
         </div>
+        <button
+          onClick={onClose}
+          className={styles.closeBtn}
+          aria-label="Cerrar panel"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
 
       {/* Video placeholder */}
@@ -145,6 +183,25 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
             "Guardar peso"
           )}
         </button>
+
+        {/* Historial de pesos registrados */}
+        {weightLogs.length > 0 && (
+          <div className={styles.weightHistory}>
+            <span className={styles.weightHistoryTitle}>Progreso</span>
+            <div className={styles.weightHistoryList}>
+              {weightLogs.map((log) => (
+                <div key={log.id} className={styles.weightHistoryRow}>
+                  <span className={styles.weightHistoryDate}>
+                    {formatLogDate(log.date)}
+                  </span>
+                  <span className={styles.weightHistoryValue}>
+                    {log.weight} kg
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
     </aside>
