@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
 import ExercisePanel, { Exercise } from "./exercise-panel";
 import styles from "./fisico.module.css";
@@ -302,9 +302,16 @@ function ExerciseCard({
 
 // --- Componente principal ---
 export default function Fisico() {
-  const today = getTodayLabel();
-  const [expandedDay, setExpandedDay] = useState<string>(today);
+  const [today, setToday] = useState<string>("Lunes");
+  const [expandedDay, setExpandedDay] = useState<string>("Lunes");
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+
+  // Calcular el día actual solo en el cliente, evita el error de prerender con new Date()
+  useEffect(() => {
+    const calculatedToday = getTodayLabel();
+    setToday(calculatedToday);
+    setExpandedDay(calculatedToday);
+  }, []);
 
   const handleSelectExercise = (exercise: Exercise) => {
     setSelectedExercise((prev) => (prev?.id === exercise.id ? null : exercise));
