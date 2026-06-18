@@ -1,0 +1,153 @@
+/* ================================================
+   mental.module.css
+   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
+   ================================================ */
+
+/* Página */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header desktop */
+.pageHeader {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .pageHeader { display: block; }
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #061A33;
+  letter-spacing: -0.02em;
+}
+
+.pageSubtitle {
+  font-size: 0.875rem;
+  color: #528ACC;
+  margin-top: 0.25rem;
+}
+
+/* Grid de categorías */
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  .categoriesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Contenido específico del card de categoría */
+.categoryCardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #223966 0%, #528ACC 100%);
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.categoryCardIcon {
+  color: rgba(255, 255, 255, 0.55);
+  z-index: 1;
+}
+
+.categoryCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(6, 26, 51, 0.6) 0%, transparent 60%);
+}
+
+.categoryCardTitle {
+  position: absolute;
+  bottom: 0.875rem;
+  left: 1rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  z-index: 1;
+  letter-spacing: -0.01em;
+}
+
+.categoryCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+.categoryCardCount {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #528ACC;
+}
+
+.categoryCardTotal {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9BC7FF;
+}
+
+/* ── Vista de meditaciones ── */
+.meditationView {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Botón volver */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #528ACC;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  transition: color 0.15s;
+  width: fit-content;
+}
+.backBtn:hover { color: #223966; }
+
+/* Header de la categoría seleccionada */
+.categoryHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.categoryTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #061A33;
+  letter-spacing: -0.02em;
+}
+
+.categorySubtitle {
+  font-size: 0.85rem;
+  color: #528ACC;
+}
+
+/* Lista de meditaciones */
+.meditationList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

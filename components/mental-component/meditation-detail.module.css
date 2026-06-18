@@ -1,0 +1,173 @@
+/* ================================================
+   meditation-detail.module.css
+   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
+   ================================================ */
+
+/* Wrapper del acordeón */
+.wrapper {
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.wrapperOpen {
+  border: 1.5px solid #528ACC;
+  border-radius: 14px;
+}
+
+/* Header content — layout interno del children del Card */
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.meditationName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #061A33;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.duration {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #528ACC;
+  background: #DBEBFF;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+}
+
+.chevron {
+  color: #9BC7FF;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Cuerpo expandible */
+.body {
+  background: #ffffff;
+  border-top: 1px solid #DBEBFF;
+  padding: 1rem 1rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+/* Video placeholder */
+.videoPlaceholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #223966 0%, #528ACC 100%);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Botón play central */
+.playBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  padding-left: 3px;
+}
+
+/* Barra de controles del video */
+.videoControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: linear-gradient(to top, rgba(6, 26, 51, 0.7) 0%, transparent 100%);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.playIcon {
+  flex-shrink: 0;
+}
+
+.progressBar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 99px;
+  position: relative;
+}
+
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 30%;
+  background: #ffffff;
+  border-radius: 99px;
+}
+
+.progressThumb {
+  position: absolute;
+  left: 30%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Fila de duración */
+.durationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f4f8ff;
+  border: 1px solid #DBEBFF;
+  border-radius: 10px;
+  padding: 0.625rem 0.875rem;
+}
+
+.durationLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #528ACC;
+}
+
+.durationValue {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #223966;
+}
