@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
 import ExercisePanel, { Exercise } from "./exercise-panel";
-import ExerciseCard from "@/components/ui/exercise-card";
+import Card from "@/components/ui/new-card";
 import styles from "./fisico.module.css";
 
 // --- Tipos ---
@@ -358,12 +358,29 @@ export default function Fisico() {
                     {isExpanded && (
                       <div className={styles.exerciseList}>
                         {workoutDay.exercises.map((exercise) => (
-                          <ExerciseCard
+                          <Card
                             key={exercise.id}
-                            exercise={exercise}
                             isSelected={false}
                             onClick={() => handleSelectExercise(exercise)}
-                          />
+                          >
+                            {/* Contenido específico de ejercicio — vive en fisico.tsx */}
+                            <div className={styles.exerciseThumb}>
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.exerciseThumbIcon}>
+                                <circle cx="12" cy="8" r="2" />
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1" />
+                                <path d="M7 21v-4" />
+                                <path d="M17 21v-4" />
+                              </svg>
+                            </div>
+                            <div className={styles.exerciseInfo}>
+                              <span className={styles.exerciseName}>{exercise.name}</span>
+                              <span className={styles.exerciseMeta}>{exercise.muscle}</span>
+                              <div className={styles.exerciseBadges}>
+                                <span className={styles.badge}>{exercise.sets} series</span>
+                                <span className={styles.badge}>{exercise.reps} reps</span>
+                              </div>
+                            </div>
+                          </Card>
                         ))}
                       </div>
                     )}
