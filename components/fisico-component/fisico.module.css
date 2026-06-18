@@ -74,6 +74,10 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(34, 57, 102, 0.07);
+}
+
+/* Lista de días */
+.daysList {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -171,96 +175,4 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-/* Card de ejercicio */
-.exerciseCard {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  padding: 0.75rem 0.875rem;
-  border-radius: 12px;
-  border: 1.5px solid transparent;
-  background: #f4f8ff;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s, border-color 0.15s;
-}
-.exerciseCard:hover {
-  background: #DBEBFF;
-  border-color: #9BC7FF;
-}
-.exerciseCardActive {
-  background: #DBEBFF;
-  border-color: #528ACC;
-}
-
-/* Thumbnail del ejercicio */
-.exerciseThumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #9BC7FF 0%, #528ACC 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.exerciseThumbIcon {
-  color: #ffffff;
-}
-
-/* Info del ejercicio */
-.exerciseInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.exerciseName {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #061A33;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.exerciseMeta {
-  font-size: 0.72rem;
-  color: #528ACC;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.exerciseBadges {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: 0.2rem;
-}
-
-.badge {
-  font-size: 0.65rem;
-  font-weight: 600;
-  background: #ffffff;
-  color: #223966;
-  border: 1px solid #DBEBFF;
-  padding: 0.15rem 0.5rem;
-  border-radius: 99px;
-}
-
-.exerciseArrow {
-  color: #9BC7FF;
-  flex-shrink: 0;
-  transition: color 0.15s;
-}
-.exerciseCard:hover .exerciseArrow,
-.exerciseCardActive .exerciseArrow {
-  color: #528ACC;
 }
