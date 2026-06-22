@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
-import Card from "@/components/ui/new-card";
+import CategoryCard from "@/components/ui/category-card";
 import MeditationDetail, { Meditation } from "./meditation-detail";
 import styles from "./mental.module.css";
 
@@ -25,7 +25,7 @@ const MEDITATION_CATEGORIES: MeditationCategory[] = [
       </svg>
     ),
     meditations: [
-      { id: "gra-1", name: "Gratitud por el presente",     duration: "5 min"  },
+      { id: "gra-1", name: "Gratitud por el presente",    duration: "5 min"  },
       { id: "gra-2", name: "Agradecimiento profundo",      duration: "10 min" },
       { id: "gra-3", name: "Diario de gratitud guiado",    duration: "15 min" },
       { id: "gra-4", name: "Gratitud por el cuerpo",       duration: "8 min"  },
@@ -62,33 +62,6 @@ const MEDITATION_CATEGORIES: MeditationCategory[] = [
     ],
   },
 ];
-
-// --- Subcomponente: card de categoría ---
-function CategoryCard({
-  category,
-  onClick,
-}: {
-  category: MeditationCategory;
-  onClick: () => void;
-}) {
-  return (
-    <Card onClick={onClick}>
-      <div className={styles.categoryCardImage}>
-        <div className={styles.categoryCardIcon}>{category.icon}</div>
-        <div className={styles.categoryCardOverlay} />
-        <span className={styles.categoryCardTitle}>{category.title}</span>
-      </div>
-      <div className={styles.categoryCardFooter}>
-        <span className={styles.categoryCardCount}>
-          {category.meditations.length} meditaciones
-        </span>
-        <span className={styles.categoryCardTotal}>
-          ~{category.meditations.reduce((sum, m) => sum + parseInt(m.duration), 0)} min totales
-        </span>
-      </div>
-    </Card>
-  );
-}
 
 // --- Componente principal ---
 export default function Mental() {
@@ -161,7 +134,10 @@ export default function Mental() {
               {MEDITATION_CATEGORIES.map((category) => (
                 <CategoryCard
                   key={category.id}
-                  category={category}
+                  title={category.title}
+                  icon={category.icon}
+                  footerPrimaryText={`${category.meditations.length} meditaciones`}
+                  footerSecondaryText={`~${category.meditations.reduce((sum, m) => sum + parseInt(m.duration), 0)} min totales`}
                   onClick={() => handleSelectCategory(category)}
                 />
               ))}

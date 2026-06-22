@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import CategoryCard from "@/components/ui/category-card";
 import MealDetail, { Recipe } from "./meal-detail";
 import styles from "./nutricion.module.css";
 
@@ -167,37 +168,6 @@ const MEAL_CATEGORIES: MealCategory[] = [
   },
 ];
 
-// --- Subcomponente: card de categoría de comida ---
-function MealCategoryCard({
-  meal,
-  onClick,
-}: {
-  meal: MealCategory;
-  onClick: () => void;
-}) {
-  const totalCalories = meal.recipes.reduce((sum, r) => sum + r.calories, 0);
-
-  return (
-    <button onClick={onClick} className={styles.mealCard}>
-      {/* Imagen placeholder */}
-      <div className={styles.mealCardImage}>
-        <div className={styles.mealCardIcon}>{meal.icon}</div>
-        <div className={styles.mealCardOverlay} />
-        <span className={styles.mealCardTitle}>{meal.title}</span>
-      </div>
-      {/* Info rápida */}
-      <div className={styles.mealCardFooter}>
-        <span className={styles.mealCardRecipeCount}>
-          {meal.recipes.length} recetas
-        </span>
-        <span className={styles.mealCardCalories}>
-          ~{totalCalories} kcal totales
-        </span>
-      </div>
-    </button>
-  );
-}
-
 // --- Componente principal ---
 export default function Nutricion() {
   const [selectedCategory, setSelectedCategory] = useState<MealCategory | null>(null);
@@ -266,9 +236,12 @@ export default function Nutricion() {
 
             <div className={styles.mealsGrid}>
               {MEAL_CATEGORIES.map((meal) => (
-                <MealCategoryCard
+                <CategoryCard
                   key={meal.id}
-                  meal={meal}
+                  title={meal.title}
+                  icon={meal.icon}
+                  footerPrimaryText={`${meal.recipes.length} recetas`}
+                  footerSecondaryText={`~${meal.recipes.reduce((sum, r) => sum + r.calories, 0)} kcal totales`}
                   onClick={() => handleSelectCategory(meal)}
                 />
               ))}

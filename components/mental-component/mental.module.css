@@ -45,60 +45,6 @@
   }
 }
 
-/* Contenido específico del card de categoría */
-.categoryCardImage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #223966 0%, #528ACC 100%);
-  border-radius: 10px 10px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.categoryCardIcon {
-  color: rgba(255, 255, 255, 0.55);
-  z-index: 1;
-}
-
-.categoryCardOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(6, 26, 51, 0.6) 0%, transparent 60%);
-}
-
-.categoryCardTitle {
-  position: absolute;
-  bottom: 0.875rem;
-  left: 1rem;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #ffffff;
-  z-index: 1;
-  letter-spacing: -0.01em;
-}
-
-.categoryCardFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-}
-
-.categoryCardCount {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #528ACC;
-}
-
-.categoryCardTotal {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #9BC7FF;
-}
-
 /* ── Vista de meditaciones ── */
 .meditationView {
   display: flex;
