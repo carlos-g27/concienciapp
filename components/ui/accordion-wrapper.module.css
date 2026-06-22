@@ -1,0 +1,82 @@
+/* ================================================
+   accordion-wrapper.module.css
+   ================================================ */
+
+.wrapper {
+  background: #ffffff;
+  border: 1.5px solid #DBEBFF;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.wrapperOpen {
+  border-color: #528ACC;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1.125rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.header:hover {
+  background: #f4f8ff;
+}
+
+.wrapperOpen .header {
+  background: #DBEBFF;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #061A33;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #528ACC;
+  background: #DBEBFF;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+}
+
+.chevron {
+  color: #9BC7FF;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.body {
+  padding: 1rem 1.125rem 1.25rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid #DBEBFF;
+}

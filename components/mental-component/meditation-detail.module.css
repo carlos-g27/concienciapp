@@ -3,65 +3,7 @@
    Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    ================================================ */
 
-/* Wrapper del acordeón */
-.wrapper {
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
 
-.wrapperOpen {
-  border: 1.5px solid #528ACC;
-  border-radius: 14px;
-}
-
-/* Header content — layout interno del children del Card */
-.headerContent {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-}
-
-.meditationName {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #061A33;
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-}
-
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
-.duration {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #528ACC;
-  background: #DBEBFF;
-  padding: 0.2rem 0.6rem;
-  border-radius: 99px;
-}
-
-.chevron {
-  color: #9BC7FF;
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-.chevronOpen {
-  transform: rotate(180deg);
-}
 
 /* Cuerpo expandible */
 .body {
