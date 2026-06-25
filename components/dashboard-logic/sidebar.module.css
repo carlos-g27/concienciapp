@@ -1,7 +1,5 @@
 /* ================================================
    Sidebar.module.css
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
-
    Todo el layout y estilos están en Tailwind (Sidebar.tsx).
    Este archivo existe para sobreescrituras puntuales que
    Tailwind no cubre, o para estilos futuros específicos.
@@ -17,10 +15,10 @@
 }
 
 .navScroll::-webkit-scrollbar-thumb {
-  background-color: #DBEBFF;
+  background-color: var(--secondary);
   border-radius: 99px;
 }
 
 .navScroll::-webkit-scrollbar-thumb:hover {
-  background-color: #9BC7FF;
+  background-color: var(--accent);
 }

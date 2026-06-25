@@ -104,7 +104,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         className={`
           fixed top-0 left-0 h-full z-30 flex flex-col
-          bg-white border-r border-[#DBEBFF] shadow-lg
+          bg-card border-r border-border shadow-lg
           w-64
           transition-transform duration-300 ease-in-out
           lg:translate-x-0 lg:static lg:shadow-none lg:z-auto
@@ -115,7 +115,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex items-center justify-end p-4 lg:hidden">
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#528ACC] hover:bg-[#DBEBFF] transition-colors"
+            className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
             aria-label="Cerrar menú"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -126,13 +126,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Perfil del usuario */}
-        <div className="flex flex-col items-center gap-2 px-6 py-6 border-b border-[#DBEBFF]">
+        <div className="flex flex-col items-center gap-2 px-6 py-6 border-b border-border">
           {loadingProfile ? (
             /* Skeleton mientras carga */
             <div className="flex flex-col items-center gap-2 w-full animate-pulse">
-              <div className="w-16 h-16 rounded-full bg-[#DBEBFF]" />
-              <div className="h-3.5 w-28 rounded bg-[#DBEBFF] mt-1" />
-              <div className="h-3 w-36 rounded bg-[#DBEBFF]" />
+              <div className="w-16 h-16 rounded-full bg-secondary" />
+              <div className="h-3.5 w-28 rounded bg-secondary mt-1" />
+              <div className="h-3 w-36 rounded bg-secondary" />
             </div>
           ) : (
             <>
@@ -151,10 +151,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 )}
               </div>
               <div className="text-center mt-1">
-                <p className="text-sm font-bold text-[#061A33]">
+                <p className="text-sm font-bold text-foreground">
                   {profile?.name ?? "Usuario"}
                 </p>
-                <p className="text-xs text-[#528ACC] mt-0.5 truncate max-w-[180px]">
+                <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[180px]">
                   {profile?.email ?? ""}
                 </p>
               </div>
@@ -176,21 +176,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   transition-all duration-150 group
                   ${
                     isActive
-                      ? "bg-[#DBEBFF] text-[#223966] font-semibold"
-                      : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
+                      ? "bg-secondary text-primary font-semibold"
+                      : "text-muted-foreground hover:bg-background hover:text-primary"
                   }
                 `}
               >
                 <span
                   className={`flex-shrink-0 transition-colors ${
-                    isActive ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
+                    isActive ? "text-primary" : "text-accent group-hover:text-muted-foreground"
                   }`}
                 >
                   {item.icon}
                 </span>
                 <span className="flex-1">{item.label}</span>
                 {isActive && (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#223966]">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 )}
@@ -200,7 +200,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Settings — fijo al fondo */}
-        <div className="px-3 py-4 border-t border-[#DBEBFF]">
+        <div className="px-3 py-4 border-t border-border">
           <Link
             href={settingsItem.href}
             onClick={onClose}
@@ -209,13 +209,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               transition-all duration-150 group
               ${
                 pathname === settingsItem.href
-                  ? "bg-[#DBEBFF] text-[#223966] font-semibold"
-                  : "text-[#528ACC] hover:bg-[#f4f8ff] hover:text-[#223966]"
+                  ? "bg-secondary text-primary font-semibold"
+                  : "text-muted-foreground hover:bg-background hover:text-primary"
               }
             `}
           >
             <span className={`flex-shrink-0 transition-colors ${
-              pathname === settingsItem.href ? "text-[#223966]" : "text-[#9BC7FF] group-hover:text-[#528ACC]"
+              pathname === settingsItem.href ? "text-primary" : "text-accent group-hover:text-muted-foreground"
             }`}>
               {settingsItem.icon}
             </span>

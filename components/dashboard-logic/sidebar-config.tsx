@@ -5,26 +5,24 @@ import Sidebar from "./sidebar";
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
-  pageTitle?: string; // título opcional que aparece en el header móvil
+  pageTitle?: string;
 }
 
 export default function SidebarLayout({ children, pageTitle }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#f4f8ff]">
+    <div className="flex min-h-screen bg-background">
 
-      {/* Sidebar — fijo en desktop, deslizable en móvil */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Área derecha: topbar móvil + contenido de la página */}
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Topbar — solo visible en móvil */}
-        <header className="flex items-center gap-3 px-4 py-4 bg-white border-b border-[#DBEBFF] lg:hidden">
+        <header className="flex items-center gap-3 px-4 py-4 bg-card border-b border-border lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="flex items-center justify-center p-2 rounded-lg text-[#223966] hover:bg-[#DBEBFF] transition-colors"
+            className="flex items-center justify-center p-2 rounded-lg text-primary hover:bg-secondary transition-colors"
             aria-label="Abrir menú"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -34,7 +32,7 @@ export default function SidebarLayout({ children, pageTitle }: SidebarLayoutProp
             </svg>
           </button>
           {pageTitle && (
-            <span className="text-base font-bold text-[#061A33]">{pageTitle}</span>
+            <span className="text-base font-bold text-foreground">{pageTitle}</span>
           )}
         </header>
 
