@@ -166,28 +166,28 @@ export default function Profile() {
 
         {/* Título — solo desktop */}
         <div className="hidden lg:block">
-          <h1 className="text-2xl font-bold text-[#061A33] tracking-tight">Mi perfil</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Mi perfil</h1>
         </div>
 
         {isLoading ? (
           /* Skeleton */
-          <div className="bg-white rounded-2xl border border-[#DBEBFF] shadow-sm p-8 flex flex-col items-center gap-4 animate-pulse">
-            <div className="w-24 h-24 rounded-full bg-[#DBEBFF]" />
-            <div className="h-4 w-40 rounded bg-[#DBEBFF]" />
-            <div className="h-3 w-52 rounded bg-[#DBEBFF]" />
-            <div className="h-10 w-36 rounded-xl bg-[#DBEBFF] mt-2" />
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-8 flex flex-col items-center gap-4 animate-pulse">
+            <div className="w-24 h-24 rounded-full bg-secondary" />
+            <div className="h-4 w-40 rounded bg-secondary" />
+            <div className="h-3 w-52 rounded bg-secondary" />
+            <div className="h-10 w-36 rounded-xl bg-secondary mt-2" />
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-full h-16 rounded-xl bg-[#DBEBFF]" />
+              <div key={i} className="w-full h-16 rounded-xl bg-secondary" />
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-[#DBEBFF] shadow-sm overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
 
             {/* Header con gradiente y avatar */}
-            <div className="bg-gradient-to-br from-[#223966] to-[#528ACC] pt-8 pb-16 flex justify-center">
+            <div className="bg-gradient-to-br from-primary to-muted-foreground pt-8 pb-16 flex justify-center">
               <div className="relative">
                 {/* Avatar */}
-                <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-[#9BC7FF] flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full border-4 border-background shadow-lg overflow-hidden bg-accent flex items-center justify-center">
                   {profile?.avatar_url ? (
                     <Image
                       src={profile?.avatar_url}
@@ -197,7 +197,7 @@ export default function Profile() {
                       className="object-cover w-full h-full"
                     />
                   ) : (
-                    <span className="text-2xl font-bold text-white select-none">
+                    <span className="text-2xl font-bold text-primary-foreground select-none">
                       {getInitials(profile?.name || "") || "?"}
                     </span>
                   )}
@@ -207,16 +207,16 @@ export default function Profile() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingAvatar}
-                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white border-2 border-[#DBEBFF] shadow flex items-center justify-center hover:bg-[#DBEBFF] transition-colors disabled:opacity-60"
+                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-background border-2 border-border shadow flex items-center justify-center hover:bg-secondary transition-colors disabled:opacity-60"
                   aria-label="Cambiar foto de perfil"
                 >
                   {isUploadingAvatar ? (
-                    <svg className="animate-spin w-4 h-4 text-[#528ACC]" viewBox="0 0 24 24" fill="none">
+                    <svg className="animate-spin w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                     </svg>
                   ) : (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#528ACC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-muted-foreground" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                       <circle cx="12" cy="13" r="4" />
                     </svg>
@@ -236,14 +236,14 @@ export default function Profile() {
 
             {/* Info y botón editar */}
             <div className="-mt-10 flex flex-col items-center gap-1 px-6 pb-6">
-              <p className="text-lg font-bold text-[#061A33]">{profile?.name || "Sin nombre"}</p>
+              <p className="text-lg font-bold text-foreground">{profile?.name || "Sin nombre"}</p>
 
               {/* Botón editar / guardar / cancelar */}
               <div className="flex gap-3 mt-4">
                 {!isEditing ? (
                   <button
                     onClick={handleEdit}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#223966] text-white text-sm font-semibold hover:bg-[#061A33] transition-colors"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-colors"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -256,14 +256,14 @@ export default function Profile() {
                     <button
                       onClick={handleCancel}
                       disabled={isSaving}
-                      className="px-4 py-2.5 rounded-xl border border-[#DBEBFF] text-[#528ACC] text-sm font-semibold hover:bg-[#f4f8ff] transition-colors disabled:opacity-60"
+                      className="px-4 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-semibold hover:bg-secondary transition-colors disabled:opacity-60"
                     >
                       Cancelar
                     </button>
                     <button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#223966] text-white text-sm font-semibold hover:bg-[#061A33] transition-colors disabled:opacity-60"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-colors disabled:opacity-60"
                     >
                       {isSaving ? (
                         <>
@@ -283,7 +283,7 @@ export default function Profile() {
 
               {/* Mensajes de feedback */}
               {error && (
-                <p className="mt-3 text-sm text-red-500 text-center">{error}</p>
+                <p className="mt-3 text-sm text-destructive text-center">{error}</p>
               )}
               {successMsg && (
                 <p className="mt-3 text-sm text-green-600 text-center">{successMsg}</p>

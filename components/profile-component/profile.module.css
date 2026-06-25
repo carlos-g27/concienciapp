@@ -1,6 +1,5 @@
 /* ================================================
    profile.module.css
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    Solo estilos que Tailwind no cubre limpiamente
    ================================================ */
 
@@ -9,22 +8,22 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  background-color: #ffffff;
-  border: 1px solid #DBEBFF;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 14px;
   padding: 0.875rem 1.125rem;
   transition: border-color 0.15s;
 }
 
 .fieldCard:focus-within {
-  border-color: #528ACC;
+  border-color: hsl(var(--muted-foreground));
 }
 
 /* Etiqueta del campo */
 .fieldLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -33,7 +32,7 @@
 .fieldValue {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #061A33;
+  color: hsl(var(--foreground));
   min-height: 1.4rem;
 }
 
@@ -41,7 +40,7 @@
 .fieldInput {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #061A33;
+  color: hsl(var(--foreground));
   background: transparent;
   border: none;
   outline: none;
@@ -51,7 +50,7 @@
 }
 
 .fieldInput::placeholder {
-  color: #9BC7FF;
+  color: hsl(var(--accent));
   font-weight: 400;
 }
 
@@ -61,6 +60,7 @@
   -webkit-appearance: none;
   margin: 0;
 }
+
 .fieldInput[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;

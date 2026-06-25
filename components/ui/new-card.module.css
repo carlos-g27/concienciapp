@@ -1,7 +1,6 @@
 /* ================================================
-   exercise-card.module.css
+   new-card.module.css
    Contenedor genérico reutilizable
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    ================================================ */
 
 .card {
@@ -12,18 +11,20 @@
   padding: 0.75rem 0.875rem;
   border-radius: 12px;
   border: 1.5px solid transparent;
-  background: #f4f8ff;
+  background: hsl(var(--secondary)); /* Fondo base */
   cursor: pointer;
   text-align: left;
   transition: background 0.15s, border-color 0.15s;
 }
+
 .card:hover {
-  background: #DBEBFF;
-  border-color: #9BC7FF;
+  background: hsl(var(--border)); /* Fondo hover */
+  border-color: hsl(var(--accent)); /* Borde hover */
 }
+
 .cardActive {
-  background: #DBEBFF;
-  border-color: #528ACC;
+  background: hsl(var(--border)); /* Fondo activo */
+  border-color: hsl(var(--muted-foreground)); /* Borde activo */
 }
 
 /* Zona de contenido libre */
@@ -34,11 +35,12 @@
 
 /* Flecha fija */
 .cardArrow {
-  color: #9BC7FF;
+  color: hsl(var(--accent));
   flex-shrink: 0;
   transition: color 0.15s;
 }
+
 .card:hover .cardArrow,
 .cardActive .cardArrow {
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
 }

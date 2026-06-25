@@ -1,6 +1,5 @@
 /* ================================================
    fisico.module.css
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    ================================================ */
 
 /* Página */
@@ -23,13 +22,13 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #061A33;
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
 }
 
 .pageSubtitle {
   font-size: 0.875rem;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   margin-top: 0.25rem;
 }
 
@@ -57,7 +56,7 @@
   gap: 0.4rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   background: none;
   border: none;
   cursor: pointer;
@@ -65,15 +64,15 @@
   transition: color 0.15s;
   width: fit-content;
 }
-.backBtn:hover { color: #223966; }
+.backBtn:hover { color: hsl(var(--primary)); }
 
 /* Panel en pantalla completa */
 .fullPanelWrapper {
-  background: #ffffff;
-  border: 1.5px solid #DBEBFF;
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(34, 57, 102, 0.07);
+  box-shadow: 0 4px 24px hsl(var(--foreground) / 0.07);
 }
 
 /* Lista de días */
@@ -85,15 +84,15 @@
 
 /* Card de día */
 .dayCard {
-  background: #ffffff;
-  border: 1.5px solid #DBEBFF;
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
   border-radius: 16px;
   overflow: hidden;
   transition: border-color 0.2s;
 }
 
 .dayCardToday {
-  border-color: #528ACC;
+  border-color: hsl(var(--muted-foreground));
 }
 
 /* Header del día */
@@ -109,7 +108,7 @@
   text-align: left;
   transition: background 0.15s;
 }
-.dayHeader:hover { background: #f4f8ff; }
+.dayHeader:hover { background: hsl(var(--secondary)); }
 
 .dayHeaderLeft {
   display: flex;
@@ -120,21 +119,21 @@
 .dayName {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #223966;
+  color: hsl(var(--primary));
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .dayNameToday {
-  color: #223966;
+  color: hsl(var(--primary));
 }
 
 .todayBadge {
   font-size: 0.65rem;
   font-weight: 700;
-  background: #223966;
-  color: #ffffff;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   padding: 0.15rem 0.5rem;
   border-radius: 99px;
   letter-spacing: 0.04em;
@@ -143,7 +142,7 @@
 
 .dayLabel {
   font-size: 0.78rem;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   font-weight: 500;
 }
 
@@ -155,12 +154,12 @@
 
 .exerciseCount {
   font-size: 0.75rem;
-  color: #9BC7FF;
+  color: hsl(var(--accent));
   font-weight: 500;
 }
 
 .chevron {
-  color: #9BC7FF;
+  color: hsl(var(--accent));
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }
@@ -170,7 +169,7 @@
 
 /* Lista de ejercicios */
 .exerciseList {
-  border-top: 1px solid #DBEBFF;
+  border-top: 1px solid hsl(var(--border));
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -182,7 +181,7 @@
   width: 52px;
   height: 52px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #9BC7FF 0%, #528ACC 100%);
+  background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--muted-foreground)) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,7 +189,7 @@
 }
 
 .exerciseThumbIcon {
-  color: #ffffff;
+  color: hsl(var(--primary-foreground));
 }
 
 .exerciseInfo {
@@ -204,7 +203,7 @@
 .exerciseName {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #061A33;
+  color: hsl(var(--foreground));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -212,7 +211,7 @@
 
 .exerciseMeta {
   font-size: 0.72rem;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -228,9 +227,9 @@
 .badge {
   font-size: 0.65rem;
   font-weight: 600;
-  background: #ffffff;
-  color: #223966;
-  border: 1px solid #DBEBFF;
+  background: hsl(var(--card));
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--border));
   padding: 0.15rem 0.5rem;
   border-radius: 99px;
 }
