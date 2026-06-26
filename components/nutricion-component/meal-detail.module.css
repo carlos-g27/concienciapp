@@ -1,13 +1,12 @@
 /* ================================================
    meal-detail.module.css
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    ================================================ */
 
 /* Imagen placeholder */
 .imagePlaceholder {
   width: 100%;
   aspect-ratio: 16 / 7;
-  background: linear-gradient(135deg, #DBEBFF 0%, #9BC7FF 100%);
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -17,14 +16,14 @@
 }
 
 .imagePlaceholderIcon {
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   opacity: 0.7;
 }
 
 .imagePlaceholderLabel {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   opacity: 0.8;
 }
 
@@ -33,8 +32,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f4f8ff;
-  border: 1px solid #DBEBFF;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
   border-radius: 10px;
   padding: 0.625rem 0.875rem;
 }
@@ -42,13 +41,13 @@
 .caloriesLabel {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
 }
 
 .caloriesValue {
   font-size: 0.875rem;
   font-weight: 800;
-  color: #223966;
+  color: hsl(var(--primary));
 }
 
 /* Sección de ingredientes */
@@ -61,7 +60,7 @@
 .ingredientsTitle {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -78,23 +77,23 @@
   justify-content: space-between;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
-  background: #f4f8ff;
-  border: 1px solid #DBEBFF;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
 }
 
 .ingredientRow:nth-child(even) {
-  background: #ffffff;
+  background: hsl(var(--card));
 }
 
 .ingredientName {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #061A33;
+  color: hsl(var(--foreground));
 }
 
 .ingredientQty {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   flex-shrink: 0;
 }

@@ -1,12 +1,11 @@
 /* ================================================
    meditation-detail.module.css
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    ================================================ */
 
 /* Cuerpo expandible */
 .body {
-  background: #ffffff;
-  border-top: 1px solid #DBEBFF;
+  background: transparent;
+  border-top: 1px solid hsl(var(--border));
   padding: 1rem 1rem 1.25rem 1rem;
   display: flex;
   flex-direction: column;
@@ -17,7 +16,7 @@
 .videoPlaceholder {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #223966 0%, #528ACC 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--muted-foreground)) 100%);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -52,7 +51,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: linear-gradient(to top, rgba(6, 26, 51, 0.7) 0%, transparent 100%);
+  background: linear-gradient(to top, hsl(var(--foreground) / 0.7) 0%, transparent 100%);
   color: rgba(255, 255, 255, 0.85);
 }
 
@@ -94,8 +93,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f4f8ff;
-  border: 1px solid #DBEBFF;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
   border-radius: 10px;
   padding: 0.625rem 0.875rem;
 }
@@ -103,11 +102,11 @@
 .durationLabel {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
 }
 
 .durationValue {
   font-size: 0.875rem;
   font-weight: 800;
-  color: #223966;
+  color: hsl(var(--primary));
 }

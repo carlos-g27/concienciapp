@@ -3,15 +3,15 @@
    ================================================ */
 
 .wrapper {
-  background: #ffffff;
-  border: 1.5px solid #DBEBFF;
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
   border-radius: 14px;
   overflow: hidden;
   transition: border-color 0.2s;
 }
 
 .wrapperOpen {
-  border-color: #528ACC;
+  border-color: hsl(var(--muted-foreground));
 }
 
 .header {
@@ -29,17 +29,17 @@
 }
 
 .header:hover {
-  background: #f4f8ff;
+  background: hsl(var(--secondary));
 }
 
 .wrapperOpen .header {
-  background: #DBEBFF;
+  background: hsl(var(--muted));
 }
 
 .title {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #061A33;
+  color: hsl(var(--foreground));
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -57,14 +57,14 @@
 .badge {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #528ACC;
-  background: #DBEBFF;
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--muted));
   padding: 0.2rem 0.6rem;
   border-radius: 99px;
 }
 
 .chevron {
-  color: #9BC7FF;
+  color: hsl(var(--accent));
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }
@@ -78,5 +78,5 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border-top: 1px solid #DBEBFF;
+  border-top: 1px solid hsl(var(--border));
 }

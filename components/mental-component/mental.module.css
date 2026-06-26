@@ -1,6 +1,5 @@
 /* ================================================
    mental.module.css
-   Paleta: #223966 | #061A33 | #528ACC | #9BC7FF | #DBEBFF
    ================================================ */
 
 /* Página */
@@ -23,13 +22,13 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #061A33;
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
 }
 
 .pageSubtitle {
   font-size: 0.875rem;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   margin-top: 0.25rem;
 }
 
@@ -62,7 +61,7 @@
   gap: 0.4rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
   background: none;
   border: none;
   cursor: pointer;
@@ -70,7 +69,7 @@
   transition: color 0.15s;
   width: fit-content;
 }
-.backBtn:hover { color: #223966; }
+.backBtn:hover { color: hsl(var(--primary)); }
 
 /* Header de la categoría seleccionada */
 .categoryHeader {
@@ -82,13 +81,13 @@
 .categoryTitle {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #061A33;
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
 }
 
 .categorySubtitle {
   font-size: 0.85rem;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
 }
 
 /* Lista de meditaciones */

@@ -7,40 +7,42 @@
   flex-direction: column;
   border-radius: 20px;
   overflow: hidden;
-  border: 1.5px solid #DBEBFF;
-  background: #ffffff;
+  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--card));
   cursor: pointer;
   text-align: left;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
-  box-shadow: 0 2px 12px rgba(34, 57, 102, 0.06);
+  /* La sombra usa el color primary con un 6% de opacidad */
+  box-shadow: 0 2px 12px hsl(var(--primary) / 0.06);
   height: 100%;
 }
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 28px rgba(34, 57, 102, 0.12);
-  border-color: #9BC7FF;
+  box-shadow: 0 8px 28px hsl(var(--primary) / 0.12);
+  border-color: hsl(var(--accent));
 }
 
 .cardImage {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #223966 0%, #528ACC 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--muted-foreground)) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .cardIcon {
-  color: rgba(255, 255, 255, 0.6);
+  color: hsl(var(--primary-foreground) / 0.6);
   z-index: 1;
 }
 
 .cardOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(6, 26, 51, 0.6) 0%, transparent 60%);
+  /* El overlay usa el foreground con opacidad para asegurar legibilidad */
+  background: linear-gradient(to top, hsl(var(--foreground) / 0.6) 0%, transparent 60%);
 }
 
 .cardTitle {
@@ -49,7 +51,7 @@
   left: 1rem;
   font-size: 1.1rem;
   font-weight: 800;
-  color: #ffffff;
+  color: hsl(var(--primary-foreground));
   z-index: 1;
   letter-spacing: -0.01em;
 }
@@ -59,18 +61,18 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  border-top: 1px solid #DBEBFF;
+  border-top: 1px solid hsl(var(--border));
   margin-top: auto; /* Empuja el footer al fondo si las tarjetas tienen alturas distintas */
 }
 
 .footerPrimary {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #528ACC;
+  color: hsl(var(--muted-foreground));
 }
 
 .footerSecondary {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #9BC7FF;
+  color: hsl(var(--accent));
 }
