@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import Card from "@/components/ui/new-card"; // Asegúrate de que esta ruta sea correcta
 import styles from "./settings.module.css";
 
 // --- Tipos ---
@@ -91,34 +91,46 @@ const accountItems: SettingsItem[] = [
   },
 ];
 
-// --- Subcomponente: fila de configuración con Link ---
+// --- Subcomponente: fila de configuración adaptada con Card ---
 function SettingsRow({ item }: { item: SettingsItem }) {
-  if (item.action) {
-    return (
-      <div className={styles.row}>
-        <span className={styles.rowIcon}>{item.icon}</span>
-        <div className={styles.rowInfo}>
-          <span className={styles.rowLabel}>{item.label}</span>
-          {item.description && (
-            <span className={styles.rowDescription}>{item.description}</span>
-          )}
-        </div>
-        <div className={styles.rowAction}>{item.action}</div>
-      </div>
-    );
-  }
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (item.href) {
+      router.push(item.href);
+    }
+  };
 
   return (
-    <Link href={item.href!} className={styles.rowLink}>
-      <span className={styles.rowIcon}>{item.icon}</span>
-      <div className={styles.rowInfo}>
-        <span className={styles.rowLabel}>{item.label}</span>
-        {item.description && (
-          <span className={styles.rowDescription}>{item.description}</span>
-        )}
+    <Card isSelected={false} {...(item.action ? {} : { onClick: handleClick })}>
+      <div className="flex items-center justify-between w-full">
+        
+        {/* Lado izquierdo: Icono y textos */}
+        <div className="flex items-center gap-4">
+          <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-secondary text-primary">
+            {item.icon}
+          </span>
+          <div className="flex flex-col text-left">
+            <span className="text-sm font-bold text-foreground">{item.label}</span>
+            {item.description && (
+              <span className="text-xs font-medium text-muted-foreground">{item.description}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Lado derecho: Acción (ThemeSwitcher) o Flecha de navegación */}
+        <div className="flex items-center flex-shrink-0" onClick={(e) => item.action && e.stopPropagation()}>
+          {item.action ? (
+            item.action
+          ) : (
+            <span className="text-accent">
+              <IconChevron />
+            </span>
+          )}
+        </div>
+
       </div>
-      <span className={styles.rowChevron}><IconChevron /></span>
-    </Link>
+    </Card>
   );
 }
 
@@ -133,51 +145,52 @@ export default function Settings() {
 
   return (
     <SidebarLayout pageTitle="Configuración">
-      <div className={styles.page}>
+      <div className="max-w-2xl mx-auto flex flex-col gap-8 w-full">
 
         {/* Título desktop */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Configuración</h1>
+        <div className="hidden lg:block">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Configuración</h1>
         </div>
 
         {/* Grupo: Cuenta */}
-        <section className={styles.group}>
-          <h2 className={styles.groupTitle}>Gestión de cuenta</h2>
-          <div className={styles.groupCard}>
-            {accountItems.map((item, i) => (
-              <div key={item.id}>
-                <SettingsRow item={item} />
-                {i < accountItems.length - 1 && <div className={styles.divider} />}
-              </div>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+            Gestión de cuenta
+          </h2>
+          <div className="flex flex-col gap-3">
+            {accountItems.map((item) => (
+              <SettingsRow key={item.id} item={item} />
             ))}
           </div>
         </section>
 
         {/* Grupo: Apariencia */}
-        <section className={styles.group}>
-          <h2 className={styles.groupTitle}>Apariencia</h2>
-          <div className={styles.groupCard}>
-            <div className={styles.row}>
-              <span className={styles.rowIcon}><IconTheme /></span>
-              <div className={styles.rowInfo}>
-                <span className={styles.rowLabel}>Tema</span>
-                <span className={styles.rowDescription}>Cambia entre modo claro, oscuro o sistema</span>
-              </div>
-              <div className={styles.rowAction}>
-                <ThemeSwitcher />
-              </div>
-            </div>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+            Apariencia
+          </h2>
+          <div className="flex flex-col gap-3">
+            <SettingsRow 
+              item={{
+                id: "theme",
+                label: "Tema de la aplicación",
+                description: "Cambia entre modo claro o modo oscuro",
+                icon: <IconTheme />,
+                action: <ThemeSwitcher />,
+              }} 
+            />
           </div>
         </section>
 
         {/* Botón cerrar sesión */}
-        <section className={styles.group}>
-          <div className={styles.groupCard}>
-            <button onClick={handleLogout} className={styles.logoutBtn}>
-              <IconLogout />
-              Cerrar sesión
-            </button>
-          </div>
+        <section className="mt-4">
+          <button 
+            onClick={handleLogout} 
+            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border-2 border-border bg-card text-destructive font-bold text-sm hover:bg-secondary transition-colors"
+          >
+            <IconLogout />
+            Cerrar sesión
+          </button>
         </section>
 
       </div>
