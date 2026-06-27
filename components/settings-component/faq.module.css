@@ -1,0 +1,124 @@
+/* ================================================
+   faq.module.css + help.module.css (comparten estructura)
+   100% variables CSS — sin colores hardcodeados
+   ================================================ */
+
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header desktop */
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  padding: 0.4rem 0;
+  transition: color 0.15s;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+.backBtn:hover { color: var(--foreground); }
+
+.pageTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+
+.pageSubtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* FAQ list */
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.faqItem {
+  background-color: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.125rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.faqQuestion {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+.faqAnswer {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+/* Help sections */
+.helpList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.helpCard {
+  background-color: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.helpCardTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.helpCardIcon {
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+
+.helpCardText {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.helpCardLink {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  width: fit-content;
+  margin-top: 0.25rem;
+  transition: opacity 0.15s;
+}
+.helpCardLink:hover { opacity: 0.75; }

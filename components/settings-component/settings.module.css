@@ -1,0 +1,154 @@
+/* ================================================
+   settings.module.css
+   100% variables CSS — sin colores hardcodeados
+   ================================================ */
+
+/* Página */
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header desktop */
+.pageHeader {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .pageHeader { display: block; }
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+
+/* Grupos */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.groupTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 0.25rem;
+}
+
+/* Card del grupo */
+.groupCard {
+  background-color: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Divisor entre filas */
+.divider {
+  height: 1px;
+  background-color: var(--border);
+  margin: 0 1rem;
+}
+
+/* Fila con Link (navegable) */
+.rowLink {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem 1.125rem;
+  text-decoration: none;
+  transition: background-color 0.15s;
+  cursor: pointer;
+}
+.rowLink:hover {
+  background-color: var(--background);
+}
+
+/* Fila sin Link (acción directa) */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem 1.125rem;
+}
+
+/* Ícono de la fila */
+.rowIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: var(--secondary);
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+.rowLink:hover .rowIcon {
+  background-color: var(--accent);
+  color: var(--primary);
+}
+
+/* Info de la fila */
+.rowInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.rowLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.rowDescription {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+/* Chevron */
+.rowChevron {
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* Acción (ThemeSwitcher u otro widget) */
+.rowAction {
+  flex-shrink: 0;
+}
+
+/* Botón cerrar sesión */
+.logoutBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--destructive);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, opacity 0.15s;
+  border-radius: 16px;
+}
+.logoutBtn:hover {
+  background-color: var(--background);
+  opacity: 0.85;
+}
