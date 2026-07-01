@@ -120,9 +120,9 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             </div>
           ) : (
             <>
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
                 {profile?.avatar_url ? (
-                  <Image src={profile.avatar_url} alt="Foto de perfil" width={64} height={64} className="object-cover w-full h-full" />
+                  <Image src={profile.avatar_url} alt="Foto de perfil" width={64} height={64} loading="eager" className="object-cover w-full h-full" />
                 ) : (
                   getInitials(profile?.name ?? "?") || "?"
                 )}
