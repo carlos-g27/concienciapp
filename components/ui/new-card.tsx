@@ -11,18 +11,29 @@ interface CardProps {
 
 // --- Componente genérico reutilizable ---
 export default function Card({ onClick, isSelected = false, children }: CardProps) {
+  // Usamos un `div` con `role="button"` para evitar botones anidados cuando
+  // el contenido interno puede incluir elementos interactivos (por ejemplo,
+  // otro `button`). También manejamos `onKeyDown` para accesibilidad.
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!onClick) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={onClick ? 0 : -1}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       className={`${styles.card} ${isSelected ? styles.cardActive : ""}`}
     >
       {/* Contenido libre — lo define quien usa el card */}
       <div className={styles.cardContent}>
         {children}
       </div>
-
-      {/* Flecha derecha fija */}
-        <polyline points="9 18 15 12 9 6" />
-    </button>
+    </div>
   );
 }
