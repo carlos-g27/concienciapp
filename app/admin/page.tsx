@@ -1,7 +1,10 @@
+import { Suspense } from "react";
 import AdminDashboard from "../../components/admin-component/admin-dashboard";
 
 export default function AdminPage() {
   return (
-    <AdminDashboard />
+    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+      <AdminDashboard />
+    </Suspense>
   )
 }

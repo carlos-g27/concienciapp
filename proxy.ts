@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "@/lib/utils";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   // Si las variables de entorno no están configuradas, saltar
@@ -51,15 +51,14 @@ export async function middleware(request: NextRequest) {
 
   // ── Protección de rutas /admin ───────────────────────────────
   if (user && pathname.startsWith("/admin")) {
-    const { data: profile, error } = await supabase
+    const { data: profile } = await supabase
       .from("profiles")
       .select("role")
-      .eq("id", user.sub)
-      .maybeSingle();
+      .eq("id", user.sub)        // sub es el user id en los claims
+      .single();
 
-    const role = profile?.role?.toString().toLowerCase();
-
-    if (error || !role || role !== "admin") {
+    if (!profile || profile.role !== "admin") {
+      // Usuario sin rol admin → redirigir a su dashboard
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
       return NextResponse.redirect(url);
