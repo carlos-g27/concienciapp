@@ -1,6 +1,7 @@
 "use client";
 
 import SidebarLayout from "./sidebar-config";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import styles from "./dashboard.module.css";
 
 // --- Tipos ---
@@ -113,98 +114,105 @@ export default function Dashboard() {
     <SidebarLayout pageTitle="Progress">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
 
-            {/* Título de página — solo visible en desktop (en móvil ya está en el topbar) */}
-            <div className="hidden lg:block">
-              <h1 className="text-2xl font-bold text-foreground tracking-tight">Progress</h1>
-            </div>
+        {/* Título de página — solo visible en desktop (en móvil ya está en el topbar) */}
+        <div className="hidden lg:block">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Progress</h1>
+        </div>
 
-            {/* Tab Bar */}
-            <div className="flex gap-6 border-b-2 border-border">
-              <button className="relative pb-3 text-sm font-bold text-primary after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2.5px] after:bg-primary after:rounded-t">
-                Improvement
-              </button>
-              <button className="pb-3 text-sm font-medium text-accent hover:text-muted-foreground transition-colors">
-                General
-              </button>
-            </div>
+        {/* Tab Bar */}
+        <div className="flex gap-6 border-b-2 border-border">
+          <button className="relative pb-3 text-sm font-bold text-primary after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2.5px] after:bg-primary after:rounded-t">
+            Improvement
+          </button>
+          <button className="pb-3 text-sm font-medium text-accent hover:text-muted-foreground transition-colors">
+            General
+          </button>
+        </div>
 
-            {/* Grid principal: 2 columnas en lg, 1 columna en móvil/tablet */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Grid principal: 2 columnas en lg, 1 columna en móvil/tablet */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-              {/* Columna izquierda — Pilares + Rendimiento */}
-              <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Columna izquierda — Pilares + Rendimiento */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
 
-                {/* Card: Pilares */}
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
-                  <h2 className="text-base font-bold text-primary mb-6">Pilares</h2>
-                  <div className="grid grid-cols-3 gap-4 sm:gap-8">
-                    {pilares.map((p) => (
-                      <div key={p.label} className="flex flex-col items-center gap-3">
-                        <span className="text-xs font-medium text-muted-foreground text-center leading-snug">
-                          {p.label}
-                        </span>
-                        <DonutRing
-                          value={p.value}
-                          colorClass={p.colorClass}
-                          trackClass={p.trackClass}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Card: Rendimiento */}
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-base font-bold text-primary">Rendimiento</h2>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-sm bg-accent opacity-60 inline-block" />
-                        Período anterior
+            {/* Card: Pilares */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-bold text-primary">Pilares</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-3 gap-4 sm:gap-8">
+                  {pilares.map((p) => (
+                    <div key={p.label} className="flex flex-col items-center gap-3">
+                      <span className="text-xs font-medium text-muted-foreground text-center leading-snug">
+                        {p.label}
                       </span>
-                      <span className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-sm bg-primary inline-block" />
-                        Período actual
-                      </span>
+                      <DonutRing
+                        value={p.value}
+                        colorClass={p.colorClass}
+                        trackClass={p.trackClass}
+                      />
                     </div>
-                  </div>
-                  {/* Cambiamos el fondo duro por el degradado con variables */}
-                  <div className="bg-gradient-to-br from-background to-secondary rounded-xl p-4 border border-border">
-                    <BarChart />
-                  </div>
+                  ))}
                 </div>
+              </CardContent>
+            </Card>
 
-              </div>
-
-              {/* Columna derecha — Leaderboard */}
-              <div className="lg:col-span-1">
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-6 h-full">
-                  <h2 className="text-base font-bold text-primary mb-6">Leaderboard</h2>
-                  <div className="flex flex-col gap-1">
-                    {leaderboard.map((entry, i) => (
-                      <div
-                        key={entry.name}
-                        className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-secondary transition-colors cursor-default"
-                      >
-                        <span
-                          className={`w-5 text-center text-sm font-bold flex-shrink-0 ${
-                            i === 0 ? "text-primary" : "text-accent"
-                          }`}
-                        >
-                          {i + 1}
-                        </span>
-                        <AvatarInitials initials={entry.avatar} />
-                        <span className="flex-1 text-sm font-medium text-primary truncate">
-                          {entry.name}
-                        </span>
-                        <span className="text-sm font-bold text-muted-foreground">{entry.score}</span>
-                      </div>
-                    ))}
-                  </div>
+            {/* Card: Rendimiento */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-base font-bold text-primary">Rendimiento</CardTitle>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-accent opacity-60 inline-block" />
+                    Período anterior
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-primary inline-block" />
+                    Período actual
+                  </span>
                 </div>
-              </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="bg-gradient-to-br from-background to-secondary rounded-xl p-4 border border-border">
+                  <BarChart />
+                </div>
+              </CardContent>
+            </Card>
 
-            </div>
+          </div>
+
+          {/* Columna derecha — Leaderboard */}
+          <div className="lg:col-span-1">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-base font-bold text-primary">Leaderboard</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 flex flex-col gap-1">
+                {leaderboard.map((entry, i) => (
+                  <div
+                    key={entry.name}
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-secondary transition-colors cursor-default"
+                  >
+                    <span
+                      className={`w-5 text-center text-sm font-bold flex-shrink-0 ${
+                        i === 0 ? "text-primary" : "text-accent"
+                      }`}
+                    >
+                      {i + 1}
+                    </span>
+                    <AvatarInitials initials={entry.avatar} />
+                    <span className="flex-1 text-sm font-medium text-primary truncate">
+                      {entry.name}
+                    </span>
+                    <span className="text-sm font-bold text-muted-foreground">{entry.score}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+        </div>
       </div>
     </SidebarLayout>
   );

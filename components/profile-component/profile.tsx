@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useProfile, getInitials } from "@/hooks/use-profile";
 import styles from "./profile.module.css";
 
@@ -224,7 +226,7 @@ export default function Profile() {
                 </button>
 
                 {/* Input file oculto */}
-                <input
+                <Input
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
@@ -304,7 +306,7 @@ export default function Profile() {
                 <div key={key} className={styles.fieldCard}>
                   <span className={styles.fieldLabel}>{label}</span>
                   {isEditing && draft ? (
-                    <input
+                    <Input
                       type={type}
                       value={draft[key]}
                       placeholder={placeholder}
