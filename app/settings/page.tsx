@@ -1,7 +1,5 @@
-import Settings from "../../components/settings-component/settings";
+import Settings from "../../components/user-component/settings-component/settings";
 
-export default function SettingsPage() {    
-    return(
-        <Settings />
-    )
+export default function SettingsPage() {
+  return <Settings />;
 }

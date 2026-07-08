@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import ExercisePanel, { Exercise } from "./exercise-panel";
 import Card from "@/components/ui/new-card";
 import styles from "./fisico.module.css";

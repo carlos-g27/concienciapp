@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useProfile, getInitials } from "@/hooks/use-profile";

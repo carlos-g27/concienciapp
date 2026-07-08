@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
+import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import Card from "@/components/ui/new-card"; // Asegúrate de que esta ruta sea correcta
 import styles from "./settings.module.css";
@@ -49,14 +50,6 @@ const IconTheme = () => (
     <line x1="21" y1="12" x2="23" y2="12" />
     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-  </svg>
-);
-
-const IconLogout = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-    <polyline points="16 17 21 12 16 7" />
-    <line x1="21" y1="12" x2="9" y2="12" />
   </svg>
 );
 
@@ -136,13 +129,6 @@ function SettingsRow({ item }: { item: SettingsItem }) {
 
 // --- Componente principal ---
 export default function Settings() {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    // Lógica de cierre de sesión — conectar con Supabase después
-    router.push("/auth/login");
-  };
-
   return (
     <SidebarLayout pageTitle="Configuración">
       <div className="max-w-2xl mx-auto flex flex-col gap-8 w-full">
@@ -184,13 +170,7 @@ export default function Settings() {
 
         {/* Botón cerrar sesión */}
         <section className="mt-4">
-          <button 
-            onClick={handleLogout} 
-            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border-2 border-border bg-card text-destructive font-bold text-sm hover:bg-secondary transition-colors"
-          >
-            <IconLogout />
-            Cerrar sesión
-          </button>
+          <LogoutButton />
         </section>
 
       </div>

@@ -1,7 +1,5 @@
-import Mental from "../../components/mental-component/pilar-mental";
+import Mental from "../../components/user-component/mental-component/pilar-mental";
 
-export default function PilarMentalPage(){
-    return(
-        <Mental />
-    )
+export default function PilarMentalPage() {
+  return <Mental />;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ProfileProvider } from "@/hooks/use-profile";
-import AdminSidebar from "../../components/admin-component/admin-sidebar";
+import AdminSidebar from "@/components/admin-component/dashboard/admin-sidebar";
 
 
 interface AdminLayoutProps {

@@ -1,0 +1,157 @@
+/* ================================================
+   admin-user-profile.module.css
+   Card, Input, Label y CategoryCard manejan sus propios
+   estilos. Este archivo solo cubre el layout específico
+   de esta página.
+   ================================================ */
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Botón volver */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.15s;
+  width: fit-content;
+}
+.backBtn:hover { color: var(--foreground); }
+
+/* Header del perfil: avatar + nombre + email */
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #528ACC, #9BC7FF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatarInitials {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.profileName {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.profileEmail {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+}
+
+/* Grid de campos editables */
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .fieldsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Fila del botón guardar */
+.saveRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.successMsg {
+  font-size: 0.8rem;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.errorMsg {
+  font-size: 0.8rem;
+  color: var(--destructive);
+  font-weight: 500;
+}
+
+/* Grid de category cards */
+.categoryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  .categoryGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Estados de carga y error */
+.skeletonHeader {
+  height: 140px;
+  border-radius: 16px;
+  background-color: var(--secondary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  .skeletonGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.skeletonCard {
+  height: 160px;
+  border-radius: 20px;
+  background-color: var(--secondary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.notFound {
+  text-align: center;
+  padding: 3rem;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}

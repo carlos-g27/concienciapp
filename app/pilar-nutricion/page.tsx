@@ -1,7 +1,5 @@
-import Nutricion from "../../components/nutricion-component/pilar-nutricion";
+import Nutricion from "../../components/user-component/nutricion-component/pilar-nutricion";
 
 export default function PilarNutricionPage() {
-    return(
-        <Nutricion />
-    )
+  return <Nutricion />;
 }

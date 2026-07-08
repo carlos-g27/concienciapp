@@ -1,7 +1,5 @@
-import ProfileComponent from "../../components/profile-component/profile";
+import ProfileComponent from "../../components/user-component/profile-component/profile";
 
 export default function ProfilePage() {
-    return(
-        <ProfileComponent  />
-    )
+  return <ProfileComponent />;
 }

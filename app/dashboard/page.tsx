@@ -1,7 +1,5 @@
-import Dashboard from "../../components/dashboard-logic/dashboard.page";
+import Dashboard from "../../components/user-component/dashboard-logic/dashboard.page";
 
 export default function DashboardPage() {
-  return (
-    <Dashboard />
-  )
+  return <Dashboard />;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import CategoryCard from "@/components/ui/category-card";
 import MealDetail, { Recipe } from "./meal-detail";
 import styles from "./nutricion.module.css";

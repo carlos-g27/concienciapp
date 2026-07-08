@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import SidebarLayout from "@/components/dashboard-logic/sidebar-config";
+import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import AccordionWrapper from "@/components/ui/accordion-wrapper";
 import styles from "./faq.module.css";
 
