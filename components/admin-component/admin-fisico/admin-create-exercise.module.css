@@ -1,0 +1,147 @@
+/* ================================================
+   admin-create-exercise.module.css
+   ================================================ */
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.15s;
+  width: fit-content;
+  cursor: pointer;
+}
+.backBtn:hover { color: var(--foreground); }
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.pageTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+
+.pageSubtitle {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--input);
+  background: transparent;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.textarea:focus { border-color: var(--ring); }
+.textarea::placeholder { color: var(--muted-foreground); }
+
+/* Pasos dinámicos */
+.stepsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stepRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stepNumber {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stepInput {
+  flex: 1;
+}
+
+.stepRemoveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s, color 0.15s;
+}
+.stepRemoveBtn:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: var(--destructive);
+}
+
+.addStepBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+.addStepBtn:hover { opacity: 0.75; }
+
+.errorMsg {
+  font-size: 0.85rem;
+  color: var(--destructive);
+  font-weight: 500;
+}
+
+.submitBtn {
+  width: 100%;
+}

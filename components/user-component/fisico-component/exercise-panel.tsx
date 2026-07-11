@@ -12,6 +12,7 @@ export interface Exercise {
   reps: number;
   description: string;
   instructions: string[];
+  video_url?: string | null;
 }
 
 // Estructura lista para mapear a una tabla 'weight_logs' en Supabase
@@ -26,6 +27,24 @@ interface ExercisePanelProps {
   onClose: () => void;
 }
 
+// --- Helper: detecta el tipo de video y arma la URL de embed ---
+function getVideoEmbedInfo(url: string): { type: "youtube" | "vimeo" | "file"; src: string } {
+  const youtubeMatch = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  if (youtubeMatch) {
+    return { type: "youtube", src: `https://www.youtube.com/embed/${youtubeMatch[1]}` };
+  }
+
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) {
+    return { type: "vimeo", src: `https://player.vimeo.com/video/${vimeoMatch[1]}` };
+  }
+
+  // Cualquier otra URL se trata como archivo de video directo
+  return { type: "file", src: url };
+}
+
 // --- Componente ---
 export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps) {
   const [weight, setWeight] = useState<string>("");
@@ -33,6 +52,8 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
   const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
 
   if (!exercise) return null;
+
+  const videoInfo = exercise.video_url ? getVideoEmbedInfo(exercise.video_url) : null;
 
   const handleSaveWeight = () => {
     if (!weight) return;
@@ -87,15 +108,35 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
         </button>
       </div>
 
-      {/* Video placeholder */}
-      <div className={styles.videoPlaceholder}>
-        <div className={styles.playBtn}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
+      {/* Video real si existe, si no, placeholder */}
+      {videoInfo ? (
+        <div className={styles.videoWrapper}>
+          {videoInfo.type === "file" ? (
+            <video
+              controls
+              className={styles.videoElement}
+              src={videoInfo.src}
+            />
+          ) : (
+            <iframe
+              className={styles.videoElement}
+              src={videoInfo.src}
+              title={exercise.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          )}
         </div>
-        <span className={styles.videoLabel}>Vista previa del ejercicio</span>
-      </div>
+      ) : (
+        <div className={styles.videoPlaceholder}>
+          <div className={styles.playBtn}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          </div>
+          <span className={styles.videoLabel}>Vista previa del ejercicio</span>
+        </div>
+      )}
 
       {/* Series y reps */}
       <div className={styles.setsRow}>

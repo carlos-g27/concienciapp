@@ -69,6 +69,22 @@
   color: hsl(var(--primary));
 }
 
+/* Video real (YouTube / Vimeo / archivo directo) */
+.videoWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  flex-shrink: 0;
+}
+
+.videoElement {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  object-fit: cover;
+}
+
 /* Video placeholder */
 .videoPlaceholder {
   width: 100%;

@@ -1,0 +1,263 @@
+/* ================================================
+   admin-fisico.module.css
+   Card, Input, Label, Button manejan sus propios estilos.
+   Este archivo cubre tabs de días, filas de ejercicios
+   asignados (estilo similar a exercise-card del usuario)
+   y el layout específico de esta página.
+   ================================================ */
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Botón volver */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.15s;
+  width: fit-content;
+}
+.backBtn:hover { color: var(--foreground); }
+
+/* Header */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+
+.pageSubtitle {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
+}
+
+/* Banners de feedback */
+.successBanner {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background-color: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.errorBanner {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background-color: rgba(220, 38, 38, 0.1);
+  color: var(--destructive);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Tabs de días */
+.dayTabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.dayTab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background-color: var(--card);
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.dayTab:hover { border-color: var(--ring); }
+
+.dayTabActive {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.dayTabBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.25);
+  padding: 0.05rem 0.4rem;
+  border-radius: 99px;
+}
+.dayTab:not(.dayTabActive) .dayTabBadge {
+  background-color: var(--secondary);
+  color: var(--primary);
+}
+
+/* Campo enfoque del día */
+.focusField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Lista de ejercicios asignados */
+.assignedList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.emptyDay {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+}
+
+/* Fila de ejercicio — estilo similar a exercise-card del usuario */
+.exerciseRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.875rem;
+  border-radius: 14px;
+  background-color: var(--secondary);
+  border: 1.5px solid var(--border);
+}
+
+.exerciseThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #9BC7FF 0%, #528ACC 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.exerciseInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.exerciseName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.exerciseMuscle {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.exerciseFields {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.fieldGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.fieldInput {
+  width: 52px;
+  height: 1.9rem;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+}
+
+.fieldSuffix {
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background-color: rgba(220, 38, 38, 0.1);
+  color: var(--destructive);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+.deleteBtn:hover {
+  background-color: rgba(220, 38, 38, 0.2);
+}
+
+/* Botón agregar ejercicio */
+.addExerciseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1.5px dashed var(--border);
+  background: none;
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+.addExerciseBtn:hover {
+  border-color: var(--ring);
+  color: var(--primary);
+  background-color: var(--secondary);
+}
+
+/* Loading skeleton */
+.loadingList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeletonRow {
+  height: 76px;
+  border-radius: 14px;
+  background-color: var(--secondary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

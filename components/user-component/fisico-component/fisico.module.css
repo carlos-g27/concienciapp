@@ -176,6 +176,14 @@
   gap: 0.5rem;
 }
 
+/* Mensaje cuando el día no tiene ejercicios asignados */
+.emptyDay {
+  text-align: center;
+  padding: 1.25rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.85rem;
+}
+
 /* Contenido específico de ejercicio dentro del Card genérico */
 .exerciseThumb {
   width: 52px;
@@ -232,4 +240,17 @@
   border: 1px solid hsl(var(--border));
   padding: 0.15rem 0.5rem;
   border-radius: 99px;
+}
+
+/* Skeleton de carga mientras llega la rutina de Supabase */
+.skeletonDayCard {
+  height: 72px;
+  border-radius: 16px;
+  background: hsl(var(--secondary));
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
