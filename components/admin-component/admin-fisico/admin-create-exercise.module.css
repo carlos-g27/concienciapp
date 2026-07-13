@@ -42,6 +42,13 @@
   color: var(--muted-foreground);
 }
 
+.loadingText {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
 .form {
   display: flex;
   flex-direction: column;
