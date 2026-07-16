@@ -4,7 +4,7 @@ import { Suspense } from "react";
 export default function AdminFisicoPage() {
   return (
     <Suspense>
-    <AdminCreateExercise />
+      <AdminCreateExercise />
     </Suspense>
   )
 }
