@@ -2,6 +2,22 @@
    meal-detail.module.css
    ================================================ */
 
+/* Imagen real de la receta */
+.recipeImageWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  border-radius: 10px;
+  overflow: hidden;
+  background: hsl(var(--secondary));
+}
+
+.recipeImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* Imagen placeholder */
 .imagePlaceholder {
   width: 100%;

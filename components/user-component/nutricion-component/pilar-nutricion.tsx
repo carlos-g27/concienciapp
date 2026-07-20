@@ -1,23 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import CategoryCard from "@/components/ui/category-card";
 import MealDetail, { Recipe } from "./meal-detail";
 import styles from "./nutricion.module.css";
 
 // --- Tipos ---
+type MealTypeKey = "breakfast" | "lunch" | "dinner";
+
 interface MealCategory {
-  id: string;
+  id: MealTypeKey;
   title: string;
   icon: React.ReactNode;
   recipes: Recipe[];
 }
 
-// --- Datos mock ---
-const MEAL_CATEGORIES: MealCategory[] = [
+// --- Íconos y títulos fijos por tipo de comida (Supabase no guarda íconos) ---
+const MEAL_TYPE_META: { id: MealTypeKey; title: string; icon: React.ReactNode }[] = [
   {
-    id: "desayuno",
+    id: "breakfast",
     title: "Desayuno",
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -28,47 +31,9 @@ const MEAL_CATEGORIES: MealCategory[] = [
         <line x1="14" y1="1" x2="14" y2="4" />
       </svg>
     ),
-    recipes: [
-      {
-        id: "des-1",
-        name: "Avena con frutas",
-        calories: 380,
-        ingredients: [
-          { name: "Avena en hojuelas", quantity: 80,  unit: "g"    },
-          { name: "Leche descremada",  quantity: 200, unit: "ml"   },
-          { name: "Plátano",           quantity: 1,   unit: "pieza"},
-          { name: "Fresas",            quantity: 50,  unit: "g"    },
-          { name: "Miel de abeja",     quantity: 1,   unit: "cda"  },
-        ],
-      },
-      {
-        id: "des-2",
-        name: "Huevos revueltos con tostadas",
-        calories: 420,
-        ingredients: [
-          { name: "Huevos",            quantity: 3,   unit: "pieza"},
-          { name: "Pan integral",      quantity: 2,   unit: "pieza"},
-          { name: "Aceite de oliva",   quantity: 1,   unit: "cdta" },
-          { name: "Tomate cherry",     quantity: 80,  unit: "g"    },
-          { name: "Espinaca baby",     quantity: 30,  unit: "g"    },
-        ],
-      },
-      {
-        id: "des-3",
-        name: "Smoothie proteico",
-        calories: 310,
-        ingredients: [
-          { name: "Proteína en polvo", quantity: 30,  unit: "g"    },
-          { name: "Leche de almendra", quantity: 250, unit: "ml"   },
-          { name: "Plátano congelado", quantity: 1,   unit: "pieza"},
-          { name: "Mantequilla maní",  quantity: 15,  unit: "g"    },
-          { name: "Hielo",             quantity: 1,   unit: "taza" },
-        ],
-      },
-    ],
   },
   {
-    id: "almuerzo",
+    id: "lunch",
     title: "Almuerzo",
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -77,101 +42,78 @@ const MEAL_CATEGORIES: MealCategory[] = [
         <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7" />
       </svg>
     ),
-    recipes: [
-      {
-        id: "alm-1",
-        name: "Pechuga de pollo con arroz",
-        calories: 620,
-        ingredients: [
-          { name: "Pechuga de pollo",  quantity: 200, unit: "g"    },
-          { name: "Arroz blanco",      quantity: 150, unit: "g"    },
-          { name: "Brócoli",           quantity: 100, unit: "g"    },
-          { name: "Aceite de oliva",   quantity: 1,   unit: "cda"  },
-          { name: "Ajo",               quantity: 2,   unit: "pieza"},
-          { name: "Limón",             quantity: 1,   unit: "pieza"},
-        ],
-      },
-      {
-        id: "alm-2",
-        name: "Ensalada de atún",
-        calories: 450,
-        ingredients: [
-          { name: "Atún en agua",      quantity: 150, unit: "g"    },
-          { name: "Lechuga romana",    quantity: 100, unit: "g"    },
-          { name: "Tomate",            quantity: 80,  unit: "g"    },
-          { name: "Pepino",            quantity: 60,  unit: "g"    },
-          { name: "Aceite de oliva",   quantity: 1,   unit: "cda"  },
-          { name: "Vinagre balsámico", quantity: 1,   unit: "cdta" },
-        ],
-      },
-      {
-        id: "alm-3",
-        name: "Pasta con salsa de tomate",
-        calories: 580,
-        ingredients: [
-          { name: "Pasta integral",    quantity: 120, unit: "g"    },
-          { name: "Tomate triturado",  quantity: 200, unit: "g"    },
-          { name: "Carne molida",      quantity: 100, unit: "g"    },
-          { name: "Cebolla",           quantity: 50,  unit: "g"    },
-          { name: "Albahaca",          quantity: 5,   unit: "g"    },
-        ],
-      },
-    ],
   },
   {
-    id: "cena",
+    id: "dinner",
     title: "Cena",
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
       </svg>
     ),
-    recipes: [
-      {
-        id: "cen-1",
-        name: "Salmón al horno",
-        calories: 520,
-        ingredients: [
-          { name: "Filete de salmón",  quantity: 180, unit: "g"    },
-          { name: "Espárragos",        quantity: 120, unit: "g"    },
-          { name: "Aceite de oliva",   quantity: 1,   unit: "cda"  },
-          { name: "Ajo en polvo",      quantity: 1,   unit: "cdta" },
-          { name: "Limón",             quantity: 1,   unit: "pieza"},
-        ],
-      },
-      {
-        id: "cen-2",
-        name: "Sopa de verduras",
-        calories: 280,
-        ingredients: [
-          { name: "Zanahoria",         quantity: 80,  unit: "g"    },
-          { name: "Calabaza",          quantity: 100, unit: "g"    },
-          { name: "Papa",              quantity: 80,  unit: "g"    },
-          { name: "Caldo de pollo",    quantity: 400, unit: "ml"   },
-          { name: "Cebolla",           quantity: 50,  unit: "g"    },
-          { name: "Sal y pimienta",    quantity: 1,   unit: "cdta" },
-        ],
-      },
-      {
-        id: "cen-3",
-        name: "Wrap de pollo y aguacate",
-        calories: 490,
-        ingredients: [
-          { name: "Tortilla integral", quantity: 1,   unit: "pieza"},
-          { name: "Pollo cocido",      quantity: 120, unit: "g"    },
-          { name: "Aguacate",          quantity: 80,  unit: "g"    },
-          { name: "Lechuga",           quantity: 40,  unit: "g"    },
-          { name: "Tomate",            quantity: 50,  unit: "g"    },
-        ],
-      },
-    ],
   },
 ];
 
 // --- Componente principal ---
 export default function Nutricion() {
+  const supabase = createClient();
+
+  const [categories, setCategories] = useState<MealCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<MealCategory | null>(null);
   const [openRecipeId, setOpenRecipeId] = useState<string | null>(null);
+
+  // Cargar el plan de comidas real del usuario desde Supabase
+  useEffect(() => {
+    const fetchMeals = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from("user_meals")
+          .select("recipe_id, recipes(id, name, calories, image_url, meal_type, recipe_ingredients(name, quantity))")
+          .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        const grouped: Record<MealTypeKey, Recipe[]> = {
+          breakfast: [], lunch: [], dinner: [],
+        };
+
+        data?.forEach((row: any) => {
+          const r = row.recipes;
+          if (!r) return;
+          const type = r.meal_type as MealTypeKey;
+          if (!grouped[type]) return;
+
+          grouped[type].push({
+            id: r.id,
+            name: r.name,
+            calories: r.calories,
+            image_url: r.image_url,
+            ingredients: (r.recipe_ingredients ?? []).map((ing: any) => ({
+              name: ing.name,
+              quantity: ing.quantity,
+            })),
+          });
+        });
+
+        const builtCategories: MealCategory[] = MEAL_TYPE_META.map((meta) => ({
+          ...meta,
+          recipes: grouped[meta.id],
+        }));
+
+        setCategories(builtCategories);
+      } catch (err) {
+        console.error("Error cargando plan de comidas:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMeals();
+  }, []);
 
   const handleSelectCategory = (meal: MealCategory) => {
     setSelectedCategory(meal);
@@ -207,21 +149,25 @@ export default function Nutricion() {
             <div className={styles.categoryHeader}>
               <h1 className={styles.categoryTitle}>{selectedCategory.title}</h1>
               <p className={styles.categorySubtitle}>
-                {selectedCategory.recipes.length} recetas disponibles
+                {selectedCategory.recipes.length} receta{selectedCategory.recipes.length !== 1 ? "s" : ""} disponible{selectedCategory.recipes.length !== 1 ? "s" : ""}
               </p>
             </div>
 
             {/* Lista de recetas con acordeón */}
-            <div className={styles.recipeList}>
-              {selectedCategory.recipes.map((recipe) => (
-                <MealDetail
-                  key={recipe.id}
-                  recipe={recipe}
-                  isOpen={openRecipeId === recipe.id}
-                  onToggle={() => handleToggleRecipe(recipe.id)}
-                />
-              ))}
-            </div>
+            {selectedCategory.recipes.length === 0 ? (
+              <p className={styles.emptyMeal}>Aún no tienes recetas asignadas para esta comida.</p>
+            ) : (
+              <div className={styles.recipeList}>
+                {selectedCategory.recipes.map((recipe) => (
+                  <MealDetail
+                    key={recipe.id}
+                    recipe={recipe}
+                    isOpen={openRecipeId === recipe.id}
+                    onToggle={() => handleToggleRecipe(recipe.id)}
+                  />
+                ))}
+              </div>
+            )}
 
           </div>
 
@@ -234,18 +180,26 @@ export default function Nutricion() {
               <p className={styles.pageSubtitle}>Selecciona una comida para ver tus recetas</p>
             </div>
 
-            <div className={styles.mealsGrid}>
-              {MEAL_CATEGORIES.map((meal) => (
-                <CategoryCard
-                  key={meal.id}
-                  title={meal.title}
-                  icon={meal.icon}
-                  footerPrimaryText={`${meal.recipes.length} recetas`}
-                  footerSecondaryText={`~${meal.recipes.reduce((sum, r) => sum + r.calories, 0)} kcal totales`}
-                  onClick={() => handleSelectCategory(meal)}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className={styles.mealsGrid}>
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className={styles.skeletonCard} />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.mealsGrid}>
+                {categories.map((meal) => (
+                  <CategoryCard
+                    key={meal.id}
+                    title={meal.title}
+                    icon={meal.icon}
+                    footerPrimaryText={`${meal.recipes.length} receta${meal.recipes.length !== 1 ? "s" : ""}`}
+                    footerSecondaryText={`~${meal.recipes.reduce((sum, r) => sum + r.calories, 0)} kcal totales`}
+                    onClick={() => handleSelectCategory(meal)}
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
 
