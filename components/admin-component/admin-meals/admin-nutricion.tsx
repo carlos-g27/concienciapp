@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import RecipePickerModal, { CatalogRecipe, MealType } from "./recipe-picker-modal";
+import TabbedCard, { TabItem } from "@/components/ui/tabbed-card"; // <-- Importamos el nuevo componente
 import styles from "./admin-nutricion.module.css";
 
 // --- Tipos ---
@@ -134,6 +134,13 @@ export default function AdminNutricion() {
   const totalAssigned = Object.values(meals).reduce((sum, list) => sum + list.length, 0);
   const activeRecipes = meals[activeMeal];
 
+  // Mapeamos los tabs para pasarle la cantidad (badge)
+  const tabItems: TabItem[] = MEAL_TABS.map((tab) => ({
+    key: tab.key,
+    label: tab.label,
+    badge: meals[tab.key as MealType].length,
+  }));
+
   return (
     <div className={styles.page}>
 
@@ -159,83 +166,68 @@ export default function AdminNutricion() {
       {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
       {error && <div className={styles.errorBanner}>{error}</div>}
 
-      {/* Tabs de comidas */}
-      <div className={styles.mealTabs}>
-        {MEAL_TABS.map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setActiveMeal(key)}
-            className={`${styles.mealTab} ${activeMeal === key ? styles.mealTabActive : ""}`}
-          >
-            {label}
-            {meals[key].length > 0 && (
-              <span className={styles.mealTabBadge}>{meals[key].length}</span>
-            )}
-          </button>
-        ))}
-      </div>
+      {/* Reemplazamos los divs manuales y el Card por nuestro nuevo componente */}
+      <TabbedCard 
+        tabs={tabItems} 
+        activeTab={activeMeal} 
+        onTabChange={(key) => setActiveMeal(key as MealType)}
+      >
+        {/* Lista de recetas asignadas a la comida activa */}
+        {isLoading ? (
+          <div className={styles.loadingList}>
+            {[...Array(3)].map((_, i) => <div key={i} className={styles.skeletonRow} />)}
+          </div>
+        ) : (
+          <div className={styles.assignedList}>
+            {activeRecipes.length === 0 ? (
+              <p className={styles.emptyMeal}>Sin recetas asignadas para esta comida.</p>
+            ) : (
+              activeRecipes.map((recipe) => (
+                <div key={recipe.recipeId} className={styles.recipeRow}>
 
-      <Card>
-        <CardContent className="pt-6 flex flex-col gap-5">
-
-          {/* Lista de recetas asignadas a la comida activa */}
-          {isLoading ? (
-            <div className={styles.loadingList}>
-              {[...Array(3)].map((_, i) => <div key={i} className={styles.skeletonRow} />)}
-            </div>
-          ) : (
-            <div className={styles.assignedList}>
-              {activeRecipes.length === 0 ? (
-                <p className={styles.emptyMeal}>Sin recetas asignadas para esta comida.</p>
-              ) : (
-                activeRecipes.map((recipe) => (
-                  <div key={recipe.recipeId} className={styles.recipeRow}>
-
-                    <div className={styles.recipeThumb}>
-                      {recipe.image_url ? (
-                        <img src={recipe.image_url} alt={recipe.name} className={styles.recipeThumbImg} />
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <polyline points="21 15 16 10 5 21" />
-                        </svg>
-                      )}
-                    </div>
-
-                    <div className={styles.recipeInfo}>
-                      <span className={styles.recipeName}>{recipe.name}</span>
-                      <span className={styles.recipeCalories}>{recipe.calories} kcal</span>
-                    </div>
-
-                    <button
-                      onClick={() => handleRemove(recipe.recipeId)}
-                      className={styles.deleteBtn}
-                      aria-label="Quitar receta"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  <div className={styles.recipeThumb}>
+                    {recipe.image_url ? (
+                      <img src={recipe.image_url} alt={recipe.name} className={styles.recipeThumbImg} />
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
                       </svg>
-                    </button>
-
+                    )}
                   </div>
-                ))
-              )}
-            </div>
-          )}
 
-          {/* Botón agregar receta */}
-          <button onClick={() => setIsPickerOpen(true)} className={styles.addRecipeBtn}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Agregar receta
-          </button>
+                  <div className={styles.recipeInfo}>
+                    <span className={styles.recipeName}>{recipe.name}</span>
+                    <span className={styles.recipeCalories}>{recipe.calories} kcal</span>
+                  </div>
 
-        </CardContent>
-      </Card>
+                  <button
+                    onClick={() => handleRemove(recipe.recipeId)}
+                    className={styles.deleteBtn}
+                    aria-label="Quitar receta"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Botón agregar receta */}
+        <button onClick={() => setIsPickerOpen(true)} className={styles.addRecipeBtn}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Agregar receta
+        </button>
+      </TabbedCard>
 
       {/* Modal picker */}
       {isPickerOpen && (

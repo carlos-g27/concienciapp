@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import ExercisePickerModal, { CatalogExercise } from "./exercise-picker-modal";
+import TabbedCard, { TabItem } from "@/components/ui/tabbed-card"; // <-- Importamos el componente reutilizable
 import styles from "./admin-fisico.module.css";
 
 // --- Tipos ---
@@ -189,6 +189,13 @@ export default function AdminFisico() {
   const totalAssigned = Object.values(routine).reduce((sum, day) => sum + day.length, 0);
   const activeExercises = routine[activeDay];
 
+  // Mapeamos los tabs para pasarle la cantidad (badge) de cada día
+  const tabItems: TabItem[] = DAYS.map((tab) => ({
+    key: tab.key,
+    label: tab.label,
+    badge: routine[tab.key as Day].length,
+  }));
+
   return (
     <div className={styles.page}>
 
@@ -214,114 +221,99 @@ export default function AdminFisico() {
       {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
       {error && <div className={styles.errorBanner}>{error}</div>}
 
-      {/* Tabs de días */}
-      <div className={styles.dayTabs}>
-        {DAYS.map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setActiveDay(key)}
-            className={`${styles.dayTab} ${activeDay === key ? styles.dayTabActive : ""}`}
-          >
-            {label}
-            {routine[key].length > 0 && (
-              <span className={styles.dayTabBadge}>{routine[key].length}</span>
-            )}
-          </button>
-        ))}
-      </div>
+      {/* Usamos el componente TabbedCard para manejar las pestañas y el contenedor */}
+      <TabbedCard
+        tabs={tabItems}
+        activeTab={activeDay}
+        onTabChange={(key) => setActiveDay(key as Day)}
+      >
+        {/* Enfoque del día */}
+        <div className={styles.focusField}>
+          <Label htmlFor="focus">Enfoque del día</Label>
+          <Input
+            id="focus"
+            type="text"
+            placeholder="Ej: Pecho y Tríceps"
+            value={dayFocus[activeDay]}
+            onChange={(e) => setDayFocus((prev) => ({ ...prev, [activeDay]: e.target.value }))}
+          />
+        </div>
 
-      <Card>
-        <CardContent className="pt-6 flex flex-col gap-5">
-
-          {/* Enfoque del día */}
-          <div className={styles.focusField}>
-            <Label htmlFor="focus">Enfoque del día</Label>
-            <Input
-              id="focus"
-              type="text"
-              placeholder="Ej: Pecho y Tríceps"
-              value={dayFocus[activeDay]}
-              onChange={(e) => setDayFocus((prev) => ({ ...prev, [activeDay]: e.target.value }))}
-            />
+        {/* Lista de ejercicios asignados al día activo */}
+        {isLoading ? (
+          <div className={styles.loadingList}>
+            {[...Array(3)].map((_, i) => <div key={i} className={styles.skeletonRow} />)}
           </div>
+        ) : (
+          <div className={styles.assignedList}>
+            {activeExercises.length === 0 ? (
+              <p className={styles.emptyDay}>Sin ejercicios asignados este día.</p>
+            ) : (
+              activeExercises.map((exercise) => (
+                <div key={exercise.exerciseId} className={styles.exerciseRow}>
 
-          {/* Lista de ejercicios asignados al día activo */}
-          {isLoading ? (
-            <div className={styles.loadingList}>
-              {[...Array(3)].map((_, i) => <div key={i} className={styles.skeletonRow} />)}
-            </div>
-          ) : (
-            <div className={styles.assignedList}>
-              {activeExercises.length === 0 ? (
-                <p className={styles.emptyDay}>Sin ejercicios asignados este día.</p>
-              ) : (
-                activeExercises.map((exercise) => (
-                  <div key={exercise.exerciseId} className={styles.exerciseRow}>
+                  <div className={styles.exerciseThumb}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="8" r="2" />
+                      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1" />
+                      <path d="M7 21v-4" />
+                      <path d="M17 21v-4" />
+                    </svg>
+                  </div>
 
-                    <div className={styles.exerciseThumb}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="8" r="2" />
-                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1" />
-                        <path d="M7 21v-4" />
-                        <path d="M17 21v-4" />
-                      </svg>
-                    </div>
-
-                    <div className={styles.exerciseInfo}>
-                      <span className={styles.exerciseName}>{exercise.name}</span>
-                      <span className={styles.exerciseMuscle}>{exercise.muscle}</span>
-                      <div className={styles.exerciseFields}>
-                        <div className={styles.fieldGroup}>
-                          <Input
-                            type="number"
-                            min="1"
-                            value={exercise.sets}
-                            onChange={(e) => handleUpdateField(exercise.exerciseId, "sets", Number(e.target.value))}
-                            className={styles.fieldInput}
-                          />
-                          <span className={styles.fieldSuffix}>series</span>
-                        </div>
-                        <div className={styles.fieldGroup}>
-                          <Input
-                            type="number"
-                            min="1"
-                            value={exercise.reps}
-                            onChange={(e) => handleUpdateField(exercise.exerciseId, "reps", Number(e.target.value))}
-                            className={styles.fieldInput}
-                          />
-                          <span className={styles.fieldSuffix}>reps</span>
-                        </div>
+                  <div className={styles.exerciseInfo}>
+                    <span className={styles.exerciseName}>{exercise.name}</span>
+                    <span className={styles.exerciseMuscle}>{exercise.muscle}</span>
+                    <div className={styles.exerciseFields}>
+                      <div className={styles.fieldGroup}>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={exercise.sets}
+                          onChange={(e) => handleUpdateField(exercise.exerciseId, "sets", Number(e.target.value))}
+                          className={styles.fieldInput}
+                        />
+                        <span className={styles.fieldSuffix}>series</span>
+                      </div>
+                      <div className={styles.fieldGroup}>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={exercise.reps}
+                          onChange={(e) => handleUpdateField(exercise.exerciseId, "reps", Number(e.target.value))}
+                          className={styles.fieldInput}
+                        />
+                        <span className={styles.fieldSuffix}>reps</span>
                       </div>
                     </div>
-
-                    <button
-                      onClick={() => handleRemove(exercise.exerciseId)}
-                      className={styles.deleteBtn}
-                      aria-label="Quitar ejercicio"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-
                   </div>
-                ))
-              )}
-            </div>
-          )}
 
-          {/* Botón agregar ejercicio */}
-          <button onClick={() => setIsPickerOpen(true)} className={styles.addExerciseBtn}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Agregar ejercicio
-          </button>
+                  <button
+                    onClick={() => handleRemove(exercise.exerciseId)}
+                    className={styles.deleteBtn}
+                    aria-label="Quitar ejercicio"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
 
-        </CardContent>
-      </Card>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Botón agregar ejercicio */}
+        <button onClick={() => setIsPickerOpen(true)} className={styles.addExerciseBtn}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Agregar ejercicio
+        </button>
+      </TabbedCard>
 
       {/* Modal picker */}
       {isPickerOpen && (
