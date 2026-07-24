@@ -68,8 +68,8 @@ export default function AdminUserProfile() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Contadores mock — se conectarán a Supabase (user_routines, user_meals, user_meditations) después
-  const [counts] = useState({ exercises: 12, recipes: 8, meditations: 5 });
+  // Conteos reales de asignaciones del usuario
+  const [counts, setCounts] = useState({ exercises: 0, recipes: 0, meditations: 0 });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -102,6 +102,42 @@ export default function AdminUserProfile() {
     };
 
     if (userId) fetchUser();
+  }, [userId]);
+
+  // Cargar conteos reales de ejercicios, recetas y meditaciones asignadas
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [
+          { count: exercisesCount },
+          { count: recipesCount },
+          { count: meditationsCount },
+        ] = await Promise.all([
+          supabase
+            .from("user_routines")
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", userId),
+          supabase
+            .from("user_meals")
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", userId),
+          supabase
+            .from("user_meditations")
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", userId),
+        ]);
+
+        setCounts({
+          exercises: exercisesCount ?? 0,
+          recipes: recipesCount ?? 0,
+          meditations: meditationsCount ?? 0,
+        });
+      } catch (err) {
+        console.error("Error cargando conteos:", err);
+      }
+    };
+
+    if (userId) fetchCounts();
   }, [userId]);
 
   const handleSave = async () => {
@@ -237,21 +273,21 @@ export default function AdminUserProfile() {
         <CategoryCard
           title="Pilar Físico"
           icon={<IconFisico />}
-          footerPrimaryText={`${counts.exercises} ejercicios`}
+          footerPrimaryText={`${counts.exercises} ejercicio${counts.exercises !== 1 ? "s" : ""}`}
           footerSecondaryText="Editar rutina"
           onClick={() => router.push(`/admin/users/${userId}/fisico`)}
         />
         <CategoryCard
           title="Pilar Nutrición"
           icon={<IconNutricion />}
-          footerPrimaryText={`${counts.recipes} recetas`}
+          footerPrimaryText={`${counts.recipes} receta${counts.recipes !== 1 ? "s" : ""}`}
           footerSecondaryText="Editar plan"
           onClick={() => router.push(`/admin/users/${userId}/nutricion`)}
         />
         <CategoryCard
           title="Pilar Mental"
           icon={<IconMental />}
-          footerPrimaryText={`${counts.meditations} meditaciones`}
+          footerPrimaryText={`${counts.meditations} meditacion${counts.meditations !== 1 ? "es" : ""}`}
           footerSecondaryText="Editar meditaciones"
           onClick={() => router.push(`/admin/users/${userId}/mental`)}
         />
