@@ -1,4 +1,5 @@
 import AdminShellLayout from "@/components/admin-component/dashboard/admin-layout";
+import { ProfileProvider } from "@/hooks/use-profile";
 import { Suspense } from "react";
 
 export default function AdminPageLayout({ children }: { children: React.ReactNode }) {
@@ -6,8 +7,9 @@ export default function AdminPageLayout({ children }: { children: React.ReactNod
   // Mantener este layout simple evita llamadas bloqueantes durante la renderización.
   return (
         <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
-          <AdminShellLayout>{children}</AdminShellLayout>
+          <ProfileProvider>
+            <AdminShellLayout>{children}</AdminShellLayout>
+          </ProfileProvider>
         </Suspense>
-      );
+      )
 }
-
