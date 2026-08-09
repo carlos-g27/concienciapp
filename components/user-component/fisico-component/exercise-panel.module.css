@@ -326,6 +326,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   background: hsl(var(--background));
   border: 1px solid hsl(var(--border));
   border-radius: 10px;
@@ -336,10 +337,47 @@
   font-size: 0.8rem;
   font-weight: 500;
   color: hsl(var(--muted-foreground));
+  flex: 1;
 }
 
 .weightHistoryValue {
   font-size: 0.875rem;
   font-weight: 700;
   color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.weightHistoryDeleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s, color 0.15s;
+}
+.weightHistoryDeleteBtn:hover:not(:disabled) {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: hsl(var(--destructive));
+}
+.weightHistoryDeleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.weightHistorySkeleton {
+  height: 42px;
+  border-radius: 10px;
+  background-color: hsl(var(--secondary));
+  animation: weightHistoryPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes weightHistoryPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }

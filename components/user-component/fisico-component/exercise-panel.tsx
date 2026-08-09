@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import styles from "./exercise-panel.module.css";
 
 // --- Tipos ---
@@ -47,28 +48,97 @@ function getVideoEmbedInfo(url: string): { type: "youtube" | "vimeo" | "file"; s
 
 // --- Componente ---
 export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps) {
+  const supabase = createClient();
+
   const [weight, setWeight] = useState<string>("");
   const [saved, setSaved] = useState(false);
   const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // --- Cargar historial real del usuario para este ejercicio ---
+  useEffect(() => {
+    if (!exercise) return;
+
+    const fetchHistory = async () => {
+      setIsLoadingHistory(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        setUserId(user.id);
+
+        const { data, error } = await supabase
+          .from("weight_logs")
+          .select("id, weight, created_at")
+          .eq("user_id", user.id)
+          .eq("exercise_id", exercise.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        setWeightLogs(
+          (data ?? []).map((row) => ({
+            id: row.id,
+            weight: Number(row.weight),
+            date: row.created_at,
+          }))
+        );
+      } catch (err) {
+        console.error("Error cargando historial de peso:", err);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    fetchHistory();
+  }, [exercise?.id]);
 
   if (!exercise) return null;
 
   const videoInfo = exercise.video_url ? getVideoEmbedInfo(exercise.video_url) : null;
 
-  const handleSaveWeight = () => {
-    if (!weight) return;
+  const handleSaveWeight = async () => {
+    if (!weight || !userId) return;
 
-    const newLog: WeightLog = {
-      id: crypto.randomUUID(),
-      weight: parseFloat(weight),
-      date: new Date().toISOString(),
-    };
+    const weightValue = parseFloat(weight);
 
-    // Más reciente primero
-    setWeightLogs((prev) => [newLog, ...prev]);
+    try {
+      const { data, error } = await supabase
+        .from("weight_logs")
+        .insert({ user_id: userId, exercise_id: exercise.id, weight: weightValue })
+        .select("id, weight, created_at")
+        .single();
 
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+      if (error) throw error;
+
+      const newLog: WeightLog = {
+        id: data.id,
+        weight: Number(data.weight),
+        date: data.created_at,
+      };
+
+      // Más reciente primero
+      setWeightLogs((prev) => [newLog, ...prev]);
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error("Error guardando peso:", err);
+    }
+  };
+
+  const handleDeleteLog = async (logId: string) => {
+    setDeletingId(logId);
+    try {
+      const { error } = await supabase.from("weight_logs").delete().eq("id", logId);
+      if (error) throw error;
+      setWeightLogs((prev) => prev.filter((log) => log.id !== logId));
+    } catch (err) {
+      console.error("Error eliminando registro:", err);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleWeightChange = (delta: number) => {
@@ -210,7 +280,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
 
         <button
           onClick={handleSaveWeight}
-          disabled={!weight || saved}
+          disabled={!weight || saved || !userId}
           className={styles.saveWeightBtn}
         >
           {saved ? (
@@ -226,7 +296,16 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
         </button>
 
         {/* Historial de pesos registrados */}
-        {weightLogs.length > 0 && (
+        {isLoadingHistory ? (
+          <div className={styles.weightHistory}>
+            <span className={styles.weightHistoryTitle}>Progreso</span>
+            <div className={styles.weightHistoryList}>
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className={styles.weightHistorySkeleton} />
+              ))}
+            </div>
+          </div>
+        ) : weightLogs.length > 0 && (
           <div className={styles.weightHistory}>
             <span className={styles.weightHistoryTitle}>Progreso</span>
             <div className={styles.weightHistoryList}>
@@ -238,6 +317,17 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
                   <span className={styles.weightHistoryValue}>
                     {log.weight} kg
                   </span>
+                  <button
+                    onClick={() => handleDeleteLog(log.id)}
+                    disabled={deletingId === log.id}
+                    className={styles.weightHistoryDeleteBtn}
+                    aria-label="Eliminar registro"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
                 </div>
               ))}
             </div>
