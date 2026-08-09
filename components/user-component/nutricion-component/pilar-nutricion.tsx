@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import CategoryCard from "@/components/ui/category-card";
 import MealDetail, { Recipe } from "./meal-detail";
+import PilarMaintenance from "@/components/ui/pilar-maintenance";
+import { usePilarSettings } from "@/hooks/use-pilar-settings";
 import styles from "./nutricion.module.css";
 
 // --- Tipos ---
@@ -128,6 +130,17 @@ export default function Nutricion() {
   const handleToggleRecipe = (id: string) => {
     setOpenRecipeId((prev) => (prev === id ? null : id));
   };
+
+  const { pilares, isLoading: pilaresLoading } = usePilarSettings();
+
+  // Si el pilar está desactivado por el admin, mostrar pantalla de mantenimiento
+  if (!pilaresLoading && !pilares.nutricion) {
+    return (
+      <SidebarLayout pageTitle="Nutrición">
+        <PilarMaintenance pilarName="Pilar Nutrición" />
+      </SidebarLayout>
+    );
+  }
 
   return (
     <SidebarLayout pageTitle="Nutrición">

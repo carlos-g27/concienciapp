@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
+import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import PilarTogglePanel, { PilarToggleItem } from "@/components/ui/pilar-toggle-panel";
 import styles from "./admin-settings.module.css";
@@ -205,6 +206,10 @@ export default function AdminSettings() {
           </CardContent>
         </Card>
       </section>
+      {/* Botón cerrar sesión */}
+        <section className="mt-4">
+          <LogoutButton />
+        </section>
 
     </div>
   );

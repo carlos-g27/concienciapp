@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useProfile, getInitials } from "@/hooks/use-profile";
+import { usePilarSettings, PilarSettings } from "@/hooks/use-pilar-settings";
 
 // --- Tipos ---
 interface NavItem {
@@ -11,6 +12,13 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
 }
+
+// --- Mapeo de rutas de pilares a su clave en pilar_settings ---
+const PILAR_HREF_MAP: Partial<Record<string, keyof PilarSettings>> = {
+  "/pilar-fisico": "fisico",
+  "/pilar-nutricion": "nutricion",
+  "/pilar-mental": "mental",
+};
 
 // --- Items de navegación ---
 const navItems: NavItem[] = [
@@ -88,6 +96,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { profile, isLoading: loadingProfile } = useProfile();
+  const { pilares } = usePilarSettings();
 
   return (
     <>
@@ -166,6 +175,26 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
+            const pilarKey = PILAR_HREF_MAP[item.href];
+            const isDisabled = pilarKey ? !pilares[pilarKey] : false;
+
+            if (isDisabled) {
+              return (
+                <div
+                  key={item.href}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed select-none"
+                  aria-disabled="true"
+                  title="Este pilar está en mantenimiento"
+                >
+                  <span className="flex-shrink-0 text-accent">{item.icon}</span>
+                  <span className="flex-1">{item.label}</span>
+                  <span className="text-[0.6rem] font-bold uppercase tracking-wide bg-secondary text-muted-foreground px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                    Mantenimiento
+                  </span>
+                </div>
+              );
+            }
+
             return (
               <Link
                 key={item.href}

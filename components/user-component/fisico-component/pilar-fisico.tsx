@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import ExercisePanel, { Exercise } from "./exercise-panel";
 import Card from "@/components/ui/new-card";
+import PilarMaintenance from "@/components/ui/pilar-maintenance";
+import { usePilarSettings } from "@/hooks/use-pilar-settings";
 import styles from "./fisico.module.css";
 
 // --- Tipos ---
@@ -119,6 +121,17 @@ export default function Fisico() {
   };
 
   const handleClosePanel = () => setSelectedExercise(null);
+
+  const { pilares, isLoading: pilaresLoading } = usePilarSettings();
+
+  // Si el pilar está desactivado por el admin, mostrar pantalla de mantenimiento
+  if (!pilaresLoading && !pilares.fisico) {
+    return (
+      <SidebarLayout pageTitle="Físico">
+        <PilarMaintenance pilarName="Pilar Físico" />
+      </SidebarLayout>
+    );
+  }
 
   return (
     <SidebarLayout pageTitle="Físico">
