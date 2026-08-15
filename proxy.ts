@@ -49,6 +49,24 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // ── Usuario ya autenticado en landing/login/sign-up → mandarlo directo a su app ──
+  // No incluye otras rutas /auth/* (update-password, forgot-password, sign-up-success, etc.)
+  // para no interrumpir esos flujos.
+  if (
+    user &&
+    (pathname === "/" || pathname === "/auth/login" || pathname === "/auth/sign-up")
+  ) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.sub)
+      .single();
+
+    const url = request.nextUrl.clone();
+    url.pathname = profile?.role === "admin" ? "/admin" : "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
   // ── Protección de rutas /admin ───────────────────────────────
   if (user && pathname.startsWith("/admin")) {
     const { data: profile } = await supabase

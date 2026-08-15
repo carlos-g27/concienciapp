@@ -1,0 +1,305 @@
+/* ================================================
+   landing-page.module.css
+   ================================================ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  padding: 5rem 1.5rem 6rem 1.5rem;
+  overflow: hidden;
+}
+
+.heroGlow {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, hsl(var(--accent) / 0.25) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heroBadge {
+  position: relative;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  background-color: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  padding: 0.35rem 0.9rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.heroTitle {
+  position: relative;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  max-width: 720px;
+}
+.heroBreak { display: none; }
+@media (min-width: 640px) {
+  .heroBreak { display: inline; }
+}
+
+.heroSubtitle {
+  position: relative;
+  font-size: 1.05rem;
+  color: hsl(var(--muted-foreground));
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+.heroActions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.ctaPrimary {
+  padding: 0.875rem 1.75rem;
+  border-radius: 12px;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.ctaPrimary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.ctaSecondary {
+  padding: 0.875rem 1.75rem;
+  border-radius: 12px;
+  background-color: transparent;
+  border: 1.5px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.ctaSecondary:hover {
+  border-color: hsl(var(--ring));
+  background-color: hsl(var(--secondary));
+}
+
+/* ── Secciones genéricas ── */
+.section,
+.sectionAlt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 4rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sectionAlt {
+  background-color: hsl(var(--secondary) / 0.4);
+  max-width: 100%;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  max-width: 520px;
+}
+
+.sectionEyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.02em;
+}
+
+.sectionSubtitle {
+  font-size: 0.95rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+/* ── Pilares ── */
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1000px;
+}
+@media (min-width: 768px) {
+  .pillarsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.pillarCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.75rem;
+  border-radius: 20px;
+  background-color: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+}
+.pillarCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px hsl(var(--foreground) / 0.08);
+  border-color: hsl(var(--ring));
+}
+
+.pillarIconWrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #528ACC 0%, #223966 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pillarTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+}
+
+.pillarDescription {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+/* ── Cómo funciona ── */
+.stepsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+}
+@media (min-width: 768px) {
+  .stepsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.stepCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.75rem 1.5rem;
+  border-radius: 18px;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+.stepNumber {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: hsl(var(--border));
+  line-height: 1;
+}
+
+.stepIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.stepDescription {
+  font-size: 0.85rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+/* ── CTA final ── */
+.finalCta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 5rem 1.5rem;
+  background: linear-gradient(135deg, #223966 0%, #061A33 100%);
+}
+
+.finalCtaTitle {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.finalCtaSubtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 460px;
+  line-height: 1.6;
+}
+
+.finalCtaButton {
+  margin-top: 0.5rem;
+  padding: 0.9rem 2rem;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #223966;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.finalCtaButton:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
