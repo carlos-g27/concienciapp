@@ -4,7 +4,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
-import LandingPage from "@/components/landing-page";
+import LandingPage from "@/components/landing/landing-page";
 
 export default function Home() {
   return (
