@@ -67,7 +67,7 @@ export default function Fisico() {
           await Promise.all([
             supabase
               .from("user_routines")
-              .select("day, sets, reps, exercises(id, name, muscle, description, instructions, video_url)")
+              .select("day, sets, reps, created_at, exercises(id, name, muscle, description, instructions, video_url, is_main_lift)")
               .eq("user_id", user.id),
             supabase
               .from("user_routine_focus")
@@ -95,6 +95,8 @@ export default function Fisico() {
               description: row.exercises.description ?? "",
               instructions: row.exercises.instructions ?? [],
               video_url: row.exercises.video_url ?? null,
+              is_main_lift: row.exercises.is_main_lift ?? false,
+              assigned_at: row.created_at,
             }));
 
           return {

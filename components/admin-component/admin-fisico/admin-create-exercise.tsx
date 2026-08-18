@@ -13,6 +13,7 @@ export default function AdminCreateExercise() {
   const exerciseId = searchParams.get("id");
   const isEditMode = Boolean(exerciseId);
 
+  const [isMainLift, setIsMainLift] = useState(false);
   const [name, setName] = useState("");
   const [muscle, setMuscle] = useState("");
   const [description, setDescription] = useState("");
@@ -30,7 +31,7 @@ export default function AdminCreateExercise() {
       try {
         const { data, error: fetchError } = await supabase
           .from("exercises")
-          .select("name, muscle, description, instructions, video_url")
+          .select("name, muscle, description, instructions, video_url, is_main_lift")
           .eq("id", exerciseId)
           .single();
 
@@ -44,6 +45,7 @@ export default function AdminCreateExercise() {
           data.instructions && data.instructions.length > 0 ? data.instructions : [""]
         );
         setVideoUrl(data.video_url ?? "");
+        setIsMainLift(data.is_main_lift ?? false);
       } catch (err) {
         console.error("Error cargando ejercicio:", err);
         setError("No se pudo cargar el ejercicio a editar.");
@@ -89,6 +91,7 @@ export default function AdminCreateExercise() {
         description: description.trim() || null,
         instructions: cleanInstructions.length > 0 ? cleanInstructions : null,
         video_url: videoUrl.trim() || null,
+        is_main_lift: isMainLift,
       };
 
       if (isEditMode && exerciseId) {
@@ -176,6 +179,49 @@ export default function AdminCreateExercise() {
           onChange={(e) => setVideoUrl(e.target.value)}
         />
       </div>
+
+      <label htmlFor="isMainLift" style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '0.75rem',
+        padding: '0.875rem',
+        borderRadius: '10px',
+        border: '1px solid var(--border)',
+        backgroundColor: 'var(--secondary)',
+        cursor: 'pointer'
+      }}>
+        <input
+          id="isMainLift"
+          type="checkbox"
+          style={{
+            width: '18px',
+            height: '18px',
+            marginTop: '0.15rem',
+            accentColor: 'var(--primary)',
+            cursor: 'pointer',
+            flexShrink: 0
+          }}
+          checked={isMainLift}
+          onChange={(e) => setIsMainLift(e.target.checked)}
+        />
+        <div>
+          <span style={{
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            color: 'var(--foreground)'
+          }}>
+            Ejercicio de fuerza máxima (RM)
+          </span>
+          <p style={{
+            fontSize: '0.78rem',
+            color: 'var(--muted-foreground)',
+            marginTop: '0.2rem',
+            lineHeight: 1.4
+          }}>
+            Activa el seguimiento de Repetición Máxima cada 4 semanas para este ejercicio.
+          </p>
+        </div>
+      </label>
 
       {/* Instrucciones paso a paso */}
       <div className="flex flex-col gap-2">

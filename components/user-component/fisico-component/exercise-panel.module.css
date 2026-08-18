@@ -333,6 +333,23 @@
   padding: 0.6rem 0.875rem;
 }
 
+/* Fila destacada cuando el registro es un RM (Repetición Máxima) */
+.weightHistoryRowRM {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
+  border: 1.5px solid hsl(var(--primary));
+}
+
+.rmBadge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
 .weightHistoryDate {
   font-size: 0.8rem;
   font-weight: 500;

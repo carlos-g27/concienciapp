@@ -14,6 +14,8 @@ export interface Exercise {
   description: string;
   instructions: string[];
   video_url?: string | null;
+  is_main_lift?: boolean;   // true para Press de Banca, Peso Muerto, Sentadilla
+  assigned_at?: string;     // fecha en que el admin asignó el ejercicio (referencia del ciclo RM)
 }
 
 // Estructura lista para mapear a una tabla 'weight_logs' en Supabase
@@ -21,6 +23,7 @@ export interface WeightLog {
   id: string;
   weight: number;
   date: string; // ISO string — se guardaría como timestamp en Supabase
+  is_rm: boolean;
 }
 
 interface ExercisePanelProps {
@@ -44,6 +47,19 @@ function getVideoEmbedInfo(url: string): { type: "youtube" | "vimeo" | "file"; s
 
   // Cualquier otra URL se trata como archivo de video directo
   return { type: "file", src: url };
+}
+
+// --- Helper: calcula en qué "semana del ciclo" cae una fecha, contando
+// desde assigned_at. El ciclo de RM se repite cada 4 semanas (semana 0, 4, 8...).
+function getWeekIndex(assignedAt: string, date: Date): number {
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const start = new Date(assignedAt).getTime();
+  const diff = date.getTime() - start;
+  return Math.floor(diff / msPerWeek);
+}
+
+function isRMWeek(weekIndex: number): boolean {
+  return weekIndex >= 0 && weekIndex % 4 === 0;
 }
 
 // --- Componente ---
@@ -70,7 +86,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
 
         const { data, error } = await supabase
           .from("weight_logs")
-          .select("id, weight, created_at")
+          .select("id, weight, created_at, is_rm")
           .eq("user_id", user.id)
           .eq("exercise_id", exercise.id)
           .order("created_at", { ascending: false });
@@ -82,6 +98,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
             id: row.id,
             weight: Number(row.weight),
             date: row.created_at,
+            is_rm: row.is_rm ?? false,
           }))
         );
       } catch (err) {
@@ -102,12 +119,34 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
     if (!weight || !userId) return;
 
     const weightValue = parseFloat(weight);
+    const now = new Date();
+
+    // Determinar si este registro cuenta como RM: solo para ejercicios marcados
+    // como "fuerza máxima", y solo si estamos en semana de RM (0, 4, 8...) y
+    // aún no se ha registrado un RM en esa misma semana.
+    let shouldMarkAsRM = false;
+    if (exercise.is_main_lift && exercise.assigned_at) {
+      const weekIndex = getWeekIndex(exercise.assigned_at, now);
+      if (isRMWeek(weekIndex)) {
+        const alreadyHasRMThisWeek = weightLogs.some((log) => {
+          if (!log.is_rm) return false;
+          const logWeekIndex = getWeekIndex(exercise.assigned_at!, new Date(log.date));
+          return logWeekIndex === weekIndex;
+        });
+        shouldMarkAsRM = !alreadyHasRMThisWeek;
+      }
+    }
 
     try {
       const { data, error } = await supabase
         .from("weight_logs")
-        .insert({ user_id: userId, exercise_id: exercise.id, weight: weightValue })
-        .select("id, weight, created_at")
+        .insert({
+          user_id: userId,
+          exercise_id: exercise.id,
+          weight: weightValue,
+          is_rm: shouldMarkAsRM,
+        })
+        .select("id, weight, created_at, is_rm")
         .single();
 
       if (error) throw error;
@@ -116,6 +155,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
         id: data.id,
         weight: Number(data.weight),
         date: data.created_at,
+        is_rm: data.is_rm ?? false,
       };
 
       // Más reciente primero
@@ -310,7 +350,11 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
             <span className={styles.weightHistoryTitle}>Progreso</span>
             <div className={styles.weightHistoryList}>
               {weightLogs.map((log) => (
-                <div key={log.id} className={styles.weightHistoryRow}>
+                <div
+                  key={log.id}
+                  className={`${styles.weightHistoryRow} ${log.is_rm ? styles.weightHistoryRowRM : ""}`}
+                >
+                  {log.is_rm && <span className={styles.rmBadge}>RM</span>}
                   <span className={styles.weightHistoryDate}>
                     {formatLogDate(log.date)}
                   </span>
