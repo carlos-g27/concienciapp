@@ -67,6 +67,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
   const supabase = createClient();
 
   const [weight, setWeight] = useState<string>("");
+  const [isRMToggle, setIsRMToggle] = useState(false);
   const [saved, setSaved] = useState(false);
   const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
@@ -115,27 +116,16 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
 
   const videoInfo = exercise.video_url ? getVideoEmbedInfo(exercise.video_url) : null;
 
+  // ¿Esta semana le toca RM a este ejercicio? (solo para fuerza máxima)
+  const isCurrentlyRMWeek =
+    !!exercise.is_main_lift &&
+    !!exercise.assigned_at &&
+    isRMWeek(getWeekIndex(exercise.assigned_at, new Date()));
+
   const handleSaveWeight = async () => {
     if (!weight || !userId) return;
 
     const weightValue = parseFloat(weight);
-    const now = new Date();
-
-    // Determinar si este registro cuenta como RM: solo para ejercicios marcados
-    // como "fuerza máxima", y solo si estamos en semana de RM (0, 4, 8...) y
-    // aún no se ha registrado un RM en esa misma semana.
-    let shouldMarkAsRM = false;
-    if (exercise.is_main_lift && exercise.assigned_at) {
-      const weekIndex = getWeekIndex(exercise.assigned_at, now);
-      if (isRMWeek(weekIndex)) {
-        const alreadyHasRMThisWeek = weightLogs.some((log) => {
-          if (!log.is_rm) return false;
-          const logWeekIndex = getWeekIndex(exercise.assigned_at!, new Date(log.date));
-          return logWeekIndex === weekIndex;
-        });
-        shouldMarkAsRM = !alreadyHasRMThisWeek;
-      }
-    }
 
     try {
       const { data, error } = await supabase
@@ -144,7 +134,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
           user_id: userId,
           exercise_id: exercise.id,
           weight: weightValue,
-          is_rm: shouldMarkAsRM,
+          is_rm: isRMToggle,
         })
         .select("id, weight, created_at, is_rm")
         .single();
@@ -162,6 +152,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
       setWeightLogs((prev) => [newLog, ...prev]);
 
       setSaved(true);
+      setIsRMToggle(false);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error("Error guardando peso:", err);
@@ -283,6 +274,19 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
       {/* Control de peso */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Registro de peso</h3>
+
+        {/* Alerta: esta semana toca RM */}
+        {isCurrentlyRMWeek && (
+          <div className={styles.rmAlert}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            Esta semana te toca registrar tu RM en este ejercicio.
+          </div>
+        )}
+
         <div className={styles.weightControl}>
           <button
             onClick={() => handleWeightChange(-2.5)}
@@ -317,6 +321,23 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
             </svg>
           </button>
         </div>
+
+        {/* Toggle manual: el usuario marca si este peso es su RM */}
+        {exercise.is_main_lift && (
+          <label className={styles.rmToggleRow} htmlFor="isRmToggle">
+            <span className={styles.rmToggleLabel}>¿Es tu RM?</span>
+            <button
+              type="button"
+              id="isRmToggle"
+              role="switch"
+              aria-checked={isRMToggle}
+              onClick={() => setIsRMToggle((prev) => !prev)}
+              className={`${styles.rmSwitch} ${isRMToggle ? styles.rmSwitchOn : ""}`}
+            >
+              <span className={styles.rmSwitchThumb} />
+            </button>
+          </label>
+        )}
 
         <button
           onClick={handleSaveWeight}

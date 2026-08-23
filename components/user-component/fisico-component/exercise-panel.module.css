@@ -216,6 +216,70 @@
   gap: 0.75rem;
 }
 
+/* Alerta: esta semana toca RM */
+.rmAlert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  background-color: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  color: #b45309;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 0.875rem;
+}
+
+/* Toggle manual: ¿Es tu RM? */
+.rmToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  margin-top: 0.875rem;
+}
+
+.rmToggleLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.rmSwitch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 99px;
+  border: none;
+  background-color: hsl(var(--muted));
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.rmSwitchOn {
+  background-color: hsl(var(--primary));
+}
+
+.rmSwitchThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s;
+}
+
+.rmSwitchOn .rmSwitchThumb {
+  transform: translateX(20px);
+}
+
 .weightBtn {
   width: 40px;
   height: 40px;
