@@ -180,48 +180,32 @@ export default function AdminCreateExercise() {
         />
       </div>
 
-      <label htmlFor="isMainLift" style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '0.75rem',
-        padding: '0.875rem',
-        borderRadius: '10px',
-        border: '1px solid var(--border)',
-        backgroundColor: 'var(--secondary)',
-        cursor: 'pointer'
-      }}>
-        <input
-          id="isMainLift"
-          type="checkbox"
-          style={{
-            width: '18px',
-            height: '18px',
-            marginTop: '0.15rem',
-            accentColor: 'var(--primary)',
-            cursor: 'pointer',
-            flexShrink: 0
-          }}
-          checked={isMainLift}
-          onChange={(e) => setIsMainLift(e.target.checked)}
-        />
-        <div>
-          <span style={{
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            color: 'var(--foreground)'
-          }}>
+      <div className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-secondary">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm font-semibold text-foreground">
             Ejercicio de fuerza máxima (RM)
           </span>
-          <p style={{
-            fontSize: '0.78rem',
-            color: 'var(--muted-foreground)',
-            marginTop: '0.2rem',
-            lineHeight: 1.4
-          }}>
+          <p className="text-xs text-muted-foreground leading-snug">
             Activa el seguimiento de Repetición Máxima cada 4 semanas para este ejercicio.
           </p>
         </div>
-      </label>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isMainLift}
+          aria-label="Ejercicio de fuerza máxima (RM)"
+          onClick={() => setIsMainLift((prev) => !prev)}
+          className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${
+            isMainLift ? "bg-primary" : "bg-muted"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+              isMainLift ? "translate-x-5" : "translate-x-0"
+            }`}
+          />
+        </button>
+      </div>
 
       {/* Instrucciones paso a paso */}
       <div className="flex flex-col gap-2">
