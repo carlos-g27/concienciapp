@@ -1,5 +1,5 @@
-import { ProfileProvider } from "@/hooks/use-profile";
-import { PilarSettingsProvider } from "@/hooks/use-pilar-settings";
+import { Suspense } from "react";
+import UserShell from "@/features/shell/user-shell";
 
 export default function SettingsLayout({
   children,
@@ -7,10 +7,8 @@ export default function SettingsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProfileProvider>
-      <PilarSettingsProvider>
-        {children}
-      </PilarSettingsProvider>
-    </ProfileProvider>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Cargando...</div>}>
+      <UserShell>{children}</UserShell>
+    </Suspense>
   );
 }

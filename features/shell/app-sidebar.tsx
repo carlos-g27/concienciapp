@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useProfile, getInitials } from "@/hooks/use-profile";
-import { usePilarSettings, PilarSettings } from "@/hooks/use-pilar-settings";
+import { getInitials } from "@/hooks/use-profile";
+import type { ShellPilares, ShellProfile } from "./types";
 
 // --- Tipos ---
 interface NavItem {
@@ -13,8 +13,8 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-// --- Mapeo de rutas de pilares a su clave en pilar_settings ---
-const PILAR_HREF_MAP: Partial<Record<string, keyof PilarSettings>> = {
+// --- Mapeo de rutas de pilares a su clave en pilares ---
+const PILAR_HREF_MAP: Partial<Record<string, keyof ShellPilares>> = {
   "/pilar-fisico": "fisico",
   "/pilar-nutricion": "nutricion",
   "/pilar-mental": "mental",
@@ -87,16 +87,16 @@ const settingsItem: NavItem = {
 };
 
 // --- Props ---
-interface SidebarProps {
+interface AppSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  profile: ShellProfile;
+  pilares: ShellPilares;
 }
 
 // --- Componente principal ---
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSidebarProps) {
   const pathname = usePathname();
-  const { profile, isLoading: loadingProfile } = useProfile();
-  const { pilares } = usePilarSettings();
 
   return (
     <>
@@ -136,39 +136,28 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* Perfil del usuario */}
         <div className="flex flex-col items-center gap-2 px-6 py-6 border-b border-border">
-          {loadingProfile ? (
-            /* Skeleton mientras carga */
-            <div className="flex flex-col items-center gap-2 w-full animate-pulse">
-              <div className="w-16 h-16 rounded-full bg-secondary" />
-              <div className="h-3.5 w-28 rounded bg-secondary mt-1" />
-              <div className="h-3 w-36 rounded bg-secondary" />
-            </div>
-          ) : (
-            <>
-              {/* Avatar: foto si existe, iniciales si no */}
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
-                {profile?.avatar_url ? (
-                  <Image
-                    src={profile.avatar_url}
-                    alt="Foto de perfil"
-                    width={64}
-                    height={64}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  getInitials(profile?.name ?? "?") || "?"
-                )}
-              </div>
-              <div className="text-center mt-1">
-                <p className="text-sm font-bold text-foreground">
-                  {profile?.name ?? "Usuario"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[180px]">
-                  {profile?.email ?? ""}
-                </p>
-              </div>
-            </>
-          )}
+          {/* Avatar: foto si existe, iniciales si no */}
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
+            {profile.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt="Foto de perfil"
+                width={64}
+                height={64}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              getInitials(profile.name ?? "?") || "?"
+            )}
+          </div>
+          <div className="text-center mt-1">
+            <p className="text-sm font-bold text-foreground">
+              {profile.name || "Usuario"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[180px]">
+              {profile.email || ""}
+            </p>
+          </div>
         </div>
 
         {/* Navegación principal */}

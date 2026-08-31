@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import AccordionWrapper from "@/components/ui/accordion-wrapper";
 import styles from "./faq.module.css";
 
@@ -52,8 +51,7 @@ export default function Help() {
   };
 
   return (
-    <SidebarLayout pageTitle="Ayuda">
-      <div className={styles.page}>
+    <div className={styles.page}>
 
         {/* Header */}
         <div className={styles.pageHeader}>
@@ -82,7 +80,6 @@ export default function Help() {
           ))}
         </div>
 
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }

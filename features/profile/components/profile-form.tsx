@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import { Input } from "@/components/ui/input";
-import { useProfile, getInitials } from "@/hooks/use-profile";
+import { getInitials } from "@/hooks/use-profile";
 import { updateProfile, uploadAvatar } from "../actions";
 import type { UserProfileData } from "../types";
 import styles from "./profile.module.css";
@@ -24,9 +24,7 @@ interface ProfileFormProps {
 
 export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Solo para sincronizar el Sidebar (context compartido) tras cada cambio.
-  const { refreshProfile, updateAvatar } = useProfile();
+  const router = useRouter();
 
   // Fuente de datos de la página: viene del servidor por props.
   const [profile, setProfile] = useState<UserProfileData>(initialProfile);
@@ -79,7 +77,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
         weight: draft.weight,
         goal: draft.goal,
       }));
-      await refreshProfile(); // el Sidebar refleja el cambio
+      router.refresh(); // el shell server re-renderiza y el Sidebar refleja el cambio
       setIsEditing(false);
       setDraft(null);
       setSuccessMsg("Perfil actualizado correctamente.");
@@ -117,8 +115,8 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
     if (res.success && res.avatarUrl) {
       const urlWithCache = `${res.avatarUrl}?t=${Date.now()}`;
       setProfile((prev) => ({ ...prev, avatar_url: urlWithCache }));
-      updateAvatar(urlWithCache); // Sidebar se actualiza
       if (draft) setDraft((prev) => (prev ? { ...prev, avatar_url: urlWithCache } : prev));
+      router.refresh(); // el shell server re-renderiza el Sidebar con el avatar nuevo
     } else {
       setError(res.error ?? "Error al subir la imagen.");
     }
@@ -128,8 +126,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   };
 
   return (
-    <SidebarLayout pageTitle="Perfil">
-      <div className="max-w-2xl mx-auto flex flex-col gap-6">
+    <div className="max-w-2xl mx-auto flex flex-col gap-6">
 
         {/* Título — solo desktop */}
         <div className="hidden lg:block">
@@ -277,7 +274,6 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
 
         </div>
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }

@@ -1,20 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "./sidebar";
+import { usePathname } from "next/navigation";
+import AppSidebar from "./app-sidebar";
+import type { ShellData } from "./types";
 
-interface SidebarLayoutProps {
+// Título del topbar móvil según la ruta (equivalente al antiguo pageTitle).
+const PAGE_TITLES: Record<string, string> = {
+  "/dashboard": "Progress",
+  "/profile": "Perfil",
+  "/pilar-fisico": "Físico",
+  "/pilar-nutricion": "Nutrición",
+  "/pilar-mental": "Mental",
+  "/settings": "Configuración",
+  "/settings/faq": "FAQ",
+  "/settings/help": "Ayuda",
+};
+
+interface ShellFrameProps {
+  data: ShellData;
   children: React.ReactNode;
-  pageTitle?: string;
 }
 
-export default function SidebarLayout({ children, pageTitle }: SidebarLayoutProps) {
+export default function ShellFrame({ data, children }: ShellFrameProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const pageTitle = PAGE_TITLES[pathname] ?? "";
 
   return (
     <div className="flex min-h-screen bg-background">
 
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <AppSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        profile={data.profile}
+        pilares={data.pilares}
+      />
 
       <div className="flex-1 flex flex-col min-w-0">
 
