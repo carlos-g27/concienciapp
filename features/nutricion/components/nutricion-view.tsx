@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import CategoryCard from "@/components/ui/category-card";
-import MealDetail, { Recipe } from "./meal-detail";
 import PilarMaintenance from "@/components/ui/pilar-maintenance";
 import { usePilarSettings } from "@/hooks/use-pilar-settings";
+import MealDetail from "./meal-detail";
+import type { MealsByType, MealTypeKey, Recipe } from "../types";
 import styles from "./nutricion.module.css";
-
-// --- Tipos ---
-type MealTypeKey = "breakfast" | "lunch" | "dinner";
 
 interface MealCategory {
   id: MealTypeKey;
@@ -56,66 +53,18 @@ const MEAL_TYPE_META: { id: MealTypeKey; title: string; icon: React.ReactNode }[
   },
 ];
 
-// --- Componente principal ---
-export default function Nutricion() {
-  const supabase = createClient();
+interface NutricionViewProps {
+  initialMeals: MealsByType;
+}
 
-  const [categories, setCategories] = useState<MealCategory[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function NutricionView({ initialMeals }: NutricionViewProps) {
+  const categories: MealCategory[] = MEAL_TYPE_META.map((meta) => ({
+    ...meta,
+    recipes: initialMeals[meta.id] ?? [],
+  }));
+
   const [selectedCategory, setSelectedCategory] = useState<MealCategory | null>(null);
   const [openRecipeId, setOpenRecipeId] = useState<string | null>(null);
-
-  // Cargar el plan de comidas real del usuario desde Supabase
-  useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data, error } = await supabase
-          .from("user_meals")
-          .select("recipe_id, recipes(id, name, calories, image_url, meal_type, recipe_ingredients(name, quantity))")
-          .eq("user_id", user.id);
-
-        if (error) throw error;
-
-        const grouped: Record<MealTypeKey, Recipe[]> = {
-          breakfast: [], lunch: [], dinner: [],
-        };
-
-        data?.forEach((row: any) => {
-          const r = row.recipes;
-          if (!r) return;
-          const type = r.meal_type as MealTypeKey;
-          if (!grouped[type]) return;
-
-          grouped[type].push({
-            id: r.id,
-            name: r.name,
-            calories: r.calories,
-            image_url: r.image_url,
-            ingredients: (r.recipe_ingredients ?? []).map((ing: any) => ({
-              name: ing.name,
-              quantity: ing.quantity,
-            })),
-          });
-        });
-
-        const builtCategories: MealCategory[] = MEAL_TYPE_META.map((meta) => ({
-          ...meta,
-          recipes: grouped[meta.id],
-        }));
-
-        setCategories(builtCategories);
-      } catch (err) {
-        console.error("Error cargando plan de comidas:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMeals();
-  }, []);
 
   const handleSelectCategory = (meal: MealCategory) => {
     setSelectedCategory(meal);
@@ -193,26 +142,18 @@ export default function Nutricion() {
               <p className={styles.pageSubtitle}>Selecciona una comida para ver tus recetas</p>
             </div>
 
-            {isLoading ? (
-              <div className={styles.mealsGrid}>
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className={styles.skeletonCard} />
-                ))}
-              </div>
-            ) : (
-              <div className={styles.mealsGrid}>
-                {categories.map((meal) => (
-                  <CategoryCard
-                    key={meal.id}
-                    title={meal.title}
-                    icon={meal.icon}
-                    footerPrimaryText={`${meal.recipes.length} receta${meal.recipes.length !== 1 ? "s" : ""}`}
-                    footerSecondaryText={`~${meal.recipes.reduce((sum, r) => sum + r.calories, 0)} kcal totales`}
-                    onClick={() => handleSelectCategory(meal)}
-                  />
-                ))}
-              </div>
-            )}
+            <div className={styles.mealsGrid}>
+              {categories.map((meal) => (
+                <CategoryCard
+                  key={meal.id}
+                  title={meal.title}
+                  icon={meal.icon}
+                  footerPrimaryText={`${meal.recipes.length} receta${meal.recipes.length !== 1 ? "s" : ""}`}
+                  footerSecondaryText={`~${meal.recipes.reduce((sum, r) => sum + r.calories, 0)} kcal totales`}
+                  onClick={() => handleSelectCategory(meal)}
+                />
+              ))}
+            </div>
           </>
         )}
 

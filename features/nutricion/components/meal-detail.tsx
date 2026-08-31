@@ -1,21 +1,8 @@
 "use client";
 
 import AccordionWrapper from "@/components/ui/accordion-wrapper";
+import type { Recipe } from "../types";
 import styles from "./meal-detail.module.css";
-
-// --- Tipos exportados para uso en nutricion.tsx ---
-export interface Ingredient {
-  name: string;
-  quantity: string; // texto libre, ej: "200 g", "1 unidad"
-}
-
-export interface Recipe {
-  id: string;
-  name: string;
-  calories: number;
-  image_url?: string | null;
-  ingredients: Ingredient[];
-}
 
 interface MealDetailProps {
   recipe: Recipe;
