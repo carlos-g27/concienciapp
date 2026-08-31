@@ -1,7 +1,6 @@
 // Vista del dashboard (Server Component). Recibe los datos por props desde la
 // página server y compone la UI. La interacción vive en <DashboardTabs/>.
 
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import DonutRing from "./donut-ring";
 import BarChart from "./bar-chart";
@@ -18,8 +17,7 @@ const PILAR_STYLES: Record<PilarKey, { colorClass: string; trackClass: string }>
 
 export default function DashboardView({ data }: { data: DashboardData }) {
   return (
-    <SidebarLayout pageTitle="Progress">
-      <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="max-w-6xl mx-auto flex flex-col gap-6">
 
         {/* Título de página — solo visible en desktop (en móvil ya está en el topbar) */}
         <div className="hidden lg:block">
@@ -84,6 +82,5 @@ export default function DashboardView({ data }: { data: DashboardData }) {
 
         </div>
       </div>
-    </SidebarLayout>
   );
 }
