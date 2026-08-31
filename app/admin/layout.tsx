@@ -1,15 +1,12 @@
-import AdminShellLayout from "@/components/admin-component/dashboard/admin-layout";
-import { ProfileProvider } from "@/hooks/use-profile";
 import { Suspense } from "react";
+import AdminShell from "@/features/admin/shell/admin-shell";
 
 export default function AdminPageLayout({ children }: { children: React.ReactNode }) {
-  // La protección de acceso a /admin se realiza en el middleware.
-  // Mantener este layout simple evita llamadas bloqueantes durante la renderización.
+  // El shell admin es server-first (requireAdmin + carga de perfil vía cookies);
+  // bajo cacheComponents ese acceso dinámico debe ir tras <Suspense>.
   return (
-        <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
-          <ProfileProvider>
-            <AdminShellLayout>{children}</AdminShellLayout>
-          </ProfileProvider>
-        </Suspense>
-      )
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Cargando...</div>}>
+      <AdminShell>{children}</AdminShell>
+    </Suspense>
+  );
 }
