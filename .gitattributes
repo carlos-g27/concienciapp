@@ -1,0 +1,16 @@
+# Normaliza finales de línea: texto en LF en índice y working tree
+# (todas las plataformas). Evita el problema de CRLF/LF con autocrlf.
+* text=auto eol=lf
+
+# Binarios: git no debe alterarlos
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.woff  binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.pdf  binary
