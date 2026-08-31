@@ -1,30 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { listWeightLogs, addWeightLog, deleteWeightLog } from "../actions";
+import type { Exercise, WeightLog } from "../types";
 import styles from "./exercise-panel.module.css";
-
-// --- Tipos ---
-export interface Exercise {
-  id: string;
-  name: string;
-  muscle: string;
-  sets: number;
-  reps: number;
-  description: string;
-  instructions: string[];
-  video_url?: string | null;
-  is_main_lift?: boolean;   // true para Press de Banca, Peso Muerto, Sentadilla
-  assigned_at?: string;     // fecha en que el admin asignó el ejercicio (referencia del ciclo RM)
-}
-
-// Estructura lista para mapear a una tabla 'weight_logs' en Supabase
-export interface WeightLog {
-  id: string;
-  weight: number;
-  date: string; // ISO string — se guardaría como timestamp en Supabase
-  is_rm: boolean;
-}
 
 interface ExercisePanelProps {
   exercise: Exercise | null;
@@ -64,44 +43,22 @@ function isRMWeek(weekIndex: number): boolean {
 
 // --- Componente ---
 export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps) {
-  const supabase = createClient();
-
   const [weight, setWeight] = useState<string>("");
   const [isRMToggle, setIsRMToggle] = useState(false);
   const [saved, setSaved] = useState(false);
   const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
 
-  // --- Cargar historial real del usuario para este ejercicio ---
+  // --- Cargar historial real del usuario para este ejercicio (Server Action) ---
   useEffect(() => {
     if (!exercise) return;
 
     const fetchHistory = async () => {
       setIsLoadingHistory(true);
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        setUserId(user.id);
-
-        const { data, error } = await supabase
-          .from("weight_logs")
-          .select("id, weight, created_at, is_rm")
-          .eq("user_id", user.id)
-          .eq("exercise_id", exercise.id)
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-
-        setWeightLogs(
-          (data ?? []).map((row) => ({
-            id: row.id,
-            weight: Number(row.weight),
-            date: row.created_at,
-            is_rm: row.is_rm ?? false,
-          }))
-        );
+        const logs = await listWeightLogs(exercise.id);
+        setWeightLogs(logs);
       } catch (err) {
         console.error("Error cargando historial de peso:", err);
       } finally {
@@ -123,53 +80,36 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
     isRMWeek(getWeekIndex(exercise.assigned_at, new Date()));
 
   const handleSaveWeight = async () => {
-    if (!weight || !userId) return;
+    if (!weight) return;
 
     const weightValue = parseFloat(weight);
 
-    try {
-      const { data, error } = await supabase
-        .from("weight_logs")
-        .insert({
-          user_id: userId,
-          exercise_id: exercise.id,
-          weight: weightValue,
-          is_rm: isRMToggle,
-        })
-        .select("id, weight, created_at, is_rm")
-        .single();
+    const res = await addWeightLog({
+      exerciseId: exercise.id,
+      weight: weightValue,
+      isRm: isRMToggle,
+    });
 
-      if (error) throw error;
-
-      const newLog: WeightLog = {
-        id: data.id,
-        weight: Number(data.weight),
-        date: data.created_at,
-        is_rm: data.is_rm ?? false,
-      };
-
+    if (res.success && res.log) {
       // Más reciente primero
-      setWeightLogs((prev) => [newLog, ...prev]);
-
+      setWeightLogs((prev) => [res.log!, ...prev]);
       setSaved(true);
       setIsRMToggle(false);
       setTimeout(() => setSaved(false), 2000);
-    } catch (err) {
-      console.error("Error guardando peso:", err);
+    } else {
+      console.error("Error guardando peso:", res.error);
     }
   };
 
   const handleDeleteLog = async (logId: string) => {
     setDeletingId(logId);
-    try {
-      const { error } = await supabase.from("weight_logs").delete().eq("id", logId);
-      if (error) throw error;
+    const res = await deleteWeightLog(logId);
+    if (res.success) {
       setWeightLogs((prev) => prev.filter((log) => log.id !== logId));
-    } catch (err) {
-      console.error("Error eliminando registro:", err);
-    } finally {
-      setDeletingId(null);
+    } else {
+      console.error("Error eliminando registro:", res.error);
     }
+    setDeletingId(null);
   };
 
   const handleWeightChange = (delta: number) => {
@@ -341,7 +281,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
 
         <button
           onClick={handleSaveWeight}
-          disabled={!weight || saved || !userId}
+          disabled={!weight || saved}
           className={styles.saveWeightBtn}
         >
           {saved ? (
