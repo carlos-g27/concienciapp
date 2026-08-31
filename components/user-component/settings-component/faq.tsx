@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import AccordionWrapper from "@/components/ui/accordion-wrapper";
 import styles from "./faq.module.css";
 
@@ -38,8 +37,7 @@ export default function Faq() {
   };
 
   return (
-    <SidebarLayout pageTitle="FAQ">
-      <div className={styles.page}>
+    <div className={styles.page}>
 
         {/* Header */}
         <div className={styles.pageHeader}>
@@ -68,7 +66,6 @@ export default function Faq() {
           ))}
         </div>
 
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }

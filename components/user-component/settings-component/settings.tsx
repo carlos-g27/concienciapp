@@ -1,11 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import Card from "@/components/ui/new-card"; // Asegúrate de que esta ruta sea correcta
-import styles from "./settings.module.css";
 
 // --- Tipos ---
 interface SettingsItem {
@@ -130,8 +128,7 @@ function SettingsRow({ item }: { item: SettingsItem }) {
 // --- Componente principal ---
 export default function Settings() {
   return (
-    <SidebarLayout pageTitle="Configuración">
-      <div className="max-w-2xl mx-auto flex flex-col gap-8 w-full">
+    <div className="max-w-2xl mx-auto flex flex-col gap-8 w-full">
 
         {/* Título desktop */}
         <div className="hidden lg:block">
@@ -173,7 +170,6 @@ export default function Settings() {
           <LogoutButton />
         </section>
 
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import CategoryCard from "@/components/ui/category-card";
 import MeditationDetail, { Meditation } from "./meditation-detail";
 import styles from "./mental.module.css";
@@ -83,8 +82,7 @@ export default function Mental() {
   };
 
   return (
-    <SidebarLayout pageTitle="Mental">
-      <div className={styles.page}>
+    <div className={styles.page}>
 
         {selectedCategory ? (
 
@@ -145,7 +143,6 @@ export default function Mental() {
           </>
         )}
 
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }

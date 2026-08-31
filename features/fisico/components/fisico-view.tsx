@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import Card from "@/components/ui/new-card";
-import PilarMaintenance from "@/components/ui/pilar-maintenance";
-import { usePilarSettings } from "@/hooks/use-pilar-settings";
 import ExercisePanel from "./exercise-panel";
 import type { Day, Exercise, WorkoutDay } from "../types";
 import styles from "./fisico.module.css";
@@ -50,20 +47,8 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
 
   const handleClosePanel = () => setSelectedExercise(null);
 
-  const { pilares, isLoading: pilaresLoading } = usePilarSettings();
-
-  // Si el pilar está desactivado por el admin, mostrar pantalla de mantenimiento
-  if (!pilaresLoading && !pilares.fisico) {
-    return (
-      <SidebarLayout pageTitle="Físico">
-        <PilarMaintenance pilarName="Pilar Físico" />
-      </SidebarLayout>
-    );
-  }
-
   return (
-    <SidebarLayout pageTitle="Físico">
-      <div className={styles.page}>
+    <div className={styles.page}>
 
         {/* Vista: detalle de ejercicio (pantalla completa) */}
         {selectedExercise ? (
@@ -181,7 +166,6 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
           </>
         )}
 
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }

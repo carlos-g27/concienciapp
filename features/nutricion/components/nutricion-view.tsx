@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SidebarLayout from "@/components/user-component/dashboard-logic/sidebar-config";
 import CategoryCard from "@/components/ui/category-card";
-import PilarMaintenance from "@/components/ui/pilar-maintenance";
-import { usePilarSettings } from "@/hooks/use-pilar-settings";
 import MealDetail from "./meal-detail";
 import type { MealsByType, MealTypeKey, Recipe } from "../types";
 import styles from "./nutricion.module.css";
@@ -80,20 +77,8 @@ export default function NutricionView({ initialMeals }: NutricionViewProps) {
     setOpenRecipeId((prev) => (prev === id ? null : id));
   };
 
-  const { pilares, isLoading: pilaresLoading } = usePilarSettings();
-
-  // Si el pilar está desactivado por el admin, mostrar pantalla de mantenimiento
-  if (!pilaresLoading && !pilares.nutricion) {
-    return (
-      <SidebarLayout pageTitle="Nutrición">
-        <PilarMaintenance pilarName="Pilar Nutrición" />
-      </SidebarLayout>
-    );
-  }
-
   return (
-    <SidebarLayout pageTitle="Nutrición">
-      <div className={styles.page}>
+    <div className={styles.page}>
 
         {selectedCategory ? (
           /* ── Vista: lista de recetas de la categoría seleccionada ── */
@@ -157,7 +142,6 @@ export default function NutricionView({ initialMeals }: NutricionViewProps) {
           </>
         )}
 
-      </div>
-    </SidebarLayout>
+    </div>
   );
 }
