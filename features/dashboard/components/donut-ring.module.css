@@ -1,9 +1,8 @@
 /* ================================================
-   dashboard.module.css
-   Solo para strokes SVG — todo lo demás está en Tailwind
+   donut-ring.module.css
+   Solo para strokes SVG de los donuts de pilares
    ================================================ */
 
-/* Colores de los donuts — personaliza aquí los pilares */
 .pilarGreen     { stroke: #4ade80; } /* Hex original: no hay variable verde global */
 .trackGreen     { stroke: #dcfce7; } /* Nota: Si brilla mucho en dark mode, considera crear un --success en globals.css */
 
