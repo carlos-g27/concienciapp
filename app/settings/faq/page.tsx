@@ -1,4 +1,4 @@
-import Faq from "@/components/user-component/settings-component/faq";
+import Faq from "@/features/settings/components/faq";
 
 export default function FaqPage() {
   return <Faq />;

@@ -1,43 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
+import { deleteExercise } from "../actions";
+import type { ExerciseCatalogItem } from "../types";
 
-export default function AdminExercisesCatalog() {
-  const supabase = createClient();
+interface ExercisesCatalogViewProps {
+  initialItems: ExerciseCatalogItem[];
+}
+
+export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogViewProps) {
   const router = useRouter();
-
-  const [exercises, setExercises] = useState<CatalogItem[]>([]);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const fetchExercises = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("exercises")
-        .select("id, name, muscle")
-        .order("name", { ascending: true });
+  const items: CatalogItem[] = initialItems.map((e) => ({
+    id: e.id,
+    title: e.name,
+    subtitle: e.muscle,
+  }));
 
-      if (error) throw error;
-
-      setExercises(
-        (data ?? []).map((e) => ({ id: e.id, title: e.name, subtitle: e.muscle }))
-      );
-    } catch (err) {
-      console.error("Error cargando catálogo:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchExercises();
-  }, []);
-
-  const filtered = exercises.filter((e) =>
+  const filtered = items.filter((e) =>
     e.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -52,16 +36,14 @@ export default function AdminExercisesCatalog() {
     if (!confirmed) return;
 
     setDeletingId(item.id);
-    try {
-      const { error } = await supabase.from("exercises").delete().eq("id", item.id);
-      if (error) throw error;
-      setExercises((prev) => prev.filter((e) => e.id !== item.id));
-    } catch (err) {
-      console.error("Error eliminando ejercicio:", err);
+    const res = await deleteExercise(item.id);
+    if (res.success) {
+      router.refresh();
+    } else {
+      console.error("Error eliminando ejercicio:", res.error);
       alert("No se pudo eliminar el ejercicio. Intenta de nuevo.");
-    } finally {
-      setDeletingId(null);
     }
+    setDeletingId(null);
   };
 
   return (
@@ -72,9 +54,9 @@ export default function AdminExercisesCatalog() {
       search={search}
       onSearchChange={setSearch}
       items={filtered}
-      isLoading={isLoading}
+      isLoading={false}
       emptyMessage={
-        exercises.length === 0
+        initialItems.length === 0
           ? "Aún no has creado ningún ejercicio."
           : "No se encontraron ejercicios."
       }

@@ -1,61 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
+import { createExercise, updateExercise } from "../actions";
+import type { ExerciseFull } from "../types";
 
-export default function AdminCreateExercise() {
-  const supabase = createClient();
-  const searchParams = useSearchParams();
-  const exerciseId = searchParams.get("id");
-  const isEditMode = Boolean(exerciseId);
+interface ExerciseFormProps {
+  initialExercise: ExerciseFull | null;
+}
 
-  const [isMainLift, setIsMainLift] = useState(false);
-  const [name, setName] = useState("");
-  const [muscle, setMuscle] = useState("");
-  const [description, setDescription] = useState("");
-  const [instructions, setInstructions] = useState<string[]>([""]);
-  const [videoUrl, setVideoUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(isEditMode);
+export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
+  const isEditMode = Boolean(initialExercise);
+
+  const [isMainLift, setIsMainLift] = useState(initialExercise?.is_main_lift ?? false);
+  const [name, setName] = useState(initialExercise?.name ?? "");
+  const [muscle, setMuscle] = useState(initialExercise?.muscle ?? "");
+  const [description, setDescription] = useState(initialExercise?.description ?? "");
+  const [instructions, setInstructions] = useState<string[]>(
+    initialExercise?.instructions && initialExercise.instructions.length > 0
+      ? initialExercise.instructions
+      : [""]
+  );
+  const [videoUrl, setVideoUrl] = useState(initialExercise?.video_url ?? "");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // --- Modo edición: precargar los datos del ejercicio existente ---
-  useEffect(() => {
-    if (!exerciseId) return;
-
-    const fetchExercise = async () => {
-      try {
-        const { data, error: fetchError } = await supabase
-          .from("exercises")
-          .select("name, muscle, description, instructions, video_url, is_main_lift")
-          .eq("id", exerciseId)
-          .single();
-
-        if (fetchError) throw fetchError;
-        if (!data) return;
-
-        setName(data.name ?? "");
-        setMuscle(data.muscle ?? "");
-        setDescription(data.description ?? "");
-        setInstructions(
-          data.instructions && data.instructions.length > 0 ? data.instructions : [""]
-        );
-        setVideoUrl(data.video_url ?? "");
-        setIsMainLift(data.is_main_lift ?? false);
-      } catch (err) {
-        console.error("Error cargando ejercicio:", err);
-        setError("No se pudo cargar el ejercicio a editar.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchExercise();
-  }, [exerciseId, supabase]);
 
   // --- Pasos dinámicos ---
   const handleStepChange = (index: number, value: string) => {
@@ -70,7 +40,7 @@ export default function AdminCreateExercise() {
     setInstructions((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // --- Guardar (crear o actualizar) ejercicio ---
+  // --- Guardar (crear o actualizar) ejercicio vía Server Action ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -82,35 +52,18 @@ export default function AdminCreateExercise() {
 
     setIsSaving(true);
 
-    try {
-      const cleanInstructions = instructions.map((s) => s.trim()).filter(Boolean);
+    const input = { name, muscle, description, instructions, videoUrl, isMainLift };
 
-      const payload = {
-        name: name.trim(),
-        muscle: muscle.trim(),
-        description: description.trim() || null,
-        instructions: cleanInstructions.length > 0 ? cleanInstructions : null,
-        video_url: videoUrl.trim() || null,
-        is_main_lift: isMainLift,
-      };
+    const res =
+      isEditMode && initialExercise
+        ? await updateExercise(initialExercise.id, input)
+        : await createExercise(input);
 
-      if (isEditMode && exerciseId) {
-        const { error: updateError } = await supabase
-          .from("exercises")
-          .update(payload)
-          .eq("id", exerciseId);
-
-        if (updateError) throw updateError;
-      } else {
-        const { error: insertError } = await supabase.from("exercises").insert(payload);
-
-        if (insertError) throw insertError;
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar el ejercicio.");
-    } finally {
-      setIsSaving(false);
+    if (!res.success) {
+      setError(res.error ?? "Error al guardar el ejercicio.");
     }
+
+    setIsSaving(false);
   };
 
   return (
@@ -121,7 +74,7 @@ export default function AdminCreateExercise() {
           ? "Los cambios se aplicarán a todos los usuarios que tengan este ejercicio asignado"
           : "Este ejercicio quedará disponible en el catálogo global"
       }
-      isLoading={isLoading}
+      isLoading={false}
       isSaving={isSaving}
       loadingText="Cargando ejercicio..."
       submitText={isEditMode ? "Guardar cambios" : "Crear ejercicio"}
