@@ -1,10 +1,28 @@
-import AdminCreateRecipe from "@/components/admin-component/admin-meals/admin-create-recipe";
 import { Suspense } from "react";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { getRecipe } from "@/features/admin/recipes/queries";
+import RecipeForm from "@/features/admin/recipes/components/recipe-form";
 
-export default function AdminCreateRecipePage() {
+export default function AdminCreateRecipePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string; type?: string }>;
+}) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AdminCreateRecipe />
+    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+      <RecipeFormContent searchParams={searchParams} />
     </Suspense>
-  )
+  );
+}
+
+async function RecipeFormContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string; type?: string }>;
+}) {
+  await requireAdmin();
+  const { id, type } = await searchParams;
+  const initialRecipe = id ? await getRecipe(id) : null;
+
+  return <RecipeForm initialRecipe={initialRecipe} initialType={type} />;
 }
