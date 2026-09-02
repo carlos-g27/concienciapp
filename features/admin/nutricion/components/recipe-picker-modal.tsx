@@ -1,21 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
-
-// --- Tipos ---
-export type MealType = "breakfast" | "lunch" | "dinner";
-
-export interface CatalogRecipe {
-  id: string;
-  name: string;
-  calories: number;
-  image_url: string | null;
-}
+import { deleteRecipe } from "@/features/admin/recipes/actions";
+import type { CatalogRecipe, MealType } from "../types";
 
 interface RecipePickerModalProps {
+  catalog: CatalogRecipe[];
   mealType: MealType;
   excludeIds: string[];
   onSelect: (recipe: CatalogRecipe) => void;
@@ -23,44 +15,21 @@ interface RecipePickerModalProps {
 }
 
 export default function RecipePickerModal({
+  catalog,
   mealType,
   excludeIds,
   onSelect,
   onClose,
 }: RecipePickerModalProps) {
-  const supabase = createClient();
   const router = useRouter();
-  const [recipes, setRecipes] = useState<CatalogRecipe[]>([]);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("recipes")
-          .select("id, name, calories, image_url")
-          .eq("meal_type", mealType)
-          .order("name", { ascending: true });
-
-        if (error) throw error;
-        setRecipes(data ?? []);
-      } catch (err) {
-        console.error("Error cargando recetas:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipes();
-  }, [mealType]);
-
-  const filtered = recipes
+  const filtered = catalog
+    .filter((r) => r.meal_type === mealType)
     .filter((r) => !excludeIds.includes(r.id))
     .filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
 
-  // Mapeamos las recetas al formato genérico de PickerItem
   const pickerItems: (PickerItem & { original: CatalogRecipe })[] = filtered.map((recipe) => ({
     id: recipe.id,
     title: recipe.name,
@@ -81,16 +50,14 @@ export default function RecipePickerModal({
     if (!confirmed) return;
 
     setDeletingId(recipe.id);
-    try {
-      const { error } = await supabase.from("recipes").delete().eq("id", recipe.id);
-      if (error) throw error;
-      setRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
-    } catch (err) {
-      console.error("Error eliminando receta:", err);
+    const res = await deleteRecipe(recipe.id);
+    if (res.success) {
+      router.refresh();
+    } else {
+      console.error("Error eliminando receta:", res.error);
       alert("No se pudo eliminar la receta. Intenta de nuevo.");
-    } finally {
-      setDeletingId(null);
     }
+    setDeletingId(null);
   };
 
   return (
@@ -100,9 +67,9 @@ export default function RecipePickerModal({
       search={search}
       onSearchChange={setSearch}
       items={pickerItems}
-      isLoading={isLoading}
+      isLoading={false}
       emptyMessage={
-        recipes.length === 0
+        catalog.filter((r) => r.meal_type === mealType).length === 0
           ? "Aún no hay recetas para esta comida."
           : "No se encontraron recetas."
       }

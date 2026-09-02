@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
-
-type MealType = "breakfast" | "lunch" | "dinner";
+import { createRecipe, updateRecipe } from "../actions";
+import type { MealType, RecipeFull } from "../types";
 
 interface IngredientRow {
   id: string;
@@ -21,72 +20,44 @@ const MEAL_TYPE_OPTIONS: { value: MealType; label: string }[] = [
   { value: "dinner", label: "Cena" },
 ];
 
-function isMealType(value: string | null): value is MealType {
+function isMealType(value: string | null | undefined): value is MealType {
   return value === "breakfast" || value === "lunch" || value === "dinner";
 }
 
-export default function AdminCreateRecipe() {
-  const supabase = createClient();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const recipeId = searchParams.get("id");
-  const typeParam = searchParams.get("type");
-  const isEditMode = Boolean(recipeId);
+interface RecipeFormProps {
+  initialRecipe: RecipeFull | null;
+  initialType?: string;
+}
 
-  const [name, setName] = useState("");
-  const [calories, setCalories] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [mealType, setMealType] = useState<MealType>(isMealType(typeParam) ? typeParam : "breakfast");
-  const [ingredients, setIngredients] = useState<IngredientRow[]>([
-    { id: crypto.randomUUID(), name: "", quantity: "" },
-  ]);
-  const [isLoading, setIsLoading] = useState(isEditMode);
+export default function RecipeForm({ initialRecipe, initialType }: RecipeFormProps) {
+  const router = useRouter();
+  const isEditMode = Boolean(initialRecipe);
+
+  const [name, setName] = useState(initialRecipe?.name ?? "");
+  const [calories, setCalories] = useState(
+    initialRecipe ? String(initialRecipe.calories ?? "") : ""
+  );
+  const [imageUrl, setImageUrl] = useState(initialRecipe?.image_url ?? "");
+  const [mealType, setMealType] = useState<MealType>(
+    initialRecipe ? initialRecipe.meal_type : isMealType(initialType) ? initialType : "breakfast"
+  );
+  const [ingredients, setIngredients] = useState<IngredientRow[]>(
+    initialRecipe && initialRecipe.ingredients.length > 0
+      ? initialRecipe.ingredients.map((i) => ({ id: crypto.randomUUID(), name: i.name, quantity: i.quantity }))
+      : [{ id: crypto.randomUUID(), name: "", quantity: "" }]
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
 
-  useEffect(() => {
-    if (!recipeId) return;
+  const addIngredient = () =>
+    setIngredients((prev) => [...prev, { id: crypto.randomUUID(), name: "", quantity: "" }]);
+  const updateIngredient = (id: string, field: "name" | "quantity", value: string) =>
+    setIngredients((prev) => prev.map((i) => (i.id === id ? { ...i, [field]: value } : i)));
+  const removeIngredient = (id: string) =>
+    setIngredients((prev) => prev.filter((i) => i.id !== id));
 
-    const fetchRecipe = async () => {
-      try {
-        const [{ data: recipeData, error: recipeError }, { data: ingredientsData, error: ingredientsError }] =
-          await Promise.all([
-            supabase.from("recipes").select("name, calories, image_url, meal_type").eq("id", recipeId).single(),
-            supabase.from("recipe_ingredients").select("id, name, quantity").eq("recipe_id", recipeId),
-          ]);
-
-        if (recipeError) throw recipeError;
-        if (ingredientsError) throw ingredientsError;
-
-        if (recipeData) {
-          setName(recipeData.name ?? "");
-          setCalories(String(recipeData.calories ?? ""));
-          setImageUrl(recipeData.image_url ?? "");
-          if (isMealType(recipeData.meal_type)) setMealType(recipeData.meal_type);
-        }
-
-        if (ingredientsData && ingredientsData.length > 0) {
-          setIngredients(
-            ingredientsData.map((row) => ({ id: row.id, name: row.name, quantity: row.quantity }))
-          );
-        }
-      } catch (err) {
-        console.error("Error cargando receta:", err);
-        setError("No se pudo cargar la receta a editar.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipe();
-  }, [recipeId]);
-
-  const addIngredient = () => setIngredients((prev) => [...prev, { id: crypto.randomUUID(), name: "", quantity: "" }]);
-  const updateIngredient = (id: string, field: "name" | "quantity", value: string) => setIngredients((prev) => prev.map((i) => (i.id === id ? { ...i, [field]: value } : i)));
-  const removeIngredient = (id: string) => setIngredients((prev) => prev.filter((i) => i.id !== id));
-
- const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -97,56 +68,23 @@ export default function AdminCreateRecipe() {
 
     setIsSaving(true);
 
-    try {
-      const recipePayload = {
-        name: name.trim(),
-        calories: Number(calories) || 0,
-        image_url: imageUrl.trim() || null,
-        meal_type: mealType,
-      };
+    const input = {
+      name,
+      calories,
+      imageUrl,
+      mealType,
+      ingredients: ingredients.map((i) => ({ name: i.name, quantity: i.quantity })),
+    };
 
-      const cleanIngredients = ingredients.filter((i) => i.name.trim());
+    const res =
+      isEditMode && initialRecipe
+        ? await updateRecipe(initialRecipe.id, input)
+        : await createRecipe(input);
 
-      let targetRecipeId = recipeId;
-
-      if (isEditMode && recipeId) {
-        const { error: updateError } = await supabase
-          .from("recipes")
-          .update(recipePayload)
-          .eq("id", recipeId);
-        if (updateError) throw updateError;
-
-        // Reemplazo completo de ingredientes
-        const { error: deleteError } = await supabase
-          .from("recipe_ingredients")
-          .delete()
-          .eq("recipe_id", recipeId);
-        if (deleteError) throw deleteError;
-      } else {
-        const { data: inserted, error: insertError } = await supabase
-          .from("recipes")
-          .insert(recipePayload)
-          .select("id")
-          .single();
-        if (insertError) throw insertError;
-        targetRecipeId = inserted.id;
-      }
-
-      if (cleanIngredients.length > 0 && targetRecipeId) {
-        const { error: ingredientsError } = await supabase.from("recipe_ingredients").insert(
-          cleanIngredients.map((i) => ({
-            recipe_id: targetRecipeId,
-            name: i.name.trim(),
-            quantity: i.quantity.trim(),
-          }))
-        );
-        if (ingredientsError) throw ingredientsError;
-      }
-
+    if (res.success) {
       router.back();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar la receta.");
-    } finally {
+    } else {
+      setError(res.error ?? "Error al guardar la receta.");
       setIsSaving(false);
     }
   };
@@ -155,7 +93,7 @@ export default function AdminCreateRecipe() {
     <AdminFormLayout
       title={isEditMode ? "Editar receta" : "Crear nueva receta"}
       subtitle={isEditMode ? "Los cambios se aplicarán a todos los usuarios que tengan esta receta asignada" : "Esta receta quedará disponible en el catálogo global"}
-      isLoading={isLoading}
+      isLoading={false}
       isSaving={isSaving}
       loadingText="Cargando receta..."
       submitText={isEditMode ? "Guardar cambios" : "Crear receta"}

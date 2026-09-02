@@ -1,60 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
-
-// --- Tipos ---
-export interface CatalogExercise {
-  id: string;
-  name: string;
-  muscle: string;
-}
+import { deleteExercise } from "@/features/admin/exercises/actions";
+import type { CatalogExercise } from "../types";
 
 interface ExercisePickerModalProps {
+  catalog: CatalogExercise[];
   excludeIds: string[]; // ejercicios ya asignados al día activo, se ocultan del picker
   onSelect: (exercise: CatalogExercise) => void;
   onClose: () => void;
 }
 
 export default function ExercisePickerModal({
+  catalog,
   excludeIds,
   onSelect,
   onClose,
 }: ExercisePickerModalProps) {
-  const supabase = createClient();
   const router = useRouter();
-  const [exercises, setExercises] = useState<CatalogExercise[]>([]);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("exercises")
-          .select("id, name, muscle")
-          .order("name", { ascending: true });
-
-        if (error) throw error;
-        setExercises(data ?? []);
-      } catch (err) {
-        console.error("Error cargando catálogo:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchExercises();
-  }, []);
-
-  const filtered = exercises
+  const filtered = catalog
     .filter((e) => !excludeIds.includes(e.id))
     .filter((e) => e.name.toLowerCase().includes(search.toLowerCase()));
 
-  // Mapeamos los ejercicios al formato genérico de PickerItem
   const pickerItems: (PickerItem & { original: CatalogExercise })[] = filtered.map((exercise) => ({
     id: exercise.id,
     title: exercise.name,
@@ -75,7 +47,7 @@ export default function ExercisePickerModal({
     router.push(`/admin/exercises?id=${exerciseId}`);
   };
 
-  // --- Eliminar: confirma, borra en Supabase y refresca la lista ---
+  // --- Eliminar del catálogo vía Server Action (reutilizada de la Fase 6B) ---
   const handleDelete = async (item: PickerItem & { original: CatalogExercise }) => {
     const exercise = item.original;
     const confirmed = window.confirm(
@@ -84,16 +56,14 @@ export default function ExercisePickerModal({
     if (!confirmed) return;
 
     setDeletingId(exercise.id);
-    try {
-      const { error } = await supabase.from("exercises").delete().eq("id", exercise.id);
-      if (error) throw error;
-      setExercises((prev) => prev.filter((e) => e.id !== exercise.id));
-    } catch (err) {
-      console.error("Error eliminando ejercicio:", err);
+    const res = await deleteExercise(exercise.id);
+    if (res.success) {
+      router.refresh();
+    } else {
+      console.error("Error eliminando ejercicio:", res.error);
       alert("No se pudo eliminar el ejercicio. Intenta de nuevo.");
-    } finally {
-      setDeletingId(null);
     }
+    setDeletingId(null);
   };
 
   return (
@@ -103,9 +73,9 @@ export default function ExercisePickerModal({
       search={search}
       onSearchChange={setSearch}
       items={pickerItems}
-      isLoading={isLoading}
+      isLoading={false}
       emptyMessage={
-        exercises.length === 0
+        catalog.length === 0
           ? "Aún no hay ejercicios en el catálogo."
           : "No se encontraron ejercicios."
       }

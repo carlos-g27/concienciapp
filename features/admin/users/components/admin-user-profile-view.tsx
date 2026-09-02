@@ -1,27 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CategoryCard from "@/components/ui/category-card";
+import { updateUserProfile } from "../actions";
+import type { AdminUserCounts, AdminUserDetail } from "../types";
 import styles from "./admin-user-profile.module.css";
-
-// --- Tipos ---
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  weight: string;
-  age: string;
-  goal: string;
-  avatar_url: string | null;
-}
 
 // --- Helpers ---
 function getInitials(name: string): string {
@@ -54,139 +44,37 @@ const IconMental = () => (
   </svg>
 );
 
-// --- Componente principal ---
-export default function AdminUserProfile() {
-  const supabase = createClient();
-  const router = useRouter();
-  const params = useParams();
-  const userId = params.userId as string;
+interface AdminUserProfileViewProps {
+  profile: AdminUserDetail;
+  counts: AdminUserCounts;
+}
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [draft, setDraft] = useState({ weight: "", age: "", goal: "" });
-  const [isLoading, setIsLoading] = useState(true);
+export default function AdminUserProfileView({ profile, counts }: AdminUserProfileViewProps) {
+  const router = useRouter();
+  const userId = profile.id;
+
+  const [draft, setDraft] = useState({ weight: profile.weight, age: profile.age, goal: profile.goal });
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Conteos reales de asignaciones del usuario
-  const [counts, setCounts] = useState({ exercises: 0, recipes: 0, meditations: 0 });
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data, error: fetchError } = await supabase
-          .from("profiles")
-          .select("id, name, email, weight, age, goal, avatar_url")
-          .eq("id", userId)
-          .single();
-
-        if (fetchError || !data) throw fetchError;
-
-        const loaded: UserProfile = {
-          id: data.id,
-          name: data.name ?? "Sin nombre",
-          email: data.email ?? "",
-          weight: data.weight ? String(data.weight) : "",
-          age: data.age ? String(data.age) : "",
-          goal: data.goal ?? "",
-          avatar_url: data.avatar_url,
-        };
-
-        setProfile(loaded);
-        setDraft({ weight: loaded.weight, age: loaded.age, goal: loaded.goal });
-      } catch (err) {
-        console.error("Error cargando usuario:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (userId) fetchUser();
-  }, [userId]);
-
-  // Cargar conteos reales de ejercicios, recetas y meditaciones asignadas
-  useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        const [
-          { count: exercisesCount },
-          { count: recipesCount },
-          { count: meditationsCount },
-        ] = await Promise.all([
-          supabase
-            .from("user_routines")
-            .select("id", { count: "exact", head: true })
-            .eq("user_id", userId),
-          supabase
-            .from("user_meals")
-            .select("id", { count: "exact", head: true })
-            .eq("user_id", userId),
-          supabase
-            .from("user_meditations")
-            .select("id", { count: "exact", head: true })
-            .eq("user_id", userId),
-        ]);
-
-        setCounts({
-          exercises: exercisesCount ?? 0,
-          recipes: recipesCount ?? 0,
-          meditations: meditationsCount ?? 0,
-        });
-      } catch (err) {
-        console.error("Error cargando conteos:", err);
-      }
-    };
-
-    if (userId) fetchCounts();
-  }, [userId]);
 
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
     setSuccessMsg(null);
 
-    try {
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({
-          weight: draft.weight ? Number(draft.weight) : null,
-          age: draft.age ? Number(draft.age) : null,
-          goal: draft.goal || null,
-        })
-        .eq("id", userId);
+    const res = await updateUserProfile(userId, draft);
 
-      if (updateError) throw updateError;
-
-      setProfile((prev) => prev ? { ...prev, ...draft } : prev);
+    if (res.success) {
       setSuccessMsg("Información actualizada correctamente.");
       setTimeout(() => setSuccessMsg(null), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar.");
-    } finally {
-      setIsSaving(false);
+      router.refresh();
+    } else {
+      setError(res.error ?? "Error al guardar.");
     }
+
+    setIsSaving(false);
   };
-
-  if (isLoading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.skeletonHeader} />
-        <div className={styles.skeletonGrid}>
-          <div className={styles.skeletonCard} />
-          <div className={styles.skeletonCard} />
-          <div className={styles.skeletonCard} />
-        </div>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className={styles.page}>
-        <p className={styles.notFound}>Usuario no encontrado.</p>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.page}>
