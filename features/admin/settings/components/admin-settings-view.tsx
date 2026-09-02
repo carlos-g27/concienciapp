@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import PilarTogglePanel, { PilarToggleItem } from "@/components/ui/pilar-toggle-panel";
+import { togglePilar } from "../actions";
+import type { PilarKey, PilarSettingItem } from "../types";
 import styles from "./admin-settings.module.css";
 
 // --- Iconos ---
@@ -76,61 +77,33 @@ const IconMental = () => (
   </svg>
 );
 
-// --- Metadata fija de los pilares (Supabase solo guarda key + enabled) ---
-const PILAR_META: { key: "fisico" | "nutricion" | "mental"; label: string; icon: React.ReactNode }[] = [
+const PILAR_META: { key: PilarKey; label: string; icon: React.ReactNode }[] = [
   { key: "fisico",    label: "Pilar Físico",     icon: <IconFisico /> },
   { key: "nutricion", label: "Pilar Nutrición",  icon: <IconNutricion /> },
   { key: "mental",    label: "Pilar Mental",     icon: <IconMental /> },
 ];
 
-export default function AdminSettings() {
-  const supabase = createClient();
+interface AdminSettingsViewProps {
+  initialPilares: PilarSettingItem[];
+}
 
-  const [pilares, setPilares] = useState<PilarToggleItem[]>([]);
-  const [isLoadingPilares, setIsLoadingPilares] = useState(true);
+export default function AdminSettingsView({ initialPilares }: AdminSettingsViewProps) {
+  const [pilares, setPilares] = useState<PilarToggleItem[]>(
+    PILAR_META.map((meta) => ({
+      key: meta.key,
+      label: meta.label,
+      icon: meta.icon,
+      enabled: initialPilares.find((p) => p.key === meta.key)?.enabled ?? true,
+    }))
+  );
 
-  // Cargar el estado real de los pilares desde Supabase
-  useEffect(() => {
-    const fetchPilares = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("pilar_settings")
-          .select("pilar_key, enabled");
-
-        if (error) throw error;
-
-        const items: PilarToggleItem[] = PILAR_META.map((meta) => ({
-          key: meta.key,
-          label: meta.label,
-          icon: meta.icon,
-          enabled: data?.find((d) => d.pilar_key === meta.key)?.enabled ?? true,
-        }));
-
-        setPilares(items);
-      } catch (err) {
-        console.error("Error cargando configuración de pilares:", err);
-      } finally {
-        setIsLoadingPilares(false);
-      }
-    };
-
-    fetchPilares();
-  }, []);
-
-  // Activar/desactivar un pilar — actualización optimista con rollback si falla
+  // Activar/desactivar un pilar — optimista con rollback si falla
   const handleTogglePilar = async (key: string, enabled: boolean) => {
     setPilares((prev) => prev.map((p) => (p.key === key ? { ...p, enabled } : p)));
 
-    try {
-      const { error } = await supabase
-        .from("pilar_settings")
-        .update({ enabled, updated_at: new Date().toISOString() })
-        .eq("pilar_key", key);
-
-      if (error) throw error;
-    } catch (err) {
-      console.error("Error actualizando pilar:", err);
-      // Revertir el cambio visual si falló en el servidor
+    const res = await togglePilar(key as PilarKey, enabled);
+    if (!res.success) {
+      console.error("Error actualizando pilar:", res.error);
       setPilares((prev) => prev.map((p) => (p.key === key ? { ...p, enabled: !enabled } : p)));
     }
   };
@@ -183,7 +156,7 @@ export default function AdminSettings() {
         </Card>
       </section>
 
-      {/* ── Zona de administrador (color distinto, exclusiva) ── */}
+      {/* ── Zona de administrador ── */}
       <section className={styles.section}>
         <h2 className={styles.dangerSectionTitle}>
           <IconWarning />
@@ -201,15 +174,16 @@ export default function AdminSettings() {
             <PilarTogglePanel
               items={pilares}
               onToggle={handleTogglePilar}
-              isLoading={isLoadingPilares}
+              isLoading={false}
             />
           </CardContent>
         </Card>
       </section>
+
       {/* Botón cerrar sesión */}
-        <section className="mt-4">
-          <LogoutButton />
-        </section>
+      <section className="mt-4">
+        <LogoutButton />
+      </section>
 
     </div>
   );

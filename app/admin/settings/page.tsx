@@ -1,5 +1,19 @@
-import AdminSettings from "@/components/admin-component/settings/admin-settings";
+import { Suspense } from "react";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { getPilarSettingsAdmin } from "@/features/admin/settings/queries";
+import AdminSettingsView from "@/features/admin/settings/components/admin-settings-view";
 
 export default function AdminSettingsPage() {
-  return <AdminSettings />;
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+      <AdminSettingsContent />
+    </Suspense>
+  );
+}
+
+async function AdminSettingsContent() {
+  await requireAdmin();
+  const pilares = await getPilarSettingsAdmin();
+
+  return <AdminSettingsView initialPilares={pilares} />;
 }
