@@ -1,38 +1,29 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { getInitials } from "@/hooks/use-profile";
+import { uploadAvatar } from "@/features/profile/actions";
+import { updateAdminProfile } from "../actions";
+import type { AdminOwnProfile } from "../types";
 import styles from "./admin-profile.module.css";
 
-// --- Tipos ---
-interface AdminProfile {
-  id: string;
-  name: string;
-  email: string;
-  avatar_url: string | null;
+interface AdminProfileViewProps {
+  initialProfile: AdminOwnProfile;
 }
 
-// --- Helpers ---
-function getInitials(name: string): string {
-  return name.trim().split(" ").filter(Boolean).slice(0, 2)
-    .map((n) => n[0].toUpperCase()).join("");
-}
-
-export default function AdminProfileEdit() {
-  const supabase = createClient();
+export default function AdminProfileView({ initialProfile }: AdminProfileViewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [profile, setProfile] = useState<AdminProfile | null>(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(initialProfile.avatar_url);
+  const [name, setName] = useState(initialProfile.name);
+  const [email, setEmail] = useState(initialProfile.email);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
@@ -40,45 +31,10 @@ export default function AdminProfileEdit() {
   const [emailPendingMsg, setEmailPendingMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Cargar perfil del admin ---
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) return;
-
-        const { data, error: profileError } = await supabase
-          .from("profiles")
-          .select("id, name, email, avatar_url")
-          .eq("id", user.id)
-          .single();
-
-        if (profileError || !data) throw profileError;
-
-        const loaded: AdminProfile = {
-          id: data.id,
-          name: data.name ?? "",
-          email: data.email ?? user.email ?? "",
-          avatar_url: data.avatar_url,
-        };
-
-        setProfile(loaded);
-        setName(loaded.name);
-        setEmail(loaded.email);
-      } catch (err) {
-        console.error("Error cargando perfil:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  // --- Subir foto de perfil ---
+  // --- Subir foto de perfil (Server Action reutilizada) ---
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !profile) return;
+    if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       setError("Solo se permiten imágenes.");
@@ -92,88 +48,42 @@ export default function AdminProfileEdit() {
     setIsUploadingAvatar(true);
     setError(null);
 
-    try {
-      const ext = file.name.split(".").pop();
-      const path = `${profile.id}/avatar.${ext}`;
+    const formData = new FormData();
+    formData.append("avatar", file);
+    const res = await uploadAvatar(formData);
 
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(path, file, { upsert: true });
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
-      const urlWithCache = `${urlData.publicUrl}?t=${Date.now()}`;
-
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ avatar_url: urlWithCache })
-        .eq("id", profile.id);
-      if (updateError) throw updateError;
-
-      setProfile((prev) => prev ? { ...prev, avatar_url: urlWithCache } : prev);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al subir la imagen.");
-    } finally {
-      setIsUploadingAvatar(false);
+    if (res.success && res.avatarUrl) {
+      setAvatarUrl(`${res.avatarUrl}?t=${Date.now()}`);
+    } else {
+      setError(res.error ?? "Error al subir la imagen.");
     }
+    setIsUploadingAvatar(false);
+    e.target.value = "";
   };
 
-  // --- Guardar nombre y, si cambió, iniciar el flujo de cambio de correo ---
+  // --- Guardar nombre y correo ---
   const handleSave = async () => {
-    if (!profile) return;
     setIsSaving(true);
     setError(null);
     setSuccessMsg(null);
     setEmailPendingMsg(null);
 
-    try {
-      // Nombre: se guarda directo en profiles
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ name: name.trim() || null })
-        .eq("id", profile.id);
-      if (updateError) throw updateError;
+    const res = await updateAdminProfile({ name, email });
 
-      // Correo: solo si cambió, se dispara el flujo de confirmación de Supabase.
-      // profiles.email NO se toca aquí — se sincroniza después de confirmar.
-      const emailChanged = email.trim() !== profile.email;
-      if (emailChanged) {
-        const { error: emailError } = await supabase.auth.updateUser({
-          email: email.trim(),
-        });
-        if (emailError) throw emailError;
-
+    if (res.success) {
+      if (res.emailPending) {
         setEmailPendingMsg(
-          `Te enviamos un correo de confirmación a ${email.trim()}. Tu correo actual (${profile.email}) seguirá siendo válido hasta que confirmes el cambio.`
+          `Te enviamos un correo de confirmación a ${email.trim()}. Tu correo actual seguirá siendo válido hasta que confirmes el cambio.`
         );
       }
-
-      setProfile((prev) => prev ? { ...prev, name: name.trim() } : prev);
       setSuccessMsg("Perfil actualizado correctamente.");
       setTimeout(() => setSuccessMsg(null), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar los cambios.");
-    } finally {
-      setIsSaving(false);
+    } else {
+      setError(res.error ?? "Error al guardar los cambios.");
     }
+
+    setIsSaving(false);
   };
-
-  if (isLoading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.skeletonHeader} />
-        <div className={styles.skeletonCard} />
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className={styles.page}>
-        <p className={styles.notFound}>No se pudo cargar tu perfil.</p>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.page}>
@@ -198,10 +108,10 @@ export default function AdminProfileEdit() {
           <div className={styles.avatarSection}>
             <div className={styles.avatarWrapper}>
               <div className={styles.avatar}>
-                {profile.avatar_url ? (
+                {avatarUrl ? (
                   <Image
-                    src={profile.avatar_url}
-                    alt={profile.name || "Avatar"}
+                    src={avatarUrl}
+                    alt={name || "Avatar"}
                     width={80}
                     height={80}
                     className="object-cover w-full h-full"
