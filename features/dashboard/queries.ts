@@ -1,32 +1,68 @@
 import "server-only";
-import type { DashboardData } from "./types";
+import { createClient } from "@/lib/supabase/server";
+import type { DashboardData, RmProgress, RmSeriesPoint } from "./types";
+
+interface RawRmRow {
+  weight: number | string;
+  created_at: string;
+  exercises: { name: string; is_main_lift: boolean } | null;
+}
 
 /**
- * Capa de datos del dashboard (server-side).
- *
- * Fase 1 (solo arquitectura): devuelve métricas de progreso como PLACEHOLDER,
- * ya tipadas y fluyendo por esta capa. Cuando se conecten los datos reales de
- * Supabase (fase de Pilar Físico y siguientes), este es el ÚNICO lugar a
- * modificar: aquí se consultarán `weight_logs`, `user_routines`,
- * `user_meditations`, etc. con el cliente server (`@/lib/supabase/server`) y el
- * `userId` recibido. La firma no cambiará.
+ * Progreso de RM (repetición máxima) del usuario para los ejercicios
+ * principales (is_main_lift). Solo registros marcados como RM (is_rm=true).
+ * Devuelve las series fusionadas por fecha para el gráfico de líneas.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- `userId` se usará al conectar datos reales (fase Pilar Físico); la firma se mantiene estable.
+export async function getRmProgress(userId: string): Promise<RmProgress> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("weight_logs")
+    .select("weight, created_at, exercises!inner(name, is_main_lift)")
+    .eq("user_id", userId)
+    .eq("is_rm", true)
+    .eq("exercises.is_main_lift", true)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("[getRmProgress] error:", error);
+    return { exercises: [], points: [] };
+  }
+
+  const rows = (data ?? []) as unknown as RawRmRow[];
+  const exerciseSet = new Set<string>();
+  const byDate = new Map<string, RmSeriesPoint>();
+
+  rows.forEach((row) => {
+    const ex = row.exercises;
+    if (!ex) return;
+    exerciseSet.add(ex.name);
+    const date = row.created_at.slice(0, 10); // YYYY-MM-DD
+    const point = byDate.get(date) ?? { date };
+    point[ex.name] = Number(row.weight);
+    byDate.set(date, point);
+  });
+
+  const points = Array.from(byDate.values()).sort((a, b) =>
+    a.date < b.date ? -1 : a.date > b.date ? 1 : 0,
+  );
+
+  return { exercises: Array.from(exerciseSet), points };
+}
+
+/**
+ * Datos del dashboard. Las métricas de pilares siguen como placeholder tipado;
+ * el progreso de RM es real (getRmProgress).
+ */
 export async function getDashboardData(userId: string): Promise<DashboardData> {
+  const rmProgress = await getRmProgress(userId);
+
   return {
     pilares: [
       { key: "fisico", label: "Pilar físico", value: 64 },
       { key: "nutricion", label: "Pilar nutrición", value: 40 },
       { key: "mental", label: "Pilar mental", value: 90 },
     ],
-    rendimiento: [
-      { month: "Ene", prev: 40, curr: 55 },
-      { month: "Feb", prev: 55, curr: 70 },
-      { month: "Mar", prev: 35, curr: 45 },
-      { month: "Abr", prev: 60, curr: 80 },
-      { month: "May", prev: 50, curr: 65 },
-      { month: "Jun", prev: 45, curr: 90 },
-      { month: "Jul", prev: 70, curr: 85 },
-    ],
+    rmProgress,
   };
 }
