@@ -10,15 +10,20 @@ export interface PilarProgress {
   value: number;
 }
 
-/** Punto de la gráfica de rendimiento: período anterior vs. actual. */
-export interface RendimientoPunto {
-  month: string;
-  prev: number;
-  curr: number;
+/** Un registro de RM: fecha (ISO YYYY-MM-DD) y peso levantado (kg). */
+export interface RmPoint {
+  date: string;
+  weight: number;
+}
+
+/** Progreso de RM de un ejercicio principal (points vacío si aún no hay RM). */
+export interface ExerciseRm {
+  name: string;
+  points: RmPoint[];
 }
 
 /** Datos que consume la vista del dashboard. */
 export interface DashboardData {
   pilares: PilarProgress[];
-  rendimiento: RendimientoPunto[];
+  rmProgress: ExerciseRm[];
 }

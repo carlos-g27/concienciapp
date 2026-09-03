@@ -3,7 +3,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import DonutRing from "./donut-ring";
-import BarChart from "./bar-chart";
+import RmLineChart from "./rm-line-chart";
 import DashboardTabs from "./dashboard-tabs";
 import type { DashboardData, PilarKey } from "../types";
 import styles from "./donut-ring.module.css";
@@ -56,24 +56,14 @@ export default function DashboardView({ data }: { data: DashboardData }) {
               </CardContent>
             </Card>
 
-            {/* Card: Rendimiento */}
+            {/* Card: Progreso de RM (datos reales) */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-base font-bold text-primary">Rendimiento</CardTitle>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-sm bg-accent opacity-60 inline-block" />
-                    Período anterior
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-sm bg-primary inline-block" />
-                    Período actual
-                  </span>
-                </div>
+              <CardHeader>
+                <CardTitle className="text-base font-bold text-primary">Progreso de RM (kg)</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="bg-gradient-to-br from-background to-secondary rounded-xl p-4 border border-border">
-                  <BarChart data={data.rendimiento} />
+                  <RmLineChart data={data.rmProgress} />
                 </div>
               </CardContent>
             </Card>
