@@ -1,53 +1,60 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { DashboardData, RmProgress, RmSeriesPoint } from "./types";
+import type { DashboardData, ExerciseRm, RmPoint } from "./types";
 
 interface RawRmRow {
   weight: number | string;
   created_at: string;
-  exercises: { name: string; is_main_lift: boolean } | null;
+  exercises: { name: string } | null;
 }
 
 /**
- * Progreso de RM (repetición máxima) del usuario para los ejercicios
- * principales (is_main_lift). Solo registros marcados como RM (is_rm=true).
- * Devuelve las series fusionadas por fecha para el gráfico de líneas.
+ * Progreso de RM del usuario por cada ejercicio principal (is_main_lift).
+ * Devuelve TODOS los ejercicios principales (con points vacío si aún no hay RM)
+ * para poder listarlos en el selector y mostrar el estado "sin datos".
  */
-export async function getRmProgress(userId: string): Promise<RmProgress> {
+export async function getRmProgress(userId: string): Promise<ExerciseRm[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // 1) Ejercicios principales (base del selector)
+  const { data: mainLifts, error: mainErr } = await supabase
+    .from("exercises")
+    .select("id, name")
+    .eq("is_main_lift", true)
+    .order("name", { ascending: true });
+
+  if (mainErr) {
+    console.error("[getRmProgress] main lifts error:", mainErr);
+    return [];
+  }
+  if (!mainLifts || mainLifts.length === 0) return [];
+
+  // 2) Registros RM del usuario para esos ejercicios
+  const { data: logs, error: logsErr } = await supabase
     .from("weight_logs")
-    .select("weight, created_at, exercises!inner(name, is_main_lift)")
+    .select("weight, created_at, exercises!inner(name)")
     .eq("user_id", userId)
     .eq("is_rm", true)
     .eq("exercises.is_main_lift", true)
     .order("created_at", { ascending: true });
 
-  if (error) {
-    console.error("[getRmProgress] error:", error);
-    return { exercises: [], points: [] };
+  if (logsErr) {
+    console.error("[getRmProgress] logs error:", logsErr);
   }
 
-  const rows = (data ?? []) as unknown as RawRmRow[];
-  const exerciseSet = new Set<string>();
-  const byDate = new Map<string, RmSeriesPoint>();
-
-  rows.forEach((row) => {
-    const ex = row.exercises;
-    if (!ex) return;
-    exerciseSet.add(ex.name);
-    const date = row.created_at.slice(0, 10); // YYYY-MM-DD
-    const point = byDate.get(date) ?? { date };
-    point[ex.name] = Number(row.weight);
-    byDate.set(date, point);
+  const pointsByName = new Map<string, RmPoint[]>();
+  ((logs ?? []) as unknown as RawRmRow[]).forEach((row) => {
+    const name = row.exercises?.name;
+    if (!name) return;
+    const list = pointsByName.get(name) ?? [];
+    list.push({ date: row.created_at.slice(0, 10), weight: Number(row.weight) });
+    pointsByName.set(name, list);
   });
 
-  const points = Array.from(byDate.values()).sort((a, b) =>
-    a.date < b.date ? -1 : a.date > b.date ? 1 : 0,
-  );
-
-  return { exercises: Array.from(exerciseSet), points };
+  return mainLifts.map((ex) => ({
+    name: ex.name,
+    points: pointsByName.get(ex.name) ?? [],
+  }));
 }
 
 /**

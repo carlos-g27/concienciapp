@@ -10,20 +10,20 @@ export interface PilarProgress {
   value: number;
 }
 
-/** Punto del gráfico de RM: una fecha con el peso de cada ejercicio. */
-export interface RmSeriesPoint {
-  date: string; // ISO YYYY-MM-DD
-  [exercise: string]: number | string;
+/** Un registro de RM: fecha (ISO YYYY-MM-DD) y peso levantado (kg). */
+export interface RmPoint {
+  date: string;
+  weight: number;
 }
 
-/** Progreso de RM: nombres de ejercicios (líneas) + puntos fusionados por fecha. */
-export interface RmProgress {
-  exercises: string[];
-  points: RmSeriesPoint[];
+/** Progreso de RM de un ejercicio principal (points vacío si aún no hay RM). */
+export interface ExerciseRm {
+  name: string;
+  points: RmPoint[];
 }
 
 /** Datos que consume la vista del dashboard. */
 export interface DashboardData {
   pilares: PilarProgress[];
-  rmProgress: RmProgress;
+  rmProgress: ExerciseRm[];
 }
