@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import PilarTogglePanel, { PilarToggleItem } from "@/components/ui/pilar-toggle-panel";
 import { togglePilar } from "../actions";
 import type { PilarKey, PilarSettingItem } from "../types";
@@ -45,6 +47,14 @@ const IconChevron = () => (
   </svg>
 );
 
+const IconLanguage = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
 const IconWarning = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -77,10 +87,10 @@ const IconMental = () => (
   </svg>
 );
 
-const PILAR_META: { key: PilarKey; label: string; icon: React.ReactNode }[] = [
-  { key: "fisico",    label: "Pilar Físico",     icon: <IconFisico /> },
-  { key: "nutricion", label: "Pilar Nutrición",  icon: <IconNutricion /> },
-  { key: "mental",    label: "Pilar Mental",     icon: <IconMental /> },
+const PILAR_META: { key: PilarKey; labelKey: string; icon: React.ReactNode }[] = [
+  { key: "fisico",    labelKey: "pilarFisico",    icon: <IconFisico /> },
+  { key: "nutricion", labelKey: "pilarNutricion", icon: <IconNutricion /> },
+  { key: "mental",    labelKey: "pilarMental",    icon: <IconMental /> },
 ];
 
 interface AdminSettingsViewProps {
@@ -88,10 +98,11 @@ interface AdminSettingsViewProps {
 }
 
 export default function AdminSettingsView({ initialPilares }: AdminSettingsViewProps) {
+  const t = useTranslations("adminSettings");
   const [pilares, setPilares] = useState<PilarToggleItem[]>(
     PILAR_META.map((meta) => ({
       key: meta.key,
-      label: meta.label,
+      label: t(meta.labelKey),
       icon: meta.icon,
       enabled: initialPilares.find((p) => p.key === meta.key)?.enabled ?? true,
     }))
@@ -111,20 +122,28 @@ export default function AdminSettingsView({ initialPilares }: AdminSettingsViewP
   return (
     <div className={styles.page}>
 
-      <h1 className={styles.pageTitle}>Configuración</h1>
+      <h1 className={styles.pageTitle}>{t("title")}</h1>
 
       {/* ── Apariencia ── */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Apariencia</h2>
+        <h2 className={styles.sectionTitle}>{t("appearance")}</h2>
         <Card>
           <CardContent className="p-0">
-            <div className={styles.row}>
+            <div className={`${styles.row} ${styles.rowBorder}`}>
               <div className={styles.rowIcon}><IconTheme /></div>
               <div className={styles.rowInfo}>
-                <span className={styles.rowLabel}>Tema</span>
-                <span className={styles.rowDescription}>Cambia entre modo claro, oscuro o sistema</span>
+                <span className={styles.rowLabel}>{t("theme")}</span>
+                <span className={styles.rowDescription}>{t("themeDesc")}</span>
               </div>
               <ThemeSwitcher />
+            </div>
+            <div className={styles.row}>
+              <div className={styles.rowIcon}><IconLanguage /></div>
+              <div className={styles.rowInfo}>
+                <span className={styles.rowLabel}>{t("language")}</span>
+                <span className={styles.rowDescription}>{t("languageDesc")}</span>
+              </div>
+              <LanguageSwitcher />
             </div>
           </CardContent>
         </Card>
@@ -132,14 +151,14 @@ export default function AdminSettingsView({ initialPilares }: AdminSettingsViewP
 
       {/* ── Cuenta ── */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Cuenta</h2>
+        <h2 className={styles.sectionTitle}>{t("account")}</h2>
         <Card>
           <CardContent className="p-0">
             <Link href="/admin/settings/profile" className={`${styles.rowLink} ${styles.rowBorder}`}>
               <div className={styles.rowIcon}><IconUser /></div>
               <div className={styles.rowInfo}>
-                <span className={styles.rowLabel}>Editar perfil</span>
-                <span className={styles.rowDescription}>Actualiza tu foto, nombre y correo</span>
+                <span className={styles.rowLabel}>{t("editProfile")}</span>
+                <span className={styles.rowDescription}>{t("editProfileDesc")}</span>
               </div>
               <span className={styles.rowChevron}><IconChevron /></span>
             </Link>
@@ -147,8 +166,8 @@ export default function AdminSettingsView({ initialPilares }: AdminSettingsViewP
             <Link href="/auth/forgot-password" className={styles.rowLink}>
               <div className={styles.rowIcon}><IconLock /></div>
               <div className={styles.rowInfo}>
-                <span className={styles.rowLabel}>Cambiar contraseña</span>
-                <span className={styles.rowDescription}>Actualiza tu contraseña de acceso</span>
+                <span className={styles.rowLabel}>{t("password")}</span>
+                <span className={styles.rowDescription}>{t("passwordDesc")}</span>
               </div>
               <span className={styles.rowChevron}><IconChevron /></span>
             </Link>
@@ -160,14 +179,14 @@ export default function AdminSettingsView({ initialPilares }: AdminSettingsViewP
       <section className={styles.section}>
         <h2 className={styles.dangerSectionTitle}>
           <IconWarning />
-          Zona de administrador
+          {t("adminZone")}
         </h2>
         <Card className={styles.dangerCard}>
           <CardContent className="pt-6 flex flex-col gap-4">
             <div>
-              <h3 className={styles.dangerCardTitle}>Disponibilidad de pilares</h3>
+              <h3 className={styles.dangerCardTitle}>{t("pilarAvailability")}</h3>
               <p className={styles.dangerCardDescription}>
-                Desactiva temporalmente un pilar para hacer mantenimiento, sin afectar el resto de la aplicación.
+                {t("pilarAvailabilityDesc")}
               </p>
             </div>
 

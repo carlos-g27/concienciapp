@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { getInitials } from "@/hooks/use-profile";
 import type { ShellPilares, ShellProfile } from "./types";
 
 // --- Tipos ---
 interface NavItem {
-  label: string;
+  key: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -23,7 +24,7 @@ const PILAR_HREF_MAP: Partial<Record<string, keyof ShellPilares>> = {
 // --- Items de navegación ---
 const navItems: NavItem[] = [
   {
-    label: "Home",
+    key: "home",
     href: "/dashboard",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,7 +34,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Profile",
+    key: "profile",
     href: "/profile",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -44,7 +45,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Físico",
+    key: "fisico",
     href: "/pilar-fisico",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +56,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Nutrición",
+    key: "nutricion",
     href: "/pilar-nutricion",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -64,7 +65,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Mental",
+    key: "mental",
     href: "/pilar-mental",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -76,7 +77,7 @@ const navItems: NavItem[] = [
 ];
 
 const settingsItem: NavItem = {
-  label: "Settings",
+  key: "settings",
   href: "/settings",
   icon: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -97,6 +98,7 @@ interface AppSidebarProps {
 // --- Componente principal ---
 export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <>
@@ -125,7 +127,7 @@ export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSid
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
-            aria-label="Cerrar menú"
+            aria-label={t("closeMenu")}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -173,12 +175,12 @@ export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSid
                   key={item.href}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed select-none"
                   aria-disabled="true"
-                  title="Este pilar está en mantenimiento"
+                  title={t("maintenance")}
                 >
                   <span className="flex-shrink-0 text-accent">{item.icon}</span>
-                  <span className="flex-1">{item.label}</span>
+                  <span className="flex-1">{t(item.key)}</span>
                   <span className="text-[0.6rem] font-bold uppercase tracking-wide bg-secondary text-muted-foreground px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                    Mantenimiento
+                    {t("maintenance")}
                   </span>
                 </div>
               );
@@ -206,7 +208,7 @@ export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSid
                 >
                   {item.icon}
                 </span>
-                <span className="flex-1">{item.label}</span>
+                <span className="flex-1">{t(item.key)}</span>
                 {isActive && (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                     <polyline points="9 18 15 12 9 6" />
@@ -237,7 +239,7 @@ export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSid
             }`}>
               {settingsItem.icon}
             </span>
-            <span>{settingsItem.label}</span>
+            <span>{t(settingsItem.key)}</span>
           </Link>
         </div>
       </aside>

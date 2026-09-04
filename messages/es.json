@@ -1,0 +1,66 @@
+{
+  "common": {
+    "language": "Idioma",
+    "spanish": "Español",
+    "english": "Inglés"
+  },
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "fisico": "Físico",
+    "nutricion": "Nutrición",
+    "mental": "Mental",
+    "settings": "Settings",
+    "maintenance": "Mantenimiento",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
+  },
+  "pageTitles": {
+    "dashboard": "Progress",
+    "victorias": "Victorias",
+    "profile": "Perfil",
+    "fisico": "Físico",
+    "nutricion": "Nutrición",
+    "mental": "Mental",
+    "settings": "Configuración",
+    "faq": "FAQ",
+    "help": "Ayuda"
+  },
+  "settings": {
+    "title": "Configuración",
+    "accountSection": "Gestión de cuenta",
+    "appearanceSection": "Apariencia",
+    "password": "Cambiar contraseña",
+    "passwordDesc": "Actualiza tu contraseña de acceso",
+    "faq": "FAQ",
+    "faqDesc": "Preguntas frecuentes",
+    "help": "Ayuda",
+    "helpDesc": "Centro de soporte",
+    "theme": "Tema de la aplicación",
+    "themeDesc": "Cambia entre modo claro o modo oscuro",
+    "language": "Idioma de la aplicación",
+    "languageDesc": "Cambia el idioma entre español e inglés"
+  },
+  "adminSettings": {
+    "title": "Configuración",
+    "appearance": "Apariencia",
+    "theme": "Tema",
+    "themeDesc": "Cambia entre modo claro, oscuro o sistema",
+    "language": "Idioma",
+    "languageDesc": "Cambia el idioma entre español e inglés",
+    "account": "Cuenta",
+    "editProfile": "Editar perfil",
+    "editProfileDesc": "Actualiza tu foto, nombre y correo",
+    "password": "Cambiar contraseña",
+    "passwordDesc": "Actualiza tu contraseña de acceso",
+    "adminZone": "Zona de administrador",
+    "pilarAvailability": "Disponibilidad de pilares",
+    "pilarAvailabilityDesc": "Desactiva temporalmente un pilar para hacer mantenimiento, sin afectar el resto de la aplicación.",
+    "pilarFisico": "Pilar Físico",
+    "pilarNutricion": "Pilar Nutrición",
+    "pilarMental": "Pilar Mental"
+  },
+  "auth": {
+    "logout": "Cerrar sesión"
+  }
+}

@@ -2,20 +2,21 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import AppSidebar from "./app-sidebar";
 import type { ShellData } from "./types";
 
-// Título del topbar móvil según la ruta (equivalente al antiguo pageTitle).
-const PAGE_TITLES: Record<string, string> = {
-  "/dashboard": "Progress",
-  "/victorias": "Victorias",
-  "/profile": "Perfil",
-  "/pilar-fisico": "Físico",
-  "/pilar-nutricion": "Nutrición",
-  "/pilar-mental": "Mental",
-  "/settings": "Configuración",
-  "/settings/faq": "FAQ",
-  "/settings/help": "Ayuda",
+// Mapa de ruta → clave de traducción del título del topbar móvil.
+const PAGE_TITLE_KEYS: Record<string, string> = {
+  "/dashboard": "dashboard",
+  "/victorias": "victorias",
+  "/profile": "profile",
+  "/pilar-fisico": "fisico",
+  "/pilar-nutricion": "nutricion",
+  "/pilar-mental": "mental",
+  "/settings": "settings",
+  "/settings/faq": "faq",
+  "/settings/help": "help",
 };
 
 interface ShellFrameProps {
@@ -26,7 +27,10 @@ interface ShellFrameProps {
 export default function ShellFrame({ data, children }: ShellFrameProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const pageTitle = PAGE_TITLES[pathname] ?? "";
+  const t = useTranslations("pageTitles");
+  const tNav = useTranslations("nav");
+  const titleKey = PAGE_TITLE_KEYS[pathname];
+  const pageTitle = titleKey ? t(titleKey) : "";
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -45,7 +49,7 @@ export default function ShellFrame({ data, children }: ShellFrameProps) {
           <button
             onClick={() => setSidebarOpen(true)}
             className="flex items-center justify-center p-2 rounded-lg text-primary hover:bg-secondary transition-colors"
-            aria-label="Abrir menú"
+            aria-label={tNav("openMenu")}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="3" y1="6"  x2="21" y2="6"  />
