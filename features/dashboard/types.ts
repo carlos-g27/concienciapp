@@ -1,14 +1,6 @@
 // --- Tipos del dominio Dashboard ---
 
-/** Clave de pilar. La presentación (color, estilo) se resuelve en la vista. */
-export type PilarKey = "fisico" | "nutricion" | "mental";
-
-/** Progreso de un pilar mostrado como anillo (donut). `value` en rango 0–100. */
-export interface PilarProgress {
-  key: PilarKey;
-  label: string;
-  value: number;
-}
+import type { TodayWins } from "@/features/daily-wins/types";
 
 /** Un registro de RM: fecha (ISO YYYY-MM-DD) y peso levantado (kg). */
 export interface RmPoint {
@@ -24,6 +16,6 @@ export interface ExerciseRm {
 
 /** Datos que consume la vista del dashboard. */
 export interface DashboardData {
-  pilares: PilarProgress[];
   rmProgress: ExerciseRm[];
+  todayWins: TodayWins;
 }

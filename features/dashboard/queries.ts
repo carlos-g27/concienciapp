@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { getTodayWins } from "@/features/daily-wins/queries";
 import type { DashboardData, ExerciseRm, RmPoint } from "./types";
 
 interface RawRmRow {
@@ -58,18 +59,14 @@ export async function getRmProgress(userId: string): Promise<ExerciseRm[]> {
 }
 
 /**
- * Datos del dashboard. Las métricas de pilares siguen como placeholder tipado;
- * el progreso de RM es real (getRmProgress).
+ * Datos del dashboard: progreso de RM (getRmProgress) y victorias de hoy
+ * (getTodayWins). Ambos son datos reales del usuario.
  */
 export async function getDashboardData(userId: string): Promise<DashboardData> {
-  const rmProgress = await getRmProgress(userId);
+  const [rmProgress, todayWins] = await Promise.all([
+    getRmProgress(userId),
+    getTodayWins(userId),
+  ]);
 
-  return {
-    pilares: [
-      { key: "fisico", label: "Pilar físico", value: 64 },
-      { key: "nutricion", label: "Pilar nutrición", value: 40 },
-      { key: "mental", label: "Pilar mental", value: 90 },
-    ],
-    rmProgress,
-  };
+  return { rmProgress, todayWins };
 }
