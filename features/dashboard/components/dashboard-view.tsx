@@ -22,12 +22,14 @@ export default function DashboardView({ data }: { data: DashboardData }) {
         {/* Grid principal */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Columna izquierda — Victorias de hoy + Rendimiento */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-
+          {/* Columna derecha (en móvil, arriba) — Victorias de hoy */}
+          <div className="flex flex-col gap-6 lg:order-2">
             {/* Card: Victorias de hoy (datos reales) */}
             <VictoriasDeHoyCard data={data.todayWins} />
+          </div>
 
+          {/* Columna izquierda ancha (en móvil, abajo) — Progreso de RM */}
+          <div className="lg:col-span-2 lg:order-1 flex flex-col gap-6">
             {/* Card: Progreso de RM (datos reales) */}
             <Card>
               <CardHeader>
@@ -39,7 +41,6 @@ export default function DashboardView({ data }: { data: DashboardData }) {
                 </div>
               </CardContent>
             </Card>
-
           </div>
 
         </div>
