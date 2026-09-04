@@ -116,7 +116,7 @@ export default function AppSidebar({ isOpen, onClose, profile, pilares }: AppSid
           bg-card border-r border-border shadow-lg
           w-64
           transition-transform duration-300 ease-in-out
-          lg:translate-x-0 lg:static lg:shadow-none lg:z-auto
+          lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:shadow-none lg:z-auto
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
