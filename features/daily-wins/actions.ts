@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/require-user";
 import { createClient } from "@/lib/supabase/server";
-import { winLabelSchema } from "./schema";
+import { winLabelSchema, MAX_DAILY_WINS } from "./schema";
 import { appToday } from "./queries";
 
 export interface ActionResult {
@@ -32,6 +32,20 @@ export async function addWin(label: string): Promise<AddWinResult> {
 
   try {
     const supabase = await createClient();
+
+    // Tope de victorias por usuario (barrera autoritativa en servidor).
+    const { count, error: countErr } = await supabase
+      .from("daily_wins")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id);
+    if (countErr) throw countErr;
+    if ((count ?? 0) >= MAX_DAILY_WINS) {
+      return {
+        success: false,
+        error: `Solo puedes tener hasta ${MAX_DAILY_WINS} victorias diarias.`,
+      };
+    }
+
     const { data, error } = await supabase
       .from("daily_wins")
       .insert({ user_id: user.id, label: parsed.data })

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { addWin, updateWin, deleteWin } from "../actions";
+import { MAX_DAILY_WINS } from "../schema";
 import type { DailyWin } from "../types";
 
 interface VictoriasManagerProps {
@@ -27,10 +28,12 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
   const setLabel = (id: string, label: string) =>
     setWins((prev) => prev.map((w) => (w.id === id ? { ...w, label } : w)));
 
+  const limitReached = wins.length >= MAX_DAILY_WINS;
+
   // --- Agregar ---
   const handleAdd = async () => {
     const label = newLabel.trim();
-    if (!label) return;
+    if (!label || limitReached) return;
 
     setError(null);
     setIsAdding(true);
@@ -154,16 +157,22 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
                   }
                 }}
                 maxLength={80}
+                disabled={limitReached}
                 className="flex-1"
               />
               <Button
                 type="button"
                 onClick={handleAdd}
-                disabled={isAdding || newLabel.trim() === ""}
+                disabled={isAdding || limitReached || newLabel.trim() === ""}
               >
                 {isAdding ? "Agregando..." : "Agregar"}
               </Button>
             </div>
+            {limitReached && (
+              <p className="text-xs text-muted-foreground">
+                Has alcanzado el máximo de {MAX_DAILY_WINS} victorias diarias.
+              </p>
+            )}
           </div>
 
         </CardContent>
