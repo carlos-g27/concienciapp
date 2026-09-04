@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const TRACK_COLOR = "hsl(var(--muted))";
+const ANIM_MS = 600;
 
 /**
  * Color del arco según el % completado (cinco tramos).
@@ -19,8 +21,36 @@ function progressColor(percent: number): string {
 }
 
 export default function VictoriasRing({ percent }: { percent: number }) {
-  const clamped = Math.max(0, Math.min(100, Math.round(percent)));
-  const color = progressColor(clamped);
+  const target = Math.max(0, Math.min(100, Math.round(percent)));
+
+  // Valor animado: se acerca a `target` con easing al cambiar el porcentaje,
+  // de modo que el número y el arco se llenan progresivamente a la vez.
+  const [display, setDisplay] = useState(target);
+  const displayRef = useRef(target);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const from = displayRef.current;
+    const to = target;
+    if (from === to) return;
+
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / ANIM_MS);
+      const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      const value = from + (to - from) * eased;
+      displayRef.current = value;
+      setDisplay(value);
+      if (t < 1) rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [target]);
+
+  const color = progressColor(display);
 
   return (
     <div className="relative w-[150px] h-[150px]">
@@ -41,8 +71,8 @@ export default function VictoriasRing({ percent }: { percent: number }) {
           {/* Arco de progreso (encima de la pista) */}
           <Pie
             data={[
-              { name: "done", value: clamped },
-              { name: "rest", value: 100 - clamped },
+              { name: "done", value: display },
+              { name: "rest", value: 100 - display },
             ]}
             dataKey="value"
             innerRadius="72%"
@@ -60,8 +90,8 @@ export default function VictoriasRing({ percent }: { percent: number }) {
       </ResponsiveContainer>
 
       {/* Porcentaje al centro */}
-      <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-foreground">
-        {clamped}%
+      <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-primary">
+        {Math.round(display)}%
       </span>
     </div>
   );
