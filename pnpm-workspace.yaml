@@ -1,3 +1,7 @@
 allowBuilds:
   sharp: true
   unrs-resolver: true
+# Desactiva la verificación de dependencias que pnpm ejecuta antes de cada
+# script (dev/build). next-intl trae build scripts opcionales sin aprobar
+# (@parcel/watcher, @swc/core) que hacían fallar ese pre-check.
+verifyDepsBeforeRun: false

@@ -1,0 +1,66 @@
+{
+  "common": {
+    "language": "Language",
+    "spanish": "Spanish",
+    "english": "English"
+  },
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "fisico": "Physical",
+    "nutricion": "Nutrition",
+    "mental": "Mental",
+    "settings": "Settings",
+    "maintenance": "Maintenance",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "pageTitles": {
+    "dashboard": "Progress",
+    "victorias": "Daily Wins",
+    "profile": "Profile",
+    "fisico": "Physical",
+    "nutricion": "Nutrition",
+    "mental": "Mental",
+    "settings": "Settings",
+    "faq": "FAQ",
+    "help": "Help"
+  },
+  "settings": {
+    "title": "Settings",
+    "accountSection": "Account management",
+    "appearanceSection": "Appearance",
+    "password": "Change password",
+    "passwordDesc": "Update your login password",
+    "faq": "FAQ",
+    "faqDesc": "Frequently asked questions",
+    "help": "Help",
+    "helpDesc": "Support center",
+    "theme": "App theme",
+    "themeDesc": "Switch between light and dark mode",
+    "language": "App language",
+    "languageDesc": "Switch the language between Spanish and English"
+  },
+  "adminSettings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "themeDesc": "Switch between light, dark or system mode",
+    "language": "Language",
+    "languageDesc": "Switch the language between Spanish and English",
+    "account": "Account",
+    "editProfile": "Edit profile",
+    "editProfileDesc": "Update your photo, name and email",
+    "password": "Change password",
+    "passwordDesc": "Update your login password",
+    "adminZone": "Administrator zone",
+    "pilarAvailability": "Pillar availability",
+    "pilarAvailabilityDesc": "Temporarily disable a pillar for maintenance, without affecting the rest of the app.",
+    "pilarFisico": "Physical pillar",
+    "pilarNutricion": "Nutrition pillar",
+    "pilarMental": "Mental pillar"
+  },
+  "auth": {
+    "logout": "Log out"
+  }
+}

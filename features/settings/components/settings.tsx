@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import Card from "@/components/ui/new-card"; // Asegúrate de que esta ruta sea correcta
 
 // --- Tipos ---
@@ -51,36 +53,19 @@ const IconTheme = () => (
   </svg>
 );
 
+const IconLanguage = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
 const IconChevron = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="9 18 15 12 9 6" />
   </svg>
 );
-
-// --- Grupos de configuración ---
-const accountItems: SettingsItem[] = [
-  {
-    id: "password",
-    label: "Cambiar contraseña",
-    description: "Actualiza tu contraseña de acceso",
-    icon: <IconLock />,
-    href: "/auth/forgot-password",
-  },
-  {
-    id: "faq",
-    label: "FAQ",
-    description: "Preguntas frecuentes",
-    icon: <IconFaq />,
-    href: "/settings/faq",
-  },
-  {
-    id: "help",
-    label: "Ayuda",
-    description: "Centro de soporte",
-    icon: <IconHelp />,
-    href: "/settings/help",
-  },
-];
 
 // --- Subcomponente: fila de configuración adaptada con Card ---
 function SettingsRow({ item }: { item: SettingsItem }) {
@@ -127,18 +112,44 @@ function SettingsRow({ item }: { item: SettingsItem }) {
 
 // --- Componente principal ---
 export default function Settings() {
+  const t = useTranslations("settings");
+
+  const accountItems: SettingsItem[] = [
+    {
+      id: "password",
+      label: t("password"),
+      description: t("passwordDesc"),
+      icon: <IconLock />,
+      href: "/auth/forgot-password",
+    },
+    {
+      id: "faq",
+      label: t("faq"),
+      description: t("faqDesc"),
+      icon: <IconFaq />,
+      href: "/settings/faq",
+    },
+    {
+      id: "help",
+      label: t("help"),
+      description: t("helpDesc"),
+      icon: <IconHelp />,
+      href: "/settings/help",
+    },
+  ];
+
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-8 w-full">
 
         {/* Título desktop */}
         <div className="hidden lg:block">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Configuración</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">{t("title")}</h1>
         </div>
 
         {/* Grupo: Cuenta */}
         <section className="flex flex-col gap-3">
           <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
-            Gestión de cuenta
+            {t("accountSection")}
           </h2>
           <div className="flex flex-col gap-3">
             {accountItems.map((item) => (
@@ -150,17 +161,26 @@ export default function Settings() {
         {/* Grupo: Apariencia */}
         <section className="flex flex-col gap-3">
           <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
-            Apariencia
+            {t("appearanceSection")}
           </h2>
           <div className="flex flex-col gap-3">
-            <SettingsRow 
+            <SettingsRow
               item={{
                 id: "theme",
-                label: "Tema de la aplicación",
-                description: "Cambia entre modo claro o modo oscuro",
+                label: t("theme"),
+                description: t("themeDesc"),
                 icon: <IconTheme />,
                 action: <ThemeSwitcher />,
-              }} 
+              }}
+            />
+            <SettingsRow
+              item={{
+                id: "language",
+                label: t("language"),
+                description: t("languageDesc"),
+                icon: <IconLanguage />,
+                action: <LanguageSwitcher />,
+              }}
             />
           </div>
         </section>
