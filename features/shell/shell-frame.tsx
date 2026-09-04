@@ -8,6 +8,7 @@ import type { ShellData } from "./types";
 // Título del topbar móvil según la ruta (equivalente al antiguo pageTitle).
 const PAGE_TITLES: Record<string, string> = {
   "/dashboard": "Progress",
+  "/victorias": "Victorias",
   "/profile": "Perfil",
   "/pilar-fisico": "Físico",
   "/pilar-nutricion": "Nutrición",
