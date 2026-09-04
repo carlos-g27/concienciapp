@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import VictoriasRing from "./victorias-ring";
 import { toggleWinToday } from "../actions";
 import type { TodayWins, WinToday } from "../types";
 
@@ -30,11 +31,8 @@ export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+      <CardHeader>
         <CardTitle className="text-base font-bold text-primary">Victorias de hoy</CardTitle>
-        {wins.length > 0 && (
-          <span className="text-sm font-bold text-primary">{percent}%</span>
-        )}
       </CardHeader>
       <CardContent className="pt-0">
         {wins.length === 0 ? (
@@ -48,7 +46,13 @@ export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
             </Link>
           </div>
         ) : (
-          <ul className="flex flex-col">
+          <div className="flex flex-col">
+            {/* Anillo de progreso con el % al centro */}
+            <div className="flex justify-center py-2">
+              <VictoriasRing percent={percent} />
+            </div>
+
+            <ul className="flex flex-col">
             {wins.map((win) => (
               <li key={win.id}>
                 <label className="flex items-center gap-3 py-2 cursor-pointer group">
@@ -76,7 +80,8 @@ export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
                 Gestionar victorias
               </Link>
             </li>
-          </ul>
+            </ul>
+          </div>
         )}
       </CardContent>
     </Card>
