@@ -1,18 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Card from "@/components/ui/new-card";
 import ExercisePanel from "./exercise-panel";
 import type { Day, Exercise, WorkoutDay } from "../types";
 import styles from "./fisico.module.css";
-
-const DAYS_ORDER: { key: Day; displayName: string }[] = [
-  { key: "lunes",     displayName: "Lunes" },
-  { key: "martes",    displayName: "Martes" },
-  { key: "miercoles", displayName: "Miércoles" },
-  { key: "jueves",    displayName: "Jueves" },
-  { key: "viernes",   displayName: "Viernes" },
-];
 
 function getTodayKey(): Day {
   const map: Record<number, Day> = {
@@ -30,6 +23,7 @@ interface FisicoViewProps {
 }
 
 export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
+  const t = useTranslations("fisico");
   const [todayKey, setTodayKey] = useState<Day>("lunes");
   const [expandedDay, setExpandedDay] = useState<Day | "">("lunes");
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -61,7 +55,7 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
-              Volver a la rutina
+              {t("backToRoutine")}
             </button>
 
             {/* Panel ocupando todo el ancho */}
@@ -78,9 +72,9 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
           /* Vista: lista de días */
           <>
             <div className={styles.pageHeader}>
-              <h1 className={styles.pageTitle}>Mi Rutina</h1>
+              <h1 className={styles.pageTitle}>{t("title")}</h1>
               <p className={styles.pageSubtitle}>
-                Semana actual · {DAYS_ORDER.find((d) => d.key === todayKey)?.displayName} es tu día de entrenamiento
+                {t("currentWeek", { day: t(`days.${todayKey}`) })}
               </p>
             </div>
 
@@ -101,16 +95,16 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
                     >
                       <div className={styles.dayHeaderLeft}>
                         <span className={`${styles.dayName} ${isToday ? styles.dayNameToday : ""}`}>
-                          {workoutDay.displayName}
-                          {isToday && <span className={styles.todayBadge}>Hoy</span>}
+                          {t(`days.${workoutDay.day}`)}
+                          {isToday && <span className={styles.todayBadge}>{t("today")}</span>}
                         </span>
                         <span className={styles.dayLabel}>
-                          {workoutDay.label || "Sin enfoque asignado"}
+                          {workoutDay.label || t("noFocus")}
                         </span>
                       </div>
                       <div className={styles.dayHeaderRight}>
                         <span className={styles.exerciseCount}>
-                          {workoutDay.exercises.length} ejercicios
+                          {t("exercisesCount", { count: workoutDay.exercises.length })}
                         </span>
                         <svg
                           width="16" height="16"
@@ -130,7 +124,7 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
                     {isExpanded && (
                       <div className={styles.exerciseList}>
                         {workoutDay.exercises.length === 0 ? (
-                          <p className={styles.emptyDay}>Sin ejercicios asignados este día.</p>
+                          <p className={styles.emptyDay}>{t("emptyDay")}</p>
                         ) : (
                           workoutDay.exercises.map((exercise) => (
                             <Card
@@ -150,8 +144,8 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
                                 <span className={styles.exerciseName}>{exercise.name}</span>
                                 <span className={styles.exerciseMeta}>{exercise.muscle}</span>
                                 <div className={styles.exerciseBadges}>
-                                  <span className={styles.badge}>{exercise.sets} series</span>
-                                  <span className={styles.badge}>{exercise.reps} reps</span>
+                                  <span className={styles.badge}>{t("setsBadge", { count: exercise.sets })}</span>
+                                  <span className={styles.badge}>{t("repsBadge", { count: exercise.reps })}</span>
                                 </div>
                               </div>
                             </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import CategoryCard from "@/components/ui/category-card";
 import MealDetail from "./meal-detail";
 import type { MealsByType, MealTypeKey, Recipe } from "../types";
@@ -13,11 +14,11 @@ interface MealCategory {
   recipes: Recipe[];
 }
 
-// --- Íconos y títulos fijos por tipo de comida (Supabase no guarda íconos) ---
-const MEAL_TYPE_META: { id: MealTypeKey; title: string; icon: React.ReactNode }[] = [
+// --- Íconos y clave de título por tipo de comida (Supabase no guarda íconos) ---
+const MEAL_TYPE_META: { id: MealTypeKey; titleKey: string; icon: React.ReactNode }[] = [
   {
     id: "breakfast",
-    title: "Desayuno",
+    titleKey: "breakfast",
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
@@ -30,7 +31,7 @@ const MEAL_TYPE_META: { id: MealTypeKey; title: string; icon: React.ReactNode }[
   },
   {
     id: "lunch",
-    title: "Almuerzo",
+    titleKey: "lunch",
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
@@ -41,7 +42,7 @@ const MEAL_TYPE_META: { id: MealTypeKey; title: string; icon: React.ReactNode }[
   },
   {
     id: "dinner",
-    title: "Cena",
+    titleKey: "dinner",
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
@@ -55,8 +56,12 @@ interface NutricionViewProps {
 }
 
 export default function NutricionView({ initialMeals }: NutricionViewProps) {
+  const t = useTranslations("nutricion");
+
   const categories: MealCategory[] = MEAL_TYPE_META.map((meta) => ({
-    ...meta,
+    id: meta.id,
+    title: t(meta.titleKey),
+    icon: meta.icon,
     recipes: initialMeals[meta.id] ?? [],
   }));
 
@@ -89,20 +94,20 @@ export default function NutricionView({ initialMeals }: NutricionViewProps) {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
-              Volver a comidas
+              {t("backToMeals")}
             </button>
 
             {/* Header de la categoría */}
             <div className={styles.categoryHeader}>
               <h1 className={styles.categoryTitle}>{selectedCategory.title}</h1>
               <p className={styles.categorySubtitle}>
-                {selectedCategory.recipes.length} receta{selectedCategory.recipes.length !== 1 ? "s" : ""} disponible{selectedCategory.recipes.length !== 1 ? "s" : ""}
+                {t("recipesAvailable", { count: selectedCategory.recipes.length })}
               </p>
             </div>
 
             {/* Lista de recetas con acordeón */}
             {selectedCategory.recipes.length === 0 ? (
-              <p className={styles.emptyMeal}>Aún no tienes recetas asignadas para esta comida.</p>
+              <p className={styles.emptyMeal}>{t("emptyMeal")}</p>
             ) : (
               <div className={styles.recipeList}>
                 {selectedCategory.recipes.map((recipe) => (
@@ -123,8 +128,8 @@ export default function NutricionView({ initialMeals }: NutricionViewProps) {
           /* ── Vista: 3 categorías de comida ── */
           <>
             <div className={styles.pageHeader}>
-              <h1 className={styles.pageTitle}>Mi Nutrición</h1>
-              <p className={styles.pageSubtitle}>Selecciona una comida para ver tus recetas</p>
+              <h1 className={styles.pageTitle}>{t("title")}</h1>
+              <p className={styles.pageSubtitle}>{t("subtitle")}</p>
             </div>
 
             <div className={styles.mealsGrid}>
@@ -133,8 +138,8 @@ export default function NutricionView({ initialMeals }: NutricionViewProps) {
                   key={meal.id}
                   title={meal.title}
                   icon={meal.icon}
-                  footerPrimaryText={`${meal.recipes.length} receta${meal.recipes.length !== 1 ? "s" : ""}`}
-                  footerSecondaryText={`~${meal.recipes.reduce((sum, r) => sum + r.calories, 0)} kcal totales`}
+                  footerPrimaryText={t("recipesCount", { count: meal.recipes.length })}
+                  footerSecondaryText={t("kcalTotal", { kcal: meal.recipes.reduce((sum, r) => sum + r.calories, 0) })}
                   onClick={() => handleSelectCategory(meal)}
                 />
               ))}

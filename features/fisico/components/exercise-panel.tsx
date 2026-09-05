@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { listWeightLogs, addWeightLog, deleteWeightLog } from "../actions";
 import type { Exercise, WeightLog } from "../types";
 import styles from "./exercise-panel.module.css";
@@ -43,6 +44,8 @@ function isRMWeek(weekIndex: number): boolean {
 
 // --- Componente ---
 export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps) {
+  const t = useTranslations("fisico");
+  const locale = useLocale();
   const [weight, setWeight] = useState<string>("");
   const [isRMToggle, setIsRMToggle] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -120,7 +123,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
 
   // Formatea la fecha de forma corta y legible (ej: "17 jun, 14:32")
   const formatLogDate = (isoDate: string) => {
-    return new Date(isoDate).toLocaleString("es-ES", {
+    return new Date(isoDate).toLocaleString(locale === "en" ? "en-US" : "es-ES", {
       day: "numeric",
       month: "short",
       hour: "2-digit",
@@ -140,7 +143,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
         <button
           onClick={onClose}
           className={styles.closeBtn}
-          aria-label="Cerrar panel"
+          aria-label={t("closePanel")}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
@@ -175,7 +178,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
               <polygon points="5 3 19 12 5 21 5 3" />
             </svg>
           </div>
-          <span className={styles.videoLabel}>Vista previa del ejercicio</span>
+          <span className={styles.videoLabel}>{t("videoPreview")}</span>
         </div>
       )}
 
@@ -183,24 +186,24 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
       <div className={styles.setsRow}>
         <div className={styles.setBadge}>
           <span className={styles.setBadgeValue}>{exercise.sets}</span>
-          <span className={styles.setBadgeLabel}>Series</span>
+          <span className={styles.setBadgeLabel}>{t("setsLabel")}</span>
         </div>
         <div className={styles.setBadgeDivider} />
         <div className={styles.setBadge}>
           <span className={styles.setBadgeValue}>{exercise.reps}</span>
-          <span className={styles.setBadgeLabel}>Repeticiones</span>
+          <span className={styles.setBadgeLabel}>{t("repsLabel")}</span>
         </div>
       </div>
 
       {/* Descripción */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Descripción</h3>
+        <h3 className={styles.sectionTitle}>{t("descriptionTitle")}</h3>
         <p className={styles.descriptionText}>{exercise.description}</p>
       </div>
 
       {/* Instrucciones */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Instrucciones</h3>
+        <h3 className={styles.sectionTitle}>{t("instructionsTitle")}</h3>
         <ul className={styles.instructionsList}>
           {exercise.instructions.map((step, i) => (
             <li key={i} className={styles.instructionItem}>
@@ -213,7 +216,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
 
       {/* Control de peso */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Registro de peso</h3>
+        <h3 className={styles.sectionTitle}>{t("weightLogTitle")}</h3>
 
         {/* Alerta: esta semana toca RM */}
         {isCurrentlyRMWeek && (
@@ -223,7 +226,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
               <line x1="12" y1="9" x2="12" y2="13" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            Esta semana te toca registrar tu RM en este ejercicio.
+            {t("rmWeekAlert")}
           </div>
         )}
 
@@ -231,7 +234,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
           <button
             onClick={() => handleWeightChange(-2.5)}
             className={styles.weightBtn}
-            aria-label="Reducir peso"
+            aria-label={t("decreaseWeight")}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -253,7 +256,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
           <button
             onClick={() => handleWeightChange(2.5)}
             className={styles.weightBtn}
-            aria-label="Aumentar peso"
+            aria-label={t("increaseWeight")}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19" />
@@ -265,7 +268,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
         {/* Toggle manual: el usuario marca si este peso es su RM */}
         {exercise.is_main_lift && (
           <label className={styles.rmToggleRow} htmlFor="isRmToggle">
-            <span className={styles.rmToggleLabel}>¿Es tu RM?</span>
+            <span className={styles.rmToggleLabel}>{t("isYourRm")}</span>
             <button
               type="button"
               id="isRmToggle"
@@ -289,17 +292,17 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Guardado
+              {t("saved")}
             </>
           ) : (
-            "Guardar peso"
+            t("saveWeight")
           )}
         </button>
 
         {/* Historial de pesos registrados */}
         {isLoadingHistory ? (
           <div className={styles.weightHistory}>
-            <span className={styles.weightHistoryTitle}>Progreso</span>
+            <span className={styles.weightHistoryTitle}>{t("progressTitle")}</span>
             <div className={styles.weightHistoryList}>
               {[...Array(2)].map((_, i) => (
                 <div key={i} className={styles.weightHistorySkeleton} />
@@ -308,7 +311,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
           </div>
         ) : weightLogs.length > 0 && (
           <div className={styles.weightHistory}>
-            <span className={styles.weightHistoryTitle}>Progreso</span>
+            <span className={styles.weightHistoryTitle}>{t("progressTitle")}</span>
             <div className={styles.weightHistoryList}>
               {weightLogs.map((log) => (
                 <div
@@ -326,7 +329,7 @@ export default function ExercisePanel({ exercise, onClose }: ExercisePanelProps)
                     onClick={() => handleDeleteLog(log.id)}
                     disabled={deletingId === log.id}
                     className={styles.weightHistoryDeleteBtn}
-                    aria-label="Eliminar registro"
+                    aria-label={t("deleteLog")}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6" />

@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth/require-user";
 import { createClient } from "@/lib/supabase/server";
 import { winLabelSchema, MAX_DAILY_WINS } from "./schema";
@@ -24,10 +25,11 @@ const idSchema = z.string().uuid();
  */
 export async function addWin(label: string): Promise<AddWinResult> {
   const user = await requireUser();
+  const t = await getTranslations("victorias");
 
   const parsed = winLabelSchema.safeParse(label);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: t("errInvalid") };
   }
 
   try {
@@ -40,10 +42,7 @@ export async function addWin(label: string): Promise<AddWinResult> {
       .eq("user_id", user.id);
     if (countErr) throw countErr;
     if ((count ?? 0) >= MAX_DAILY_WINS) {
-      return {
-        success: false,
-        error: `Solo puedes tener hasta ${MAX_DAILY_WINS} victorias diarias.`,
-      };
+      return { success: false, error: t("errLimit", { max: MAX_DAILY_WINS }) };
     }
 
     const { data, error } = await supabase
@@ -58,7 +57,7 @@ export async function addWin(label: string): Promise<AddWinResult> {
     return { success: true, id: data.id as string };
   } catch (err) {
     console.error("[addWin] error:", err);
-    return { success: false, error: "No se pudo agregar la victoria." };
+    return { success: false, error: t("errAdd") };
   }
 }
 
@@ -67,14 +66,15 @@ export async function addWin(label: string): Promise<AddWinResult> {
  */
 export async function updateWin(id: string, label: string): Promise<ActionResult> {
   const user = await requireUser();
+  const t = await getTranslations("victorias");
 
   if (!idSchema.safeParse(id).success) {
-    return { success: false, error: "Victoria inválida." };
+    return { success: false, error: t("errInvalid") };
   }
 
   const parsed = winLabelSchema.safeParse(label);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: t("errInvalid") };
   }
 
   try {
@@ -91,7 +91,7 @@ export async function updateWin(id: string, label: string): Promise<ActionResult
     return { success: true };
   } catch (err) {
     console.error("[updateWin] error:", err);
-    return { success: false, error: "No se pudo guardar la victoria." };
+    return { success: false, error: t("errUpdate") };
   }
 }
 
@@ -101,9 +101,10 @@ export async function updateWin(id: string, label: string): Promise<ActionResult
  */
 export async function deleteWin(id: string): Promise<ActionResult> {
   const user = await requireUser();
+  const t = await getTranslations("victorias");
 
   if (!idSchema.safeParse(id).success) {
-    return { success: false, error: "Victoria inválida." };
+    return { success: false, error: t("errInvalid") };
   }
 
   try {
@@ -120,7 +121,7 @@ export async function deleteWin(id: string): Promise<ActionResult> {
     return { success: true };
   } catch (err) {
     console.error("[deleteWin] error:", err);
-    return { success: false, error: "No se pudo eliminar la victoria." };
+    return { success: false, error: t("errDelete") };
   }
 }
 
@@ -132,9 +133,10 @@ export async function deleteWin(id: string): Promise<ActionResult> {
  */
 export async function toggleWinToday(winId: string, completed: boolean): Promise<ActionResult> {
   const user = await requireUser();
+  const t = await getTranslations("victorias");
 
   if (!idSchema.safeParse(winId).success) {
-    return { success: false, error: "Victoria inválida." };
+    return { success: false, error: t("errInvalid") };
   }
 
   try {
@@ -148,7 +150,7 @@ export async function toggleWinToday(winId: string, completed: boolean): Promise
       .eq("user_id", user.id)
       .maybeSingle();
     if (ownErr) throw ownErr;
-    if (!win) return { success: false, error: "Victoria inválida." };
+    if (!win) return { success: false, error: t("errInvalid") };
 
     const today = appToday();
 
@@ -174,6 +176,6 @@ export async function toggleWinToday(winId: string, completed: boolean): Promise
     return { success: true };
   } catch (err) {
     console.error("[toggleWinToday] error:", err);
-    return { success: false, error: "No se pudo actualizar la victoria." };
+    return { success: false, error: t("errToggle") };
   }
 }

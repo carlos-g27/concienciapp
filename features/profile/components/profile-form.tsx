@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { getInitials } from "@/hooks/use-profile";
@@ -9,13 +10,13 @@ import { updateProfile, uploadAvatar } from "../actions";
 import type { UserProfileData } from "../types";
 import styles from "./profile.module.css";
 
-// --- Campos del formulario (orden y etiquetas) ---
-const fields: { key: keyof Omit<UserProfileData, "avatar_url" | "email">; label: string; type: string; placeholder: string }[] = [
-  { key: "name",   label: "Nombre",             type: "text",   placeholder: "Daniela" },
-  { key: "phone",  label: "Número de teléfono", type: "tel",    placeholder: "+52 55 1234 5678" },
-  { key: "age",    label: "Edad",               type: "number", placeholder: "28" },
-  { key: "weight", label: "Peso (kg)",          type: "number", placeholder: "78" },
-  { key: "goal",   label: "Objetivo",           type: "text",   placeholder: "Ganar músculo" },
+// --- Campos del formulario (orden, clave de etiqueta y de placeholder) ---
+const fields: { key: keyof Omit<UserProfileData, "avatar_url" | "email">; labelKey: string; type: string; phKey: string }[] = [
+  { key: "name",   labelKey: "fieldName",   type: "text",   phKey: "phName" },
+  { key: "phone",  labelKey: "fieldPhone",  type: "tel",    phKey: "phPhone" },
+  { key: "age",    labelKey: "fieldAge",    type: "number", phKey: "phAge" },
+  { key: "weight", labelKey: "fieldWeight", type: "number", phKey: "phWeight" },
+  { key: "goal",   labelKey: "fieldGoal",   type: "text",   phKey: "phGoal" },
 ];
 
 interface ProfileFormProps {
@@ -23,6 +24,7 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ initialProfile }: ProfileFormProps) {
+  const t = useTranslations("profile");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -80,10 +82,10 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
       router.refresh(); // el shell server re-renderiza y el Sidebar refleja el cambio
       setIsEditing(false);
       setDraft(null);
-      setSuccessMsg("Perfil actualizado correctamente.");
+      setSuccessMsg(t("savedOk"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {
-      setError(res.error ?? "Error al guardar.");
+      setError(res.error ?? t("errSave"));
     }
 
     setIsSaving(false);
@@ -96,11 +98,11 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
 
     // Validación rápida en cliente (UX); el servidor revalida de forma real.
     if (!file.type.startsWith("image/")) {
-      setError("Solo se permiten imágenes.");
+      setError(t("errImageOnly"));
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
-      setError("La imagen no puede superar 2MB.");
+      setError(t("errImageSize"));
       return;
     }
 
@@ -118,7 +120,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
       if (draft) setDraft((prev) => (prev ? { ...prev, avatar_url: urlWithCache } : prev));
       router.refresh(); // el shell server re-renderiza el Sidebar con el avatar nuevo
     } else {
-      setError(res.error ?? "Error al subir la imagen.");
+      setError(res.error ?? t("errUpload"));
     }
 
     setIsUploadingAvatar(false);
@@ -130,7 +132,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
 
         {/* Título — solo desktop */}
         <div className="hidden lg:block">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Mi perfil</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">{t("title")}</h1>
         </div>
 
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
@@ -143,7 +145,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                 {profile.avatar_url ? (
                   <Image
                     src={profile.avatar_url}
-                    alt="Foto de perfil"
+                    alt={t("avatarAlt")}
                     width={96}
                     height={96}
                     className="object-cover w-full h-full"
@@ -160,7 +162,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingAvatar}
                 className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-background border-2 border-border shadow flex items-center justify-center hover:bg-secondary transition-colors disabled:opacity-60"
-                aria-label="Cambiar foto de perfil"
+                aria-label={t("avatarAria")}
               >
                 {isUploadingAvatar ? (
                   <svg className="animate-spin w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none">
@@ -188,7 +190,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
 
           {/* Info y botón editar */}
           <div className="-mt-10 flex flex-col items-center gap-1 px-6 pb-6">
-            <p className="text-lg font-bold text-foreground">{profile.name || "Sin nombre"}</p>
+            <p className="text-lg font-bold text-foreground">{profile.name || t("noName")}</p>
 
             {/* Botón editar / guardar / cancelar */}
             <div className="flex gap-3 mt-4">
@@ -201,7 +203,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
-                  Editar perfil
+                  {t("editBtn")}
                 </button>
               ) : (
                 <>
@@ -210,7 +212,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                     disabled={isSaving}
                     className="px-4 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-semibold hover:bg-secondary transition-colors disabled:opacity-60"
                   >
-                    Cancelar
+                    {t("cancel")}
                   </button>
                   <button
                     onClick={handleSave}
@@ -223,10 +225,10 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                         </svg>
-                        Guardando...
+                        {t("saving")}
                       </>
                     ) : (
-                      "Guardar cambios"
+                      t("save")
                     )}
                   </button>
                 </>
@@ -247,19 +249,19 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
 
             {/* Email — siempre solo lectura */}
             <div className={styles.fieldCard}>
-              <span className={styles.fieldLabel}>Correo</span>
+              <span className={styles.fieldLabel}>{t("email")}</span>
               <span className={styles.fieldValue}>{profile.email || "—"}</span>
             </div>
 
             {/* Campos editables */}
-            {fields.map(({ key, label, type, placeholder }) => (
+            {fields.map(({ key, labelKey, type, phKey }) => (
               <div key={key} className={styles.fieldCard}>
-                <span className={styles.fieldLabel}>{label}</span>
+                <span className={styles.fieldLabel}>{t(labelKey)}</span>
                 {isEditing && draft ? (
                   <Input
                     type={type}
                     value={draft[key]}
-                    placeholder={placeholder}
+                    placeholder={t(phKey)}
                     onChange={(e) => handleChange(key, e.target.value)}
                     className={styles.fieldInput}
                     min={type === "number" ? "0" : undefined}

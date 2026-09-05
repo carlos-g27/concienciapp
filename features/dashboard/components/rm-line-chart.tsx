@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   LineChart,
   Line,
@@ -14,12 +15,16 @@ import type { ExerciseRm } from "../types";
 
 const LINE_COLOR = "#528ACC";
 
-function formatDate(iso: string): string {
-  const d = new Date(`${iso}T00:00:00`);
-  return d.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
-}
-
 export default function RmLineChart({ data }: { data: ExerciseRm[] }) {
+  const t = useTranslations("dashboard");
+  const locale = useLocale();
+  const dateLocale = locale === "en" ? "en-US" : "es-ES";
+
+  const formatDate = (iso: string): string => {
+    const d = new Date(`${iso}T00:00:00`);
+    return d.toLocaleDateString(dateLocale, { day: "numeric", month: "short" });
+  };
+
   // Selección inicial: primer ejercicio con datos; si ninguno tiene, el primero.
   const initial = data.find((d) => d.points.length > 0)?.name ?? data[0]?.name ?? "";
   const [selected, setSelected] = useState(initial);
@@ -27,7 +32,7 @@ export default function RmLineChart({ data }: { data: ExerciseRm[] }) {
   if (data.length === 0) {
     return (
       <p className="text-sm text-muted-foreground text-center py-10">
-        Aún no hay ejercicios principales configurados.
+        {t("rmNoMainLifts")}
       </p>
     );
   }
@@ -60,7 +65,7 @@ export default function RmLineChart({ data }: { data: ExerciseRm[] }) {
       {/* Gráfico o estado vacío */}
       {current.points.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-12">
-          Cuando marques tu primer RM, lo podrás ver aquí.
+          {t("rmNoData")}
         </p>
       ) : (
         <div className="w-full text-muted-foreground" style={{ height: 240 }}>
@@ -75,7 +80,7 @@ export default function RmLineChart({ data }: { data: ExerciseRm[] }) {
                 strokeOpacity={0.3}
               />
               <YAxis
-                unit=" kg"
+                unit={t("kgUnit")}
                 width={56}
                 tick={{ fill: "currentColor", fontSize: 11 }}
                 stroke="currentColor"
@@ -83,7 +88,7 @@ export default function RmLineChart({ data }: { data: ExerciseRm[] }) {
               />
               <Tooltip
                 labelFormatter={(label) => formatDate(String(label))}
-                formatter={(value) => [`${value} kg`, current.name]}
+                formatter={(value) => [`${value}${t("kgUnit")}`, current.name]}
               />
               <Line
                 type="monotone"
