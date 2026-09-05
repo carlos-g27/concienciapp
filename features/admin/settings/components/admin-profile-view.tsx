@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ interface AdminProfileViewProps {
 }
 
 export default function AdminProfileView({ initialProfile }: AdminProfileViewProps) {
+  const t = useTranslations("adminProfile");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialProfile.avatar_url);
@@ -37,11 +39,11 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setError("Solo se permiten imágenes.");
+      setError(t("errImageOnly"));
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
-      setError("La imagen no puede superar 2MB.");
+      setError(t("errImageSize"));
       return;
     }
 
@@ -55,7 +57,7 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
     if (res.success && res.avatarUrl) {
       setAvatarUrl(`${res.avatarUrl}?t=${Date.now()}`);
     } else {
-      setError(res.error ?? "Error al subir la imagen.");
+      setError(res.error ?? t("errUpload"));
     }
     setIsUploadingAvatar(false);
     e.target.value = "";
@@ -72,14 +74,12 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
 
     if (res.success) {
       if (res.emailPending) {
-        setEmailPendingMsg(
-          `Te enviamos un correo de confirmación a ${email.trim()}. Tu correo actual seguirá siendo válido hasta que confirmes el cambio.`
-        );
+        setEmailPendingMsg(t("emailPending", { email: email.trim() }));
       }
-      setSuccessMsg("Perfil actualizado correctamente.");
+      setSuccessMsg(t("savedOk"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {
-      setError(res.error ?? "Error al guardar los cambios.");
+      setError(res.error ?? t("errSaveChanges"));
     }
 
     setIsSaving(false);
@@ -93,12 +93,12 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
         </svg>
-        Volver a configuración
+        {t("backToSettings")}
       </Link>
 
       <div>
-        <h1 className={styles.pageTitle}>Editar perfil</h1>
-        <p className={styles.pageSubtitle}>Actualiza tu foto, nombre y correo de administrador</p>
+        <h1 className={styles.pageTitle}>{t("title")}</h1>
+        <p className={styles.pageSubtitle}>{t("subtitle")}</p>
       </div>
 
       <Card>
@@ -125,7 +125,7 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingAvatar}
                 className={styles.cameraBtn}
-                aria-label="Cambiar foto de perfil"
+                aria-label={t("avatarAria")}
               >
                 {isUploadingAvatar ? (
                   <svg className={styles.spinner} width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -152,11 +152,11 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
 
           {/* Nombre */}
           <div className={styles.field}>
-            <Label htmlFor="name">Nombre</Label>
+            <Label htmlFor="name">{t("nameLabel")}</Label>
             <Input
               id="name"
               type="text"
-              placeholder="Tu nombre"
+              placeholder={t("namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -164,16 +164,16 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
 
           {/* Correo */}
           <div className={styles.field}>
-            <Label htmlFor="email">Correo electrónico</Label>
+            <Label htmlFor="email">{t("emailLabel")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="tu@email.com"
+              placeholder={t("emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <span className={styles.fieldHint}>
-              Cambiar tu correo requiere confirmación por email antes de aplicarse.
+              {t("emailHint")}
             </span>
           </div>
 
@@ -183,7 +183,7 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
           {error && <p className={styles.errorMsg}>{error}</p>}
 
           <Button onClick={handleSave} disabled={isSaving} className={styles.saveBtn}>
-            {isSaving ? "Guardando..." : "Guardar cambios"}
+            {isSaving ? t("saving") : t("save")}
           </Button>
 
         </CardContent>

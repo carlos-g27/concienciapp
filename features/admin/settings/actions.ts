@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { pilarToggleSchema, adminProfileSchema, type AdminProfileFormInput } from "./schema";
@@ -44,10 +45,11 @@ export async function togglePilar(key: PilarKey, enabled: boolean): Promise<Acti
  */
 export async function updateAdminProfile(input: AdminProfileFormInput): Promise<ActionResult> {
   const user = await requireAdmin();
+  const t = await getTranslations("adminProfile");
 
   const parsed = adminProfileSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: parsed.error.issues[0]?.message ?? t("errSaveChanges") };
   }
   const { name, email } = parsed.data;
 
@@ -71,6 +73,6 @@ export async function updateAdminProfile(input: AdminProfileFormInput): Promise<
     return { success: true, emailPending };
   } catch (err) {
     console.error("[updateAdminProfile] error:", err);
-    return { success: false, error: "No se pudo guardar el perfil." };
+    return { success: false, error: t("errSaveChanges") };
   }
 }
