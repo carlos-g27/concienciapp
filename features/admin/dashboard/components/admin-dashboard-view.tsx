@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { AdminUserRow } from "../types";
@@ -27,12 +28,6 @@ function getInitials(name: string): string {
     .map((n) => n[0].toUpperCase()).join("");
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("es-ES", {
-    day: "numeric", month: "short", year: "numeric",
-  });
-}
-
 // --- Subcomponente: Avatar con iniciales ---
 function AvatarInitials({ initials }: { initials: string }) {
   return (
@@ -44,6 +39,7 @@ function AvatarInitials({ initials }: { initials: string }) {
 
 // --- Subcomponente: Card grande de "Usuarios Totales" (oscura, usa Card) ---
 function TotalUsersCard({ total }: { total: number }) {
+  const t = useTranslations("adminDashboard");
   return (
     <Link href="/admin?filter=all">
       <Card className="rounded-[20px] border-0 bg-gradient-to-br from-[#223966] to-[#061A33] text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
@@ -57,7 +53,7 @@ function TotalUsersCard({ total }: { total: number }) {
             </svg>
           </div>
           <CardTitle className="flex-1 text-sm font-bold text-white">
-            Usuarios Totales
+            {t("totalUsers")}
           </CardTitle>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.totalCardArrow}>
             <polyline points="9 18 15 12 9 6" />
@@ -83,6 +79,7 @@ function FilterMetricCard({
   filter: string;
   icon: React.ReactNode;
 }) {
+  const t = useTranslations("adminDashboard");
   return (
     <Link href={`/admin?filter=${filter}`}>
       <Card className="rounded-[20px] hover:border-ring hover:-translate-y-0.5 transition-all">
@@ -95,7 +92,7 @@ function FilterMetricCard({
         <CardContent className="pt-0 px-5 pb-5 flex flex-col gap-2">
           <span className={styles.filterCardValue}>{value}</span>
           <span className={styles.filterCardLink}>
-            Ver más
+            {t("seeMore")}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -112,10 +109,17 @@ interface AdminDashboardViewProps {
 
 // --- Componente principal ---
 export default function AdminDashboardView({ initialUsers }: AdminDashboardViewProps) {
+  const t = useTranslations("adminDashboard");
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const activeFilter = searchParams.get("filter") ?? "all";
 
   const [search, setSearch] = useState("");
+
+  const formatDate = (iso: string): string =>
+    new Date(iso).toLocaleDateString(locale === "en" ? "en-US" : "es-ES", {
+      day: "numeric", month: "short", year: "numeric",
+    });
 
   // Filtro por métrica (query param) + búsqueda de texto combinados
   const filtered = initialUsers
@@ -141,8 +145,8 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
       {/* Header */}
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Panel de administrador</h1>
-          <p className={styles.pageSubtitle}>Gestiona los usuarios y su contenido asignado</p>
+          <h1 className={styles.pageTitle}>{t("title")}</h1>
+          <p className={styles.pageSubtitle}>{t("subtitle")}</p>
         </div>
       </div>
 
@@ -151,7 +155,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
         <TotalUsersCard total={totalUsers} />
 
         <FilterMetricCard
-          label="Con plan asignado"
+          label={t("withPlan")}
           value={withRoutine}
           filter="with-routine"
           icon={
@@ -162,7 +166,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
         />
 
         <FilterMetricCard
-          label="Sin plan asignado"
+          label={t("withoutPlan")}
           value={withoutRoutine}
           filter="without-routine"
           icon={
@@ -190,7 +194,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
                 </svg>
                 <Input
                   type="text"
-                  placeholder="Buscar por nombre o correo..."
+                  placeholder={t("searchPlaceholder")}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className={styles.searchInput}
@@ -200,7 +204,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
               <div className={styles.userList}>
                 {filtered.length === 0 ? (
                   <div className={styles.emptyState}>
-                    <p>No se encontraron usuarios</p>
+                    <p>{t("noUsers")}</p>
                   </div>
                 ) : (
                   filtered.map((user) => (
@@ -217,7 +221,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
                       </div>
 
                       <div className={styles.userInfo}>
-                        <span className={styles.userName}>{user.name ?? "Sin nombre"}</span>
+                        <span className={styles.userName}>{user.name ?? t("noName")}</span>
                         <span className={styles.userEmail}>{user.email}</span>
                         <div className={styles.userMeta}>
                           {user.weight && <span className={styles.userMetaItem}>{user.weight} kg</span>}
@@ -228,7 +232,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
 
                       <div className={styles.userBadgeWrapper}>
                         <span className={`${styles.userBadge} ${user.has_routine ? styles.userBadgeActive : styles.userBadgePending}`}>
-                          {user.has_routine ? "Con plan" : "Sin plan"}
+                          {user.has_routine ? t("badgeWithPlan") : t("badgeWithoutPlan")}
                         </span>
                       </div>
 
@@ -249,7 +253,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
         <div className={styles.rightColumn}>
           <Card className="h-full">
             <CardHeader>
-              <CardTitle className="text-base font-bold text-primary">Leaderboard</CardTitle>
+              <CardTitle className="text-base font-bold text-primary">{t("leaderboard")}</CardTitle>
             </CardHeader>
             <CardContent className="pt-0 flex flex-col gap-1">
               {leaderboard.map((entry, i) => (

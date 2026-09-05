@@ -212,5 +212,50 @@
     "imagePlaceholder": "Imagen de la receta",
     "totalCalories": "Calorías totales",
     "ingredients": "Ingredientes"
+  },
+  "adminNav": {
+    "users": "Usuarios",
+    "catalogExercises": "Catálogo ejercicios",
+    "catalogRecipes": "Catálogo recetas",
+    "catalogMeditations": "Catálogo meditaciones",
+    "settings": "Configuración",
+    "adminBadge": "Administrador",
+    "adminLabel": "Admin",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "avatarAlt": "Foto de perfil"
+  },
+  "adminDashboard": {
+    "title": "Panel de administrador",
+    "subtitle": "Gestiona los usuarios y su contenido asignado",
+    "totalUsers": "Usuarios Totales",
+    "withPlan": "Con plan asignado",
+    "withoutPlan": "Sin plan asignado",
+    "seeMore": "Ver más",
+    "searchPlaceholder": "Buscar por nombre o correo...",
+    "noUsers": "No se encontraron usuarios",
+    "noName": "Sin nombre",
+    "badgeWithPlan": "Con plan",
+    "badgeWithoutPlan": "Sin plan",
+    "leaderboard": "Clasificación"
+  },
+  "adminProfile": {
+    "backToSettings": "Volver a configuración",
+    "title": "Editar perfil",
+    "subtitle": "Actualiza tu foto, nombre y correo de administrador",
+    "avatarAria": "Cambiar foto de perfil",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@email.com",
+    "emailHint": "Cambiar tu correo requiere confirmación por email antes de aplicarse.",
+    "emailPending": "Te enviamos un correo de confirmación a {email}. Tu correo actual seguirá siendo válido hasta que confirmes el cambio.",
+    "savedOk": "Perfil actualizado correctamente.",
+    "saving": "Guardando...",
+    "save": "Guardar cambios",
+    "errImageOnly": "Solo se permiten imágenes.",
+    "errImageSize": "La imagen no puede superar 2MB.",
+    "errUpload": "Error al subir la imagen.",
+    "errSaveChanges": "Error al guardar los cambios."
   }
 }

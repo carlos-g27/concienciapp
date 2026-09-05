@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { getInitials } from "@/hooks/use-profile";
 import type { ShellProfile } from "@/features/shell/types";
 
 // --- Tipos ---
 interface NavItem {
-  label: string;
+  key: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -16,7 +17,7 @@ interface NavItem {
 // --- Items de navegación del admin ---
 const navItems: NavItem[] = [
   {
-    label: "Usuarios",
+    key: "users",
     href: "/admin",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -28,7 +29,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Catálogo ejercicios",
+    key: "catalogExercises",
     href: "/admin/catalog/exercises",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -39,7 +40,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Catálogo recetas",
+    key: "catalogRecipes",
     href: "/admin/catalog/recipes",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -52,7 +53,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Catálogo meditaciones",
+    key: "catalogMeditations",
     href: "/admin/catalog/meditations",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -63,7 +64,7 @@ const navItems: NavItem[] = [
 ];
 
 const settingsItem: NavItem = {
-  label: "Configuración",
+  key: "settings",
   href: "/admin/settings",
   icon: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -82,6 +83,7 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations("adminNav");
 
   return (
     <>
@@ -97,14 +99,14 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
         fixed top-0 left-0 h-full z-30 flex flex-col
         bg-card border-r border-border shadow-lg w-64
         transition-transform duration-300 ease-in-out
-        lg:translate-x-0 lg:static lg:shadow-none lg:z-auto
+        lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:shadow-none lg:z-auto
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
 
         {/* Botón cerrar — móvil */}
         <div className="flex items-center justify-between p-4 lg:hidden">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Admin</span>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors" aria-label="Cerrar menú">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t("adminLabel")}</span>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors" aria-label={t("closeMenu")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -115,17 +117,17 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
         <div className="flex flex-col items-center gap-2 px-6 py-6 border-b border-border">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
             {profile.avatar_url ? (
-              <Image src={profile.avatar_url} alt="Foto de perfil" width={64} height={64} loading="eager" className="object-cover w-full h-full" />
+              <Image src={profile.avatar_url} alt={t("avatarAlt")} width={64} height={64} loading="eager" className="object-cover w-full h-full" />
             ) : (
               getInitials(profile.name ?? "?") || "?"
             )}
           </div>
           <div className="text-center mt-1">
-            <p className="text-sm font-bold text-foreground">{profile.name || "Admin"}</p>
+            <p className="text-sm font-bold text-foreground">{profile.name || t("adminLabel")}</p>
             <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[180px]">{profile.email || ""}</p>
             {/* Badge de rol */}
             <span className="inline-block mt-1.5 text-[0.65rem] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full uppercase tracking-wide">
-              Administrador
+              {t("adminBadge")}
             </span>
           </div>
         </div>
@@ -152,7 +154,7 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
                 <span className={`flex-shrink-0 transition-colors ${isActive ? "text-primary" : "text-accent group-hover:text-muted-foreground"}`}>
                   {item.icon}
                 </span>
-                <span className="flex-1">{item.label}</span>
+                <span className="flex-1">{t(item.key)}</span>
                 {isActive && (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                     <polyline points="9 18 15 12 9 6" />
@@ -180,7 +182,7 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
             <span className={`flex-shrink-0 transition-colors ${pathname === settingsItem.href ? "text-primary" : "text-accent group-hover:text-muted-foreground"}`}>
               {settingsItem.icon}
             </span>
-            <span>{settingsItem.label}</span>
+            <span>{t(settingsItem.key)}</span>
           </Link>
         </div>
       </aside>

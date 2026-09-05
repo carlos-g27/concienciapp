@@ -212,5 +212,50 @@
     "imagePlaceholder": "Recipe image",
     "totalCalories": "Total calories",
     "ingredients": "Ingredients"
+  },
+  "adminNav": {
+    "users": "Users",
+    "catalogExercises": "Exercise catalog",
+    "catalogRecipes": "Recipe catalog",
+    "catalogMeditations": "Meditation catalog",
+    "settings": "Settings",
+    "adminBadge": "Administrator",
+    "adminLabel": "Admin",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "avatarAlt": "Profile photo"
+  },
+  "adminDashboard": {
+    "title": "Admin panel",
+    "subtitle": "Manage users and their assigned content",
+    "totalUsers": "Total users",
+    "withPlan": "With assigned plan",
+    "withoutPlan": "Without assigned plan",
+    "seeMore": "See more",
+    "searchPlaceholder": "Search by name or email...",
+    "noUsers": "No users found",
+    "noName": "No name",
+    "badgeWithPlan": "With plan",
+    "badgeWithoutPlan": "No plan",
+    "leaderboard": "Leaderboard"
+  },
+  "adminProfile": {
+    "backToSettings": "Back to settings",
+    "title": "Edit profile",
+    "subtitle": "Update your admin photo, name and email",
+    "avatarAria": "Change profile photo",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@email.com",
+    "emailHint": "Changing your email requires email confirmation before it takes effect.",
+    "emailPending": "We sent a confirmation email to {email}. Your current email stays valid until you confirm the change.",
+    "savedOk": "Profile updated successfully.",
+    "saving": "Saving...",
+    "save": "Save changes",
+    "errImageOnly": "Only images are allowed.",
+    "errImageSize": "The image can't exceed 2MB.",
+    "errUpload": "Couldn't upload the image.",
+    "errSaveChanges": "Couldn't save the changes."
   }
 }
