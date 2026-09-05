@@ -37,6 +37,20 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Redirige preservando las cookies de sesión que `supabaseResponse` haya
+  // refrescado. Sin esto, un `NextResponse.redirect` "pelado" descarta la
+  // rotación del refresh token y la sesión queda desincronizada (loop de
+  // redirección /admin ⇄ /auth/login). Patrón recomendado por @supabase/ssr.
+  const redirectTo = (path: string) => {
+    const url = request.nextUrl.clone();
+    url.pathname = path;
+    const redirectResponse = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) =>
+      redirectResponse.cookies.set(cookie),
+    );
+    return redirectResponse;
+  };
+
   // ── Redirección global si no hay sesión ─────────────────────
   if (
     !user &&
@@ -44,9 +58,7 @@ export async function proxy(request: NextRequest) {
     !pathname.startsWith("/auth") &&
     !pathname.startsWith("/login")
   ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
+    return redirectTo("/auth/login");
   }
 
   // ── Usuario ya autenticado en landing/login/sign-up → mandarlo directo a su app ──
@@ -62,9 +74,7 @@ export async function proxy(request: NextRequest) {
       .eq("id", user.sub)
       .single();
 
-    const url = request.nextUrl.clone();
-    url.pathname = profile?.role === "admin" ? "/admin" : "/dashboard";
-    return NextResponse.redirect(url);
+    return redirectTo(profile?.role === "admin" ? "/admin" : "/dashboard");
   }
 
   // ── Protección de rutas /admin ───────────────────────────────
@@ -77,9 +87,7 @@ export async function proxy(request: NextRequest) {
 
     if (!profile || profile.role !== "admin") {
       // Usuario sin rol admin → redirigir a su dashboard
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
+      return redirectTo("/dashboard");
     }
   }
 
