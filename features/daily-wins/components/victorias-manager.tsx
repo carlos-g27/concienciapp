@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,7 @@ interface VictoriasManagerProps {
 }
 
 export default function VictoriasManager({ initialWins }: VictoriasManagerProps) {
+  const t = useTranslations("victorias");
   // `wins` guarda el texto en edición (input controlado); `committed` guarda el
   // último valor confirmado por el servidor, para poder revertir si algo falla.
   const [wins, setWins] = useState<DailyWin[]>(initialWins);
@@ -43,7 +45,7 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
       committed.current.set(res.id, label);
       setNewLabel("");
     } else {
-      setError(res.error ?? "No se pudo agregar la victoria.");
+      setError(res.error ?? t("errAdd"));
     }
     setIsAdding(false);
   };
@@ -70,7 +72,7 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
       committed.current.set(win.id, label);
       setLabel(win.id, label);
     } else {
-      setError(res.error ?? "No se pudo guardar la victoria.");
+      setError(res.error ?? t("errUpdate"));
       setLabel(win.id, original);
     }
   };
@@ -83,7 +85,7 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
       committed.current.delete(win.id);
       setWins((prev) => prev.filter((w) => w.id !== win.id));
     } else {
-      setError(res.error ?? "No se pudo eliminar la victoria.");
+      setError(res.error ?? t("errDelete"));
     }
   };
 
@@ -92,14 +94,14 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
 
       {/* Título de página — solo visible en desktop (en móvil ya está en el topbar) */}
       <div className="hidden lg:block">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">Victorias diarias</h1>
+        <h1 className="text-2xl font-bold text-foreground tracking-tight">{t("title")}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-bold text-primary">Mis victorias</CardTitle>
+          <CardTitle className="text-base font-bold text-primary">{t("myWins")}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Define tus mini-metas diarias. Cada día podrás marcarlas desde tu dashboard.
+            {t("manageSubtitle")}
           </p>
         </CardHeader>
         <CardContent className="pt-0 flex flex-col gap-4">
@@ -109,7 +111,7 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
           {/* Lista editable */}
           {wins.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Aún no tienes victorias. Agrega la primera abajo.
+              {t("emptyManager")}
             </p>
           ) : (
             <div className="flex flex-col gap-3">
@@ -122,13 +124,13 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
                     onBlur={() => handleEditBlur(win)}
                     maxLength={80}
                     className="flex-1"
-                    aria-label="Editar victoria"
+                    aria-label={t("editAria")}
                   />
                   <button
                     type="button"
                     onClick={() => handleDelete(win)}
                     className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
-                    aria-label="Eliminar victoria"
+                    aria-label={t("deleteAria")}
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18" />
@@ -142,12 +144,12 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
 
           {/* Agregar victoria */}
           <div className="flex flex-col gap-2 pt-2 border-t border-border">
-            <Label htmlFor="new-win">Nueva victoria</Label>
+            <Label htmlFor="new-win">{t("newWin")}</Label>
             <div className="flex items-center gap-3">
               <Input
                 id="new-win"
                 type="text"
-                placeholder="Ej. Beber 2L de agua"
+                placeholder={t("newWinPlaceholder")}
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
                 onKeyDown={(e) => {
@@ -165,12 +167,12 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
                 onClick={handleAdd}
                 disabled={isAdding || limitReached || newLabel.trim() === ""}
               >
-                {isAdding ? "Agregando..." : "Agregar"}
+                {isAdding ? t("adding") : t("add")}
               </Button>
             </div>
             {limitReached && (
               <p className="text-xs text-muted-foreground">
-                Has alcanzado el máximo de {MAX_DAILY_WINS} victorias diarias.
+                {t("limitReached", { max: MAX_DAILY_WINS })}
               </p>
             )}
           </div>

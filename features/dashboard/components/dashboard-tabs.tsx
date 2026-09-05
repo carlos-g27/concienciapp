@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 // Único island interactivo del dashboard: barra de tabs.
 // El resto de la vista es server-first.
@@ -8,6 +9,7 @@ import { useState } from "react";
 type Tab = "improvement" | "general";
 
 export default function DashboardTabs() {
+  const t = useTranslations("dashboard");
   const [active, setActive] = useState<Tab>("improvement");
 
   return (
@@ -20,7 +22,7 @@ export default function DashboardTabs() {
             : "pb-3 text-sm font-medium text-accent hover:text-muted-foreground transition-colors"
         }
       >
-        Improvement
+        {t("tabImprovement")}
       </button>
       <button
         onClick={() => setActive("general")}
@@ -30,7 +32,7 @@ export default function DashboardTabs() {
             : "pb-3 text-sm font-medium text-accent hover:text-muted-foreground transition-colors"
         }
       >
-        General
+        {t("tabGeneral")}
       </button>
     </div>
   );

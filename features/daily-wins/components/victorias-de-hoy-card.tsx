@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import VictoriasRing from "./victorias-ring";
@@ -9,6 +10,7 @@ import { toggleWinToday } from "../actions";
 import type { TodayWins, WinToday } from "../types";
 
 export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
+  const t = useTranslations("victorias");
   const [wins, setWins] = useState<WinToday[]>(data.wins);
   const [, startTransition] = useTransition();
 
@@ -32,17 +34,17 @@ export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base font-bold text-primary">Victorias de hoy</CardTitle>
+        <CardTitle className="text-base font-bold text-primary">{t("cardTitle")}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         {wins.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-8 text-center">
-            <p className="text-sm text-muted-foreground">Aún no tienes victorias diarias.</p>
+            <p className="text-sm text-muted-foreground">{t("emptyCard")}</p>
             <Link
               href="/victorias"
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
             >
-              Crear mis victorias
+              {t("createCta")}
             </Link>
           </div>
         ) : (
@@ -77,7 +79,7 @@ export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
                 href="/victorias"
                 className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
               >
-                Gestionar victorias
+                {t("manageCta")}
               </Link>
             </li>
             </ul>

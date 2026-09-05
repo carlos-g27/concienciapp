@@ -62,5 +62,37 @@
   },
   "auth": {
     "logout": "Cerrar sesión"
+  },
+  "dashboard": {
+    "progress": "Progress",
+    "tabImprovement": "Improvement",
+    "tabGeneral": "General",
+    "rmTitle": "Progreso de RM (kg)",
+    "rmNoMainLifts": "Aún no hay ejercicios principales configurados.",
+    "rmNoData": "Cuando marques tu primer RM, lo podrás ver aquí.",
+    "kgUnit": " kg"
+  },
+  "victorias": {
+    "title": "Victorias diarias",
+    "cardTitle": "Victorias de hoy",
+    "emptyCard": "Aún no tienes victorias diarias.",
+    "createCta": "Crear mis victorias",
+    "manageCta": "Gestionar victorias",
+    "myWins": "Mis victorias",
+    "manageSubtitle": "Define tus mini-metas diarias. Cada día podrás marcarlas desde tu dashboard.",
+    "emptyManager": "Aún no tienes victorias. Agrega la primera abajo.",
+    "newWin": "Nueva victoria",
+    "newWinPlaceholder": "Ej. Beber 2L de agua",
+    "add": "Agregar",
+    "adding": "Agregando...",
+    "limitReached": "Has alcanzado el máximo de {max} victorias diarias.",
+    "editAria": "Editar victoria",
+    "deleteAria": "Eliminar victoria",
+    "errAdd": "No se pudo agregar la victoria.",
+    "errUpdate": "No se pudo guardar la victoria.",
+    "errDelete": "No se pudo eliminar la victoria.",
+    "errToggle": "No se pudo actualizar la victoria.",
+    "errLimit": "Solo puedes tener hasta {max} victorias diarias.",
+    "errInvalid": "Victoria inválida."
   }
 }

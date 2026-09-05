@@ -62,5 +62,37 @@
   },
   "auth": {
     "logout": "Log out"
+  },
+  "dashboard": {
+    "progress": "Progress",
+    "tabImprovement": "Improvement",
+    "tabGeneral": "General",
+    "rmTitle": "1RM progress (kg)",
+    "rmNoMainLifts": "No main lifts have been set up yet.",
+    "rmNoData": "Once you log your first 1RM, you'll see it here.",
+    "kgUnit": " kg"
+  },
+  "victorias": {
+    "title": "Daily wins",
+    "cardTitle": "Today's wins",
+    "emptyCard": "You don't have any daily wins yet.",
+    "createCta": "Create my wins",
+    "manageCta": "Manage wins",
+    "myWins": "My wins",
+    "manageSubtitle": "Set your small daily goals. Each day you'll be able to check them off from your dashboard.",
+    "emptyManager": "You don't have any wins yet. Add your first one below.",
+    "newWin": "New win",
+    "newWinPlaceholder": "e.g. Drink 2L of water",
+    "add": "Add",
+    "adding": "Adding...",
+    "limitReached": "You've reached the maximum of {max} daily wins.",
+    "editAria": "Edit win",
+    "deleteAria": "Delete win",
+    "errAdd": "Couldn't add the win.",
+    "errUpdate": "Couldn't save the win.",
+    "errDelete": "Couldn't delete the win.",
+    "errToggle": "Couldn't update the win.",
+    "errLimit": "You can only have up to {max} daily wins.",
+    "errInvalid": "Invalid win."
   }
 }
