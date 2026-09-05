@@ -410,5 +410,14 @@
     "actRoutineSaveError": "Couldn't save the routine.",
     "actMealsInvalid": "Invalid plan data.",
     "actMealsSaveError": "Couldn't save the meal plan."
+  },
+  "notFound": {
+    "badge": "SESSION INTERRUPTED",
+    "title": "Error 404",
+    "description": "We lost the signal of your routine. The page you're looking for doesn't exist or has moved, but your progress in Conciencia is still intact.",
+    "backHome": "Back to home",
+    "illustrationCode": "404",
+    "illustrationLabel": "RHYTHM NOT FOUND",
+    "footer": "© Conciencia · Find your balance, even when the app doesn't."
   }
 }

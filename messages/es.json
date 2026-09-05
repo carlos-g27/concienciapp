@@ -410,5 +410,14 @@
     "actRoutineSaveError": "No se pudo guardar la rutina.",
     "actMealsInvalid": "Datos del plan inválidos.",
     "actMealsSaveError": "No se pudo guardar el plan de comidas."
+  },
+  "notFound": {
+    "badge": "SESIÓN INTERRUMPIDA",
+    "title": "Error 404",
+    "description": "Perdimos la señal de tu rutina. La página que buscas no existe o cambió de lugar, pero tu progreso en Conciencia sigue intacto.",
+    "backHome": "Volver al inicio",
+    "illustrationCode": "404",
+    "illustrationLabel": "RITMO NO ENCONTRADO",
+    "footer": "© Conciencia · Encuentra tu equilibrio, incluso cuando la app no lo hace."
   }
 }
