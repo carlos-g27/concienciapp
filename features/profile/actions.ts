@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth/require-user";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -23,6 +24,7 @@ export interface ActionResult {
  */
 export async function updateProfile(formData: FormData): Promise<ActionResult> {
   const user = await requireUser();
+  const t = await getTranslations("profile");
 
   const parsed = profileUpdateSchema.safeParse({
     name: formData.get("name"),
@@ -33,7 +35,7 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
   });
 
   if (!parsed.success) {
-    return { success: false, error: "Datos inválidos. Revisa los campos." };
+    return { success: false, error: t("errInvalid") };
   }
 
   const { name, phone, goal, age, weight } = parsed.data;
@@ -57,7 +59,7 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
     return { success: true };
   } catch (err) {
     console.error("[updateProfile] error:", err);
-    return { success: false, error: "No se pudo guardar el perfil." };
+    return { success: false, error: t("errSaveProfile") };
   }
 }
 
@@ -68,17 +70,18 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
  */
 export async function uploadAvatar(formData: FormData): Promise<ActionResult> {
   const user = await requireUser();
+  const t = await getTranslations("profile");
 
   const file = formData.get("avatar");
   if (!(file instanceof File) || file.size === 0) {
-    return { success: false, error: "No se recibió ninguna imagen." };
+    return { success: false, error: t("errNoImage") };
   }
 
   if (!AVATAR_ALLOWED_TYPES.includes(file.type as (typeof AVATAR_ALLOWED_TYPES)[number])) {
-    return { success: false, error: "Formato no permitido. Usa JPG, PNG o WebP." };
+    return { success: false, error: t("errFormat") };
   }
   if (file.size > AVATAR_MAX_BYTES) {
-    return { success: false, error: "La imagen no puede superar 2MB." };
+    return { success: false, error: t("errImageSize") };
   }
 
   try {
@@ -107,6 +110,6 @@ export async function uploadAvatar(formData: FormData): Promise<ActionResult> {
     return { success: true, avatarUrl: publicUrl };
   } catch (err) {
     console.error("[uploadAvatar] error:", err);
-    return { success: false, error: "No se pudo subir la imagen." };
+    return { success: false, error: t("errAvatarUpload") };
   }
 }

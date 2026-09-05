@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import AccordionWrapper from "@/components/ui/accordion-wrapper";
 import type { Recipe } from "../types";
 import styles from "./meal-detail.module.css";
@@ -12,6 +13,8 @@ interface MealDetailProps {
 
 // --- Componente ---
 export default function MealDetail({ recipe, isOpen, onToggle }: MealDetailProps) {
+  const t = useTranslations("nutricion");
+
   return (
     <AccordionWrapper
       title={recipe.name}
@@ -31,19 +34,19 @@ export default function MealDetail({ recipe, isOpen, onToggle }: MealDetailProps
             <circle cx="8.5" cy="8.5" r="1.5" />
             <polyline points="21 15 16 10 5 21" />
           </svg>
-          <span className={styles.imagePlaceholderLabel}>Imagen de la receta</span>
+          <span className={styles.imagePlaceholderLabel}>{t("imagePlaceholder")}</span>
         </div>
       )}
 
       {/* Calorías totales */}
       <div className={styles.caloriesRow}>
-        <span className={styles.caloriesLabel}>Calorías totales</span>
+        <span className={styles.caloriesLabel}>{t("totalCalories")}</span>
         <span className={styles.caloriesValue}>{recipe.calories} kcal</span>
       </div>
 
       {/* Lista de ingredientes */}
       <div className={styles.ingredientsSection}>
-        <span className={styles.ingredientsTitle}>Ingredientes</span>
+        <span className={styles.ingredientsTitle}>{t("ingredients")}</span>
         <div className={styles.ingredientsList}>
           {recipe.ingredients.map((ing, i) => (
             <div key={i} className={styles.ingredientRow}>
