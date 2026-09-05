@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,6 +52,7 @@ interface AdminUserProfileViewProps {
 
 export default function AdminUserProfileView({ profile, counts }: AdminUserProfileViewProps) {
   const router = useRouter();
+  const t = useTranslations("adminAssign");
   const userId = profile.id;
 
   const [draft, setDraft] = useState({ weight: profile.weight, age: profile.age, goal: profile.goal });
@@ -66,11 +68,11 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
     const res = await updateUserProfile(userId, draft);
 
     if (res.success) {
-      setSuccessMsg("Información actualizada correctamente.");
+      setSuccessMsg(t("savedInfo"));
       setTimeout(() => setSuccessMsg(null), 3000);
       router.refresh();
     } else {
-      setError(res.error ?? "Error al guardar.");
+      setError(res.error ?? t("errSave"));
     }
 
     setIsSaving(false);
@@ -84,7 +86,7 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
         </svg>
-        Volver a usuarios
+        {t("backToUsers")}
       </Link>
 
       {/* Card: perfil del usuario */}
@@ -111,33 +113,33 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
           {/* Campos editables */}
           <div className={styles.fieldsGrid}>
             <div className={styles.field}>
-              <Label htmlFor="weight">Peso (kg)</Label>
+              <Label htmlFor="weight">{t("weight")}</Label>
               <Input
                 id="weight"
                 type="number"
-                placeholder="70"
+                placeholder={t("weightPh")}
                 value={draft.weight}
                 onChange={(e) => setDraft((d) => ({ ...d, weight: e.target.value }))}
               />
             </div>
 
             <div className={styles.field}>
-              <Label htmlFor="age">Edad</Label>
+              <Label htmlFor="age">{t("age")}</Label>
               <Input
                 id="age"
                 type="number"
-                placeholder="28"
+                placeholder={t("agePh")}
                 value={draft.age}
                 onChange={(e) => setDraft((d) => ({ ...d, age: e.target.value }))}
               />
             </div>
 
             <div className={styles.field}>
-              <Label htmlFor="goal">Objetivo</Label>
+              <Label htmlFor="goal">{t("goal")}</Label>
               <Input
                 id="goal"
                 type="text"
-                placeholder="Ganar músculo"
+                placeholder={t("goalPh")}
                 value={draft.goal}
                 onChange={(e) => setDraft((d) => ({ ...d, goal: e.target.value }))}
               />
@@ -147,7 +149,7 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
           {/* Botón guardar + feedback */}
           <div className={styles.saveRow}>
             <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Guardando..." : "Guardar cambios"}
+              {isSaving ? t("saving") : t("save")}
             </Button>
             {successMsg && <span className={styles.successMsg}>{successMsg}</span>}
             {error && <span className={styles.errorMsg}>{error}</span>}
@@ -159,24 +161,24 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
       {/* Category cards de pilares */}
       <div className={styles.categoryGrid}>
         <CategoryCard
-          title="Pilar Físico"
+          title={t("pillarFisico")}
           icon={<IconFisico />}
-          footerPrimaryText={`${counts.exercises} ejercicio${counts.exercises !== 1 ? "s" : ""}`}
-          footerSecondaryText="Editar rutina"
+          footerPrimaryText={t("exercisesCount", { count: counts.exercises })}
+          footerSecondaryText={t("editRoutine")}
           onClick={() => router.push(`/admin/users/${userId}/fisico`)}
         />
         <CategoryCard
-          title="Pilar Nutrición"
+          title={t("pillarNutricion")}
           icon={<IconNutricion />}
-          footerPrimaryText={`${counts.recipes} receta${counts.recipes !== 1 ? "s" : ""}`}
-          footerSecondaryText="Editar plan"
+          footerPrimaryText={t("recipesCount", { count: counts.recipes })}
+          footerSecondaryText={t("editPlan")}
           onClick={() => router.push(`/admin/users/${userId}/nutricion`)}
         />
         <CategoryCard
-          title="Pilar Mental"
+          title={t("pillarMental")}
           icon={<IconMental />}
-          footerPrimaryText={`${counts.meditations} meditacion${counts.meditations !== 1 ? "es" : ""}`}
-          footerSecondaryText="Editar meditaciones"
+          footerPrimaryText={t("meditationsCount", { count: counts.meditations })}
+          footerSecondaryText={t("editMeditations")}
           onClick={() => router.push(`/admin/users/${userId}/mental`)}
         />
       </div>

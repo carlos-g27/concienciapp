@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { saveRoutineSchema } from "./schema";
@@ -27,14 +28,15 @@ export async function saveUserRoutine(
   input: SaveRoutineFormInput,
 ): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminAssign");
 
   if (!z.string().uuid().safeParse(userId).success) {
-    return { success: false, error: "Usuario inválido." };
+    return { success: false, error: t("actInvalidUser") };
   }
 
   const parsed = saveRoutineSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Datos de rutina inválidos." };
+    return { success: false, error: t("actRoutineInvalid") };
   }
 
   try {
@@ -59,6 +61,6 @@ export async function saveUserRoutine(
     return { success: true };
   } catch (err) {
     console.error("[saveUserRoutine] error:", err);
-    return { success: false, error: "No se pudo guardar la rutina." };
+    return { success: false, error: t("actRoutineSaveError") };
   }
 }

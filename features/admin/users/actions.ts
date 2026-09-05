@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { userUpdateSchema, type UserUpdateFormInput } from "./schema";
@@ -21,14 +22,15 @@ export async function updateUserProfile(
   input: UserUpdateFormInput,
 ): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminAssign");
 
   if (!z.string().uuid().safeParse(userId).success) {
-    return { success: false, error: "Usuario inválido." };
+    return { success: false, error: t("actInvalidUser") };
   }
 
   const parsed = userUpdateSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Datos inválidos. Revisa los campos." };
+    return { success: false, error: t("actUserInvalidData") };
   }
 
   const { weight, age, goal } = parsed.data;
@@ -50,6 +52,6 @@ export async function updateUserProfile(
     return { success: true };
   } catch (err) {
     console.error("[updateUserProfile] error:", err);
-    return { success: false, error: "No se pudo guardar la información." };
+    return { success: false, error: t("actUserSaveError") };
   }
 }

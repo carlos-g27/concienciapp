@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { saveMealsSchema, type SaveMealsInput } from "./schema";
@@ -17,14 +18,15 @@ export interface ActionResult {
  */
 export async function saveUserMeals(userId: string, input: SaveMealsInput): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminAssign");
 
   if (!z.string().uuid().safeParse(userId).success) {
-    return { success: false, error: "Usuario inválido." };
+    return { success: false, error: t("actInvalidUser") };
   }
 
   const parsed = saveMealsSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: "Datos del plan inválidos." };
+    return { success: false, error: t("actMealsInvalid") };
   }
 
   try {
@@ -42,6 +44,6 @@ export async function saveUserMeals(userId: string, input: SaveMealsInput): Prom
     return { success: true };
   } catch (err) {
     console.error("[saveUserMeals] error:", err);
-    return { success: false, error: "No se pudo guardar el plan de comidas." };
+    return { success: false, error: t("actMealsSaveError") };
   }
 }

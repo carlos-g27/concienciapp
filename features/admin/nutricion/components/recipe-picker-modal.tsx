@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
 import { deleteRecipe } from "@/features/admin/recipes/actions";
 import type { CatalogRecipe, MealType } from "../types";
@@ -22,6 +23,7 @@ export default function RecipePickerModal({
   onClose,
 }: RecipePickerModalProps) {
   const router = useRouter();
+  const t = useTranslations("adminAssign");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -44,9 +46,7 @@ export default function RecipePickerModal({
 
   const handleDelete = async (item: PickerItem & { original: CatalogRecipe }) => {
     const recipe = item.original;
-    const confirmed = window.confirm(
-      `¿Eliminar "${recipe.name}"? Esto también la quitará del plan de todos los usuarios que la tengan asignada.`
-    );
+    const confirmed = window.confirm(t("pickerDeleteConfirmRec", { name: recipe.name }));
     if (!confirmed) return;
 
     setDeletingId(recipe.id);
@@ -55,32 +55,32 @@ export default function RecipePickerModal({
       router.refresh();
     } else {
       console.error("Error eliminando receta:", res.error);
-      alert("No se pudo eliminar la receta. Intenta de nuevo.");
+      alert(t("pickerDeleteErrorRec"));
     }
     setDeletingId(null);
   };
 
   return (
     <PickerModal
-      title="Agregar receta"
-      searchPlaceholder="Buscar receta..."
+      title={t("pickerAddRecipe")}
+      searchPlaceholder={t("pickerSearchRecipe")}
       search={search}
       onSearchChange={setSearch}
       items={pickerItems}
       isLoading={false}
       emptyMessage={
         catalog.filter((r) => r.meal_type === mealType).length === 0
-          ? "Aún no hay recetas para esta comida."
-          : "No se encontraron recetas."
+          ? t("pickerEmptyNoneRec")
+          : t("pickerEmptyNoResultsRec")
       }
       deletingId={deletingId}
       onSelect={(item) => onSelect(item.original)}
       onEdit={handleEdit}
       onDelete={handleDelete}
       onClose={onClose}
-      footerPrompt="¿No encuentras la receta?"
+      footerPrompt={t("pickerFooterRec")}
       createLinkHref={`/admin/recipes?type=${mealType}`}
-      createLinkLabel="+ Crear nueva receta"
+      createLinkLabel={t("pickerCreateRec")}
     />
   );
 }
