@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import TabbedCard, { TabItem } from "@/components/ui/tabbed-card";
 import RecipePickerModal from "./recipe-picker-modal";
@@ -9,11 +10,7 @@ import { saveUserMeals } from "../actions";
 import type { CatalogRecipe, MealsByType, MealType } from "../types";
 import styles from "./admin-nutricion.module.css";
 
-const MEAL_TABS: { key: MealType; label: string }[] = [
-  { key: "breakfast", label: "Desayuno" },
-  { key: "lunch",     label: "Almuerzo" },
-  { key: "dinner",    label: "Cena" },
-];
+const MEAL_KEYS: MealType[] = ["breakfast", "lunch", "dinner"];
 
 interface AdminNutricionViewProps {
   userId: string;
@@ -22,6 +19,8 @@ interface AdminNutricionViewProps {
 }
 
 export default function AdminNutricionView({ userId, initialMeals, catalog }: AdminNutricionViewProps) {
+  const t = useTranslations("adminAssign");
+  const tn = useTranslations("nutricion");
   const [activeMeal, setActiveMeal] = useState<MealType>("breakfast");
   const [meals, setMeals] = useState<MealsByType>(initialMeals);
   const [isSaving, setIsSaving] = useState(false);
@@ -57,10 +56,10 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
     const res = await saveUserMeals(userId, { recipeIds });
 
     if (res.success) {
-      setSuccessMsg("Plan de comidas guardado correctamente.");
+      setSuccessMsg(t("savedMeals"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {
-      setError(res.error ?? "Error al guardar.");
+      setError(res.error ?? t("errSave"));
     }
 
     setIsSaving(false);
@@ -69,10 +68,10 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
   const totalAssigned = Object.values(meals).reduce((sum, list) => sum + list.length, 0);
   const activeRecipes = meals[activeMeal];
 
-  const tabItems: TabItem[] = MEAL_TABS.map((tab) => ({
-    key: tab.key,
-    label: tab.label,
-    badge: meals[tab.key].length,
+  const tabItems: TabItem[] = MEAL_KEYS.map((key) => ({
+    key,
+    label: tn(key),
+    badge: meals[key].length,
   }));
 
   return (
@@ -82,18 +81,18 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
         </svg>
-        Volver al perfil
+        {t("backToProfile")}
       </Link>
 
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Plan de comidas — Pilar Nutrición</h1>
+          <h1 className={styles.pageTitle}>{t("nutricionTitle")}</h1>
           <p className={styles.pageSubtitle}>
-            {totalAssigned} receta{totalAssigned !== 1 ? "s" : ""} asignada{totalAssigned !== 1 ? "s" : ""} en total
+            {t("assignedTotalRecipes", { count: totalAssigned })}
           </p>
         </div>
         <Button onClick={handleSaveMeals} disabled={isSaving}>
-          {isSaving ? "Guardando..." : "Guardar cambios"}
+          {isSaving ? t("saving") : t("save")}
         </Button>
       </div>
 
@@ -108,7 +107,7 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
         {/* Lista de recetas asignadas a la comida activa */}
         <div className={styles.assignedList}>
           {activeRecipes.length === 0 ? (
-            <p className={styles.emptyMeal}>Sin recetas asignadas para esta comida.</p>
+            <p className={styles.emptyMeal}>{t("emptyMeal")}</p>
           ) : (
             activeRecipes.map((recipe) => (
               <div key={recipe.recipeId} className={styles.recipeRow}>
@@ -133,7 +132,7 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
                 <button
                   onClick={() => handleRemove(recipe.recipeId)}
                   className={styles.deleteBtn}
-                  aria-label="Quitar receta"
+                  aria-label={t("removeRecipe")}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" />
@@ -152,7 +151,7 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          Agregar receta
+          {t("addRecipe")}
         </button>
       </TabbedCard>
 

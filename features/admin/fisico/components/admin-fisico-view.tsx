@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,13 +12,7 @@ import { saveUserRoutine } from "../actions";
 import type { AssignedExercise, CatalogExercise, Day, FocusByDay, RoutineByDay } from "../types";
 import styles from "./admin-fisico.module.css";
 
-const DAYS: { key: Day; label: string }[] = [
-  { key: "lunes",     label: "Lunes" },
-  { key: "martes",    label: "Martes" },
-  { key: "miercoles", label: "Miércoles" },
-  { key: "jueves",    label: "Jueves" },
-  { key: "viernes",   label: "Viernes" },
-];
+const DAY_KEYS: Day[] = ["lunes", "martes", "miercoles", "jueves", "viernes"];
 
 interface AdminFisicoViewProps {
   userId: string;
@@ -27,6 +22,8 @@ interface AdminFisicoViewProps {
 }
 
 export default function AdminFisicoView({ userId, initialRoutine, initialFocus, catalog }: AdminFisicoViewProps) {
+  const t = useTranslations("adminAssign");
+  const tf = useTranslations("fisico");
   const [activeDay, setActiveDay] = useState<Day>("lunes");
   const [routine, setRoutine] = useState<RoutineByDay>(initialRoutine);
   const [dayFocus, setDayFocus] = useState<FocusByDay>(initialFocus);
@@ -79,10 +76,10 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
     const res = await saveUserRoutine(userId, { routine: routineRows, focus: focusRows });
 
     if (res.success) {
-      setSuccessMsg("Cambios guardados correctamente.");
+      setSuccessMsg(t("savedChanges"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {
-      setError(res.error ?? "Error al guardar.");
+      setError(res.error ?? t("errSave"));
     }
 
     setIsSaving(false);
@@ -91,10 +88,10 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
   const totalAssigned = Object.values(routine).reduce((sum, day) => sum + day.length, 0);
   const activeExercises = routine[activeDay];
 
-  const tabItems: TabItem[] = DAYS.map((tab) => ({
-    key: tab.key,
-    label: tab.label,
-    badge: routine[tab.key].length,
+  const tabItems: TabItem[] = DAY_KEYS.map((key) => ({
+    key,
+    label: tf(`days.${key}`),
+    badge: routine[key].length,
   }));
 
   return (
@@ -104,18 +101,18 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
         </svg>
-        Volver al perfil
+        {t("backToProfile")}
       </Link>
 
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Editar rutina — Pilar Físico</h1>
+          <h1 className={styles.pageTitle}>{t("fisicoTitle")}</h1>
           <p className={styles.pageSubtitle}>
-            {totalAssigned} ejercicio{totalAssigned !== 1 ? "s" : ""} asignado{totalAssigned !== 1 ? "s" : ""} en total
+            {t("assignedTotal", { count: totalAssigned })}
           </p>
         </div>
         <Button onClick={handleSaveRoutine} disabled={isSaving}>
-          {isSaving ? "Guardando..." : "Guardar cambios"}
+          {isSaving ? t("saving") : t("save")}
         </Button>
       </div>
 
@@ -129,11 +126,11 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
       >
         {/* Enfoque del día */}
         <div className={styles.focusField}>
-          <Label htmlFor="focus">Enfoque del día</Label>
+          <Label htmlFor="focus">{t("dayFocus")}</Label>
           <Input
             id="focus"
             type="text"
-            placeholder="Ej: Pecho y Tríceps"
+            placeholder={t("dayFocusPh")}
             value={dayFocus[activeDay]}
             onChange={(e) => setDayFocus((prev) => ({ ...prev, [activeDay]: e.target.value }))}
           />
@@ -142,7 +139,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
         {/* Lista de ejercicios asignados al día activo */}
         <div className={styles.assignedList}>
           {activeExercises.length === 0 ? (
-            <p className={styles.emptyDay}>Sin ejercicios asignados este día.</p>
+            <p className={styles.emptyDay}>{t("emptyDay")}</p>
           ) : (
             activeExercises.map((exercise) => (
               <div key={exercise.exerciseId} className={styles.exerciseRow}>
@@ -168,7 +165,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
                         onChange={(e) => handleUpdateField(exercise.exerciseId, "sets", Number(e.target.value))}
                         className={styles.fieldInput}
                       />
-                      <span className={styles.fieldSuffix}>series</span>
+                      <span className={styles.fieldSuffix}>{t("seriesSuffix")}</span>
                     </div>
                     <div className={styles.fieldGroup}>
                       <Input
@@ -178,7 +175,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
                         onChange={(e) => handleUpdateField(exercise.exerciseId, "reps", Number(e.target.value))}
                         className={styles.fieldInput}
                       />
-                      <span className={styles.fieldSuffix}>reps</span>
+                      <span className={styles.fieldSuffix}>{t("repsSuffix")}</span>
                     </div>
                   </div>
                 </div>
@@ -186,7 +183,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
                 <button
                   onClick={() => handleRemove(exercise.exerciseId)}
                   className={styles.deleteBtn}
-                  aria-label="Quitar ejercicio"
+                  aria-label={t("removeExercise")}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" />
@@ -205,7 +202,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          Agregar ejercicio
+          {t("addExercise")}
         </button>
       </TabbedCard>
 

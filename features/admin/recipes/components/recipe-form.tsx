@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
@@ -14,10 +15,11 @@ interface IngredientRow {
   quantity: string;
 }
 
-const MEAL_TYPE_OPTIONS: { value: MealType; label: string }[] = [
-  { value: "breakfast", label: "Desayuno" },
-  { value: "lunch", label: "Almuerzo" },
-  { value: "dinner", label: "Cena" },
+// value = tipo de comida; labelKey = clave en el namespace `nutricion`.
+const MEAL_TYPE_OPTIONS: { value: MealType; labelKey: string }[] = [
+  { value: "breakfast", labelKey: "breakfast" },
+  { value: "lunch", labelKey: "lunch" },
+  { value: "dinner", labelKey: "dinner" },
 ];
 
 function isMealType(value: string | null | undefined): value is MealType {
@@ -31,6 +33,8 @@ interface RecipeFormProps {
 
 export default function RecipeForm({ initialRecipe, initialType }: RecipeFormProps) {
   const router = useRouter();
+  const t = useTranslations("adminCatalog");
+  const tn = useTranslations("nutricion");
   const isEditMode = Boolean(initialRecipe);
 
   const [name, setName] = useState(initialRecipe?.name ?? "");
@@ -62,7 +66,7 @@ export default function RecipeForm({ initialRecipe, initialType }: RecipeFormPro
     setError(null);
 
     if (!name.trim() || !calories.trim()) {
-      setError("El nombre y las calorías son obligatorios.");
+      setError(t("recReqError"));
       return;
     }
 
@@ -84,26 +88,26 @@ export default function RecipeForm({ initialRecipe, initialType }: RecipeFormPro
     if (res.success) {
       router.back();
     } else {
-      setError(res.error ?? "Error al guardar la receta.");
+      setError(res.error ?? t("recSaveError"));
       setIsSaving(false);
     }
   };
 
   return (
     <AdminFormLayout
-      title={isEditMode ? "Editar receta" : "Crear nueva receta"}
-      subtitle={isEditMode ? "Los cambios se aplicarán a todos los usuarios que tengan esta receta asignada" : "Esta receta quedará disponible en el catálogo global"}
+      title={isEditMode ? t("recFormEditTitle") : t("recFormCreateTitle")}
+      subtitle={isEditMode ? t("recFormEditSubtitle") : t("recFormCreateSubtitle")}
       isLoading={false}
       isSaving={isSaving}
-      loadingText="Cargando receta..."
-      submitText={isEditMode ? "Guardar cambios" : "Crear receta"}
+      loadingText={t("recFormLoading")}
+      submitText={isEditMode ? t("recFormSaveBtn") : t("recFormCreateBtn")}
       error={error}
       onSubmit={handleSubmit}
     >
       {/* Preview de imagen */}
       <div className="w-full aspect-[16/7] rounded-2xl overflow-hidden bg-secondary">
         {imageUrl && !imgError ? (
-          <img src={imageUrl} alt={name || "Vista previa"} onError={() => setImgError(true)} className="w-full h-full object-cover block" />
+          <img src={imageUrl} alt={name || t("recPreviewAlt")} onError={() => setImgError(true)} className="w-full h-full object-cover block" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
@@ -118,48 +122,48 @@ export default function RecipeForm({ initialRecipe, initialType }: RecipeFormPro
       {/* Nombre + Calorías */}
       <div className="flex gap-4">
         <div className="flex flex-col gap-2 flex-1">
-          <Label htmlFor="name">Nombre de la receta</Label>
-          <Input id="name" type="text" placeholder="Bowl de Avena con Frutas" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Label htmlFor="name">{t("recName")}</Label>
+          <Input id="name" type="text" placeholder={t("recNamePh")} value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
         <div className="flex flex-col gap-2 w-[140px]">
-          <Label htmlFor="calories">Calorías (kcal)</Label>
-          <Input id="calories" type="number" min="0" placeholder="420" value={calories} onChange={(e) => setCalories(e.target.value)} required />
+          <Label htmlFor="calories">{t("recCalories")}</Label>
+          <Input id="calories" type="number" min="0" placeholder={t("recCaloriesPh")} value={calories} onChange={(e) => setCalories(e.target.value)} required />
         </div>
       </div>
 
       {/* Tipo de comida */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="mealType">Tipo de comida</Label>
+        <Label htmlFor="mealType">{t("recMealType")}</Label>
         <select id="mealType" value={mealType} onChange={(e) => setMealType(e.target.value as MealType)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
           {MEAL_TYPE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <option key={opt.value} value={opt.value}>{tn(opt.labelKey)}</option>
           ))}
         </select>
       </div>
 
       {/* URL de imagen */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="image">URL de imagen</Label>
-        <Input id="image" type="url" placeholder="https://..." value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImgError(false); }} />
+        <Label htmlFor="image">{t("recImageUrl")}</Label>
+        <Input id="image" type="url" placeholder={t("recImageUrlPh")} value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImgError(false); }} />
       </div>
 
       {/* Ingredientes */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Label>Ingredientes</Label>
-          <span className="text-xs text-muted-foreground">{ingredients.length} ítems</span>
+          <Label>{t("recIngredients")}</Label>
+          <span className="text-xs text-muted-foreground">{t("recItems", { count: ingredients.length })}</span>
         </div>
 
         <div className="border border-border rounded-xl overflow-hidden mt-1">
           <div className="grid grid-cols-[1fr_130px_32px] gap-2 px-3.5 py-2 bg-secondary border-b border-border">
-            <span className="text-[0.68rem] font-bold text-muted-foreground uppercase tracking-wider">Ingrediente</span>
-            <span className="text-[0.68rem] font-bold text-muted-foreground uppercase tracking-wider">Cantidad</span>
+            <span className="text-[0.68rem] font-bold text-muted-foreground uppercase tracking-wider">{t("recIngredientCol")}</span>
+            <span className="text-[0.68rem] font-bold text-muted-foreground uppercase tracking-wider">{t("recQuantityCol")}</span>
             <span />
           </div>
           {ingredients.map((ing) => (
             <div key={ing.id} className="grid grid-cols-[1fr_130px_32px] items-center gap-2 px-3.5 py-1 border-b border-border last:border-0">
-              <input type="text" placeholder="ej. Avena" value={ing.name} onChange={(e) => updateIngredient(ing.id, "name", e.target.value)} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground min-w-0" />
-              <input type="text" placeholder="ej. 200 g" value={ing.quantity} onChange={(e) => updateIngredient(ing.id, "quantity", e.target.value)} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground min-w-0" />
+              <input type="text" placeholder={t("recIngredientPh")} value={ing.name} onChange={(e) => updateIngredient(ing.id, "name", e.target.value)} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground min-w-0" />
+              <input type="text" placeholder={t("recQuantityPh")} value={ing.quantity} onChange={(e) => updateIngredient(ing.id, "quantity", e.target.value)} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground min-w-0" />
               <button type="button" onClick={() => removeIngredient(ing.id)} className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="3 6 5 6 21 6" />
@@ -175,7 +179,7 @@ export default function RecipeForm({ initialRecipe, initialType }: RecipeFormPro
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          Añadir ingrediente
+          {t("recAddIngredient")}
         </button>
       </div>
     </AdminFormLayout>

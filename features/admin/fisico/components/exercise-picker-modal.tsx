@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
 import { deleteExercise } from "@/features/admin/exercises/actions";
 import type { CatalogExercise } from "../types";
@@ -20,6 +21,7 @@ export default function ExercisePickerModal({
   onClose,
 }: ExercisePickerModalProps) {
   const router = useRouter();
+  const t = useTranslations("adminAssign");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -50,9 +52,7 @@ export default function ExercisePickerModal({
   // --- Eliminar del catálogo vía Server Action (reutilizada de la Fase 6B) ---
   const handleDelete = async (item: PickerItem & { original: CatalogExercise }) => {
     const exercise = item.original;
-    const confirmed = window.confirm(
-      `¿Eliminar "${exercise.name}"? Esto también quitará el ejercicio de las rutinas de todos los usuarios que lo tengan asignado.`
-    );
+    const confirmed = window.confirm(t("pickerDeleteConfirmEx", { name: exercise.name }));
     if (!confirmed) return;
 
     setDeletingId(exercise.id);
@@ -61,32 +61,30 @@ export default function ExercisePickerModal({
       router.refresh();
     } else {
       console.error("Error eliminando ejercicio:", res.error);
-      alert("No se pudo eliminar el ejercicio. Intenta de nuevo.");
+      alert(t("pickerDeleteErrorEx"));
     }
     setDeletingId(null);
   };
 
   return (
     <PickerModal
-      title="Agregar ejercicio"
-      searchPlaceholder="Buscar ejercicio..."
+      title={t("pickerAddExercise")}
+      searchPlaceholder={t("pickerSearchExercise")}
       search={search}
       onSearchChange={setSearch}
       items={pickerItems}
       isLoading={false}
       emptyMessage={
-        catalog.length === 0
-          ? "Aún no hay ejercicios en el catálogo."
-          : "No se encontraron ejercicios."
+        catalog.length === 0 ? t("pickerEmptyNoneEx") : t("pickerEmptyNoResultsEx")
       }
       deletingId={deletingId}
       onSelect={(item) => onSelect(item.original)}
       onEdit={handleEdit}
       onDelete={handleDelete}
       onClose={onClose}
-      footerPrompt="¿No encuentras el ejercicio?"
+      footerPrompt={t("pickerFooterEx")}
       createLinkHref="/admin/exercises"
-      createLinkLabel="+ Crear nuevo ejercicio"
+      createLinkLabel={t("pickerCreateEx")}
     />
   );
 }

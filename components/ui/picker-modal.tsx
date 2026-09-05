@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 
 export interface PickerItem {
@@ -32,12 +33,12 @@ interface PickerModalProps<T extends PickerItem> {
 
 export default function PickerModal<T extends PickerItem>({
   title,
-  searchPlaceholder = "Buscar...",
+  searchPlaceholder,
   search,
   onSearchChange,
   items,
   isLoading = false,
-  emptyMessage = "No se encontraron resultados.",
+  emptyMessage,
   deletingId,
   onSelect,
   onEdit,
@@ -47,6 +48,7 @@ export default function PickerModal<T extends PickerItem>({
   createLinkHref,
   createLinkLabel,
 }: PickerModalProps<T>) {
+  const t = useTranslations("adminCommon");
   return (
     <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
@@ -62,7 +64,7 @@ export default function PickerModal<T extends PickerItem>({
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-            aria-label="Cerrar"
+            aria-label={t("close")}
           >
             <svg
               width="18"
@@ -98,7 +100,7 @@ export default function PickerModal<T extends PickerItem>({
           </svg>
           <Input
             type="text"
-            placeholder={searchPlaceholder}
+            placeholder={searchPlaceholder ?? t("searchDefault")}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
@@ -113,7 +115,7 @@ export default function PickerModal<T extends PickerItem>({
             ))
           ) : items.length === 0 ? (
             <p className="text-center py-8 px-4 text-muted-foreground text-sm">
-              {emptyMessage}
+              {emptyMessage ?? t("resultsEmpty")}
             </p>
           ) : (
             items.map((item) => (
@@ -170,8 +172,8 @@ export default function PickerModal<T extends PickerItem>({
                     <button
                       onClick={() => onEdit(item.id)}
                       className="flex items-center justify-center w-8 h-8 rounded-lg bg-background text-muted-foreground hover:bg-accent hover:text-primary transition-colors"
-                      aria-label={`Editar ${item.title}`}
-                      title="Editar"
+                      aria-label={t("editAria", { title: item.title })}
+                      title={t("edit")}
                     >
                       <svg
                         width="14"
@@ -193,8 +195,8 @@ export default function PickerModal<T extends PickerItem>({
                       onClick={() => onDelete(item)}
                       disabled={deletingId === item.id}
                       className="flex items-center justify-center w-8 h-8 rounded-lg bg-background text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors disabled:opacity-50"
-                      aria-label={`Eliminar ${item.title}`}
-                      title="Eliminar"
+                      aria-label={t("deleteAria", { title: item.title })}
+                      title={t("delete")}
                     >
                       <svg
                         width="14"

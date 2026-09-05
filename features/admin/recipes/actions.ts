@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { recipeSchema, type RecipeInput, type RecipeFormInput } from "./schema";
@@ -22,10 +23,11 @@ function recipePayload(input: RecipeInput) {
 
 export async function createRecipe(input: RecipeFormInput): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminCatalog");
 
   const parsed = recipeSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: parsed.error.issues[0]?.message ?? t("recActInvalid") };
   }
 
   try {
@@ -49,20 +51,21 @@ export async function createRecipe(input: RecipeFormInput): Promise<ActionResult
     return { success: true };
   } catch (err) {
     console.error("[createRecipe] error:", err);
-    return { success: false, error: "No se pudo crear la receta." };
+    return { success: false, error: t("recActCreate") };
   }
 }
 
 export async function updateRecipe(id: string, input: RecipeFormInput): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminCatalog");
 
   if (!z.string().uuid().safeParse(id).success) {
-    return { success: false, error: "Receta inválida." };
+    return { success: false, error: t("recActInvalidId") };
   }
 
   const parsed = recipeSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: parsed.error.issues[0]?.message ?? t("recActInvalid") };
   }
 
   try {
@@ -93,15 +96,16 @@ export async function updateRecipe(id: string, input: RecipeFormInput): Promise<
     return { success: true };
   } catch (err) {
     console.error("[updateRecipe] error:", err);
-    return { success: false, error: "No se pudo guardar la receta." };
+    return { success: false, error: t("recActUpdate") };
   }
 }
 
 export async function deleteRecipe(id: string): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminCatalog");
 
   if (!z.string().uuid().safeParse(id).success) {
-    return { success: false, error: "Receta inválida." };
+    return { success: false, error: t("recActInvalidId") };
   }
 
   try {
@@ -113,6 +117,6 @@ export async function deleteRecipe(id: string): Promise<ActionResult> {
     return { success: true };
   } catch (err) {
     console.error("[deleteRecipe] error:", err);
-    return { success: false, error: "No se pudo eliminar la receta." };
+    return { success: false, error: t("recActDelete") };
   }
 }

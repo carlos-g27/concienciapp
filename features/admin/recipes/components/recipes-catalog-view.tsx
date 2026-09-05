@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
 import { deleteRecipe } from "../actions";
 import type { RecipeCatalogItem } from "../types";
@@ -12,6 +13,7 @@ interface RecipesCatalogViewProps {
 
 export default function RecipesCatalogView({ initialItems }: RecipesCatalogViewProps) {
   const router = useRouter();
+  const t = useTranslations("adminCatalog");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -31,9 +33,7 @@ export default function RecipesCatalogView({ initialItems }: RecipesCatalogViewP
   };
 
   const handleDelete = async (item: CatalogItem) => {
-    const confirmed = window.confirm(
-      `¿Eliminar "${item.title}"? Esto también la quitará del plan de todos los usuarios que la tengan asignada.`
-    );
+    const confirmed = window.confirm(t("recDeleteConfirm", { title: item.title }));
     if (!confirmed) return;
 
     setDeletingId(item.id);
@@ -42,30 +42,28 @@ export default function RecipesCatalogView({ initialItems }: RecipesCatalogViewP
       router.refresh();
     } else {
       console.error("Error eliminando receta:", res.error);
-      alert("No se pudo eliminar la receta. Intenta de nuevo.");
+      alert(t("recDeleteError"));
     }
     setDeletingId(null);
   };
 
   return (
     <CatalogList
-      title="Catálogo de recetas"
-      subtitle="Todas las recetas disponibles para asignar a los usuarios"
-      searchPlaceholder="Buscar receta..."
+      title={t("recTitle")}
+      subtitle={t("recSubtitle")}
+      searchPlaceholder={t("recSearch")}
       search={search}
       onSearchChange={setSearch}
       items={filtered}
       isLoading={false}
       emptyMessage={
-        initialItems.length === 0
-          ? "Aún no has creado ninguna receta."
-          : "No se encontraron recetas."
+        initialItems.length === 0 ? t("recEmptyNone") : t("recEmptyNoResults")
       }
       deletingId={deletingId}
       onEdit={handleEdit}
       onDelete={handleDelete}
       createLinkHref="/admin/recipes"
-      createLinkLabel="+ Nueva receta"
+      createLinkLabel={t("recNew")}
     />
   );
 }
