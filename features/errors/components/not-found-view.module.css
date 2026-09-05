@@ -1,0 +1,142 @@
+/* ================================================
+   not-found-view.module.css
+   Página 404 con estilo de marca (fondo oscuro fijo)
+   ================================================ */
+
+.page {
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Degradado azul marino de marca, independiente del tema claro/oscuro */
+  background: linear-gradient(135deg, var(--brand-900) 0%, var(--brand-700) 100%);
+  color: #fff;
+}
+
+/* Resplandor decorativo sutil */
+.glow {
+  position: absolute;
+  top: -25%;
+  right: -10%;
+  width: 700px;
+  height: 700px;
+  max-width: 90vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(155, 199, 255, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Contenido principal centrado */
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  text-align: center;
+}
+
+/* ── Columna de texto ── */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 560px;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-100);
+  background-color: rgba(219, 235, 255, 0.12);
+  border: 1px solid rgba(219, 235, 255, 0.25);
+  padding: 0.4rem 1rem;
+  border-radius: 99px;
+}
+
+.title {
+  font-size: clamp(3rem, 9vw, 5.25rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: #fff;
+}
+
+.description {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--brand-100);
+  margin: 0;
+}
+
+.actions {
+  margin-top: 0.5rem;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.9rem;
+  border-radius: 99px;
+  background-color: var(--brand-300);
+  color: var(--brand-900);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 10px 30px -12px rgba(155, 199, 255, 0.6);
+}
+.backButton:hover {
+  opacity: 0.92;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -12px rgba(155, 199, 255, 0.75);
+}
+
+/* ── Ilustración ── */
+.illustration {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+}
+
+/* ── Footer ── */
+.footer {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(219, 235, 255, 0.7);
+}
+
+/* ── Desktop: dos columnas (texto | ilustración) ── */
+@media (min-width: 900px) {
+  .content {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 3.5rem;
+    text-align: left;
+    padding: 4rem 2.5rem;
+  }
+  .text {
+    align-items: flex-start;
+  }
+  .illustration {
+    flex-shrink: 0;
+  }
+}
