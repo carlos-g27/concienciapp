@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
@@ -12,6 +13,7 @@ interface ExerciseFormProps {
 }
 
 export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
+  const t = useTranslations("adminCatalog");
   const isEditMode = Boolean(initialExercise);
 
   const [isMainLift, setIsMainLift] = useState(initialExercise?.is_main_lift ?? false);
@@ -46,7 +48,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
     setError(null);
 
     if (!name.trim() || !muscle.trim()) {
-      setError("El nombre y el grupo muscular son obligatorios.");
+      setError(t("exReqError"));
       return;
     }
 
@@ -60,7 +62,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
         : await createExercise(input);
 
     if (!res.success) {
-      setError(res.error ?? "Error al guardar el ejercicio.");
+      setError(res.error ?? t("exSaveError"));
     }
 
     setIsSaving(false);
@@ -68,27 +70,23 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
 
   return (
     <AdminFormLayout
-      title={isEditMode ? "Editar ejercicio" : "Crear nuevo ejercicio"}
-      subtitle={
-        isEditMode
-          ? "Los cambios se aplicarán a todos los usuarios que tengan este ejercicio asignado"
-          : "Este ejercicio quedará disponible en el catálogo global"
-      }
+      title={isEditMode ? t("exFormEditTitle") : t("exFormCreateTitle")}
+      subtitle={isEditMode ? t("exFormEditSubtitle") : t("exFormCreateSubtitle")}
       isLoading={false}
       isSaving={isSaving}
-      loadingText="Cargando ejercicio..."
-      submitText={isEditMode ? "Guardar cambios" : "Crear ejercicio"}
-      savingText={isEditMode ? "Guardando..." : "Creando..."}
+      loadingText={t("exFormLoading")}
+      submitText={isEditMode ? t("exFormSaveBtn") : t("exFormCreateBtn")}
+      savingText={isEditMode ? t("exFormSaving") : t("exFormCreating")}
       error={error}
       onSubmit={handleSubmit}
     >
       {/* Nombre */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Nombre del ejercicio</Label>
+        <Label htmlFor="name">{t("exName")}</Label>
         <Input
           id="name"
           type="text"
-          placeholder="Press de Banca"
+          placeholder={t("exNamePh")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -97,11 +95,11 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
 
       {/* Grupo muscular */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="muscle">Grupo muscular</Label>
+        <Label htmlFor="muscle">{t("exMuscle")}</Label>
         <Input
           id="muscle"
           type="text"
-          placeholder="Pectoral Mayor • Tríceps"
+          placeholder={t("exMusclePh")}
           value={muscle}
           onChange={(e) => setMuscle(e.target.value)}
           required
@@ -110,10 +108,10 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
 
       {/* Descripción */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="description">Descripción</Label>
+        <Label htmlFor="description">{t("exDesc")}</Label>
         <textarea
           id="description"
-          placeholder="Explica brevemente qué trabaja este ejercicio..."
+          placeholder={t("exDescPh")}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
@@ -123,11 +121,11 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
 
       {/* Video */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="video">URL del video</Label>
+        <Label htmlFor="video">{t("exVideo")}</Label>
         <Input
           id="video"
           type="url"
-          placeholder="https://..."
+          placeholder={t("exVideoPh")}
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
         />
@@ -136,17 +134,17 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
       <div className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-secondary">
         <div className="flex flex-col gap-0.5">
           <span className="text-sm font-semibold text-foreground">
-            Ejercicio de fuerza máxima (RM)
+            {t("exRmTitle")}
           </span>
           <p className="text-xs text-muted-foreground leading-snug">
-            Activa el seguimiento de Repetición Máxima cada 4 semanas para este ejercicio.
+            {t("exRmDesc")}
           </p>
         </div>
         <button
           type="button"
           role="switch"
           aria-checked={isMainLift}
-          aria-label="Ejercicio de fuerza máxima (RM)"
+          aria-label={t("exRmTitle")}
           onClick={() => setIsMainLift((prev) => !prev)}
           className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${
             isMainLift ? "bg-primary" : "bg-muted"
@@ -162,7 +160,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
 
       {/* Instrucciones paso a paso */}
       <div className="flex flex-col gap-2">
-        <Label>Instrucciones paso a paso</Label>
+        <Label>{t("exInstructions")}</Label>
         <div className="flex flex-col gap-3">
           {instructions.map((step, i) => (
             <div key={i} className="flex items-center gap-3">
@@ -171,7 +169,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
               </span>
               <Input
                 type="text"
-                placeholder={`Paso ${i + 1}...`}
+                placeholder={t("exStepPh", { n: i + 1 })}
                 value={step}
                 onChange={(e) => handleStepChange(i, e.target.value)}
                 className="flex-1"
@@ -181,7 +179,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
                   type="button"
                   onClick={() => handleRemoveStep(i)}
                   className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                  aria-label="Quitar paso"
+                  aria-label={t("exRemoveStep")}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
@@ -201,7 +199,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          Agregar paso
+          {t("exAddStep")}
         </button>
       </div>
     </AdminFormLayout>

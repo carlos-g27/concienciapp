@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -23,14 +24,15 @@ export default function AdminFormLayout({
   subtitle,
   isLoading = false,
   isSaving = false,
-  loadingText = "Cargando...",
-  submitText = "Guardar",
-  savingText = "Guardando...",
+  loadingText,
+  submitText,
+  savingText,
   error,
   onSubmit,
   children,
 }: AdminFormLayoutProps) {
   const router = useRouter();
+  const t = useTranslations("adminCommon");
 
   return (
     <div className="max-w-[680px] mx-auto flex flex-col gap-5 w-full">
@@ -42,7 +44,7 @@ export default function AdminFormLayout({
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
         </svg>
-        Volver
+        {t("back")}
       </button>
 
       {/* Cabecera */}
@@ -60,7 +62,7 @@ export default function AdminFormLayout({
         <CardContent className="pt-6">
           {isLoading ? (
             <p className="text-center py-8 text-muted-foreground text-sm">
-              {loadingText}
+              {loadingText ?? t("loading")}
             </p>
           ) : (
             <form onSubmit={onSubmit} className="flex flex-col gap-5">
@@ -77,7 +79,7 @@ export default function AdminFormLayout({
 
               {/* Botón de envío estándar */}
               <Button type="submit" disabled={isSaving} className="w-full mt-2">
-                {isSaving ? savingText : submitText}
+                {isSaving ? (savingText ?? t("saving")) : (submitText ?? t("save"))}
               </Button>
             </form>
           )}

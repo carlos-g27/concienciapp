@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
 import { deleteExercise } from "../actions";
 import type { ExerciseCatalogItem } from "../types";
@@ -12,6 +13,7 @@ interface ExercisesCatalogViewProps {
 
 export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogViewProps) {
   const router = useRouter();
+  const t = useTranslations("adminCatalog");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -30,9 +32,7 @@ export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogV
   };
 
   const handleDelete = async (item: CatalogItem) => {
-    const confirmed = window.confirm(
-      `¿Eliminar "${item.title}"? Esto también lo quitará de las rutinas de todos los usuarios que lo tengan asignado.`
-    );
+    const confirmed = window.confirm(t("exDeleteConfirm", { title: item.title }));
     if (!confirmed) return;
 
     setDeletingId(item.id);
@@ -41,30 +41,28 @@ export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogV
       router.refresh();
     } else {
       console.error("Error eliminando ejercicio:", res.error);
-      alert("No se pudo eliminar el ejercicio. Intenta de nuevo.");
+      alert(t("exDeleteError"));
     }
     setDeletingId(null);
   };
 
   return (
     <CatalogList
-      title="Catálogo de ejercicios"
-      subtitle="Todos los ejercicios disponibles para asignar a los usuarios"
-      searchPlaceholder="Buscar ejercicio..."
+      title={t("exTitle")}
+      subtitle={t("exSubtitle")}
+      searchPlaceholder={t("exSearch")}
       search={search}
       onSearchChange={setSearch}
       items={filtered}
       isLoading={false}
       emptyMessage={
-        initialItems.length === 0
-          ? "Aún no has creado ningún ejercicio."
-          : "No se encontraron ejercicios."
+        initialItems.length === 0 ? t("exEmptyNone") : t("exEmptyNoResults")
       }
       deletingId={deletingId}
       onEdit={handleEdit}
       onDelete={handleDelete}
       createLinkHref="/admin/exercises"
-      createLinkLabel="+ Nuevo ejercicio"
+      createLinkLabel={t("exNew")}
     />
   );
 }

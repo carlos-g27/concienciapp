@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseSchema, type ExerciseInput } from "./schema";
@@ -25,10 +26,11 @@ function toPayload(input: ExerciseInput) {
 
 export async function createExercise(input: ExerciseInput): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminCatalog");
 
   const parsed = exerciseSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: parsed.error.issues[0]?.message ?? t("exActInvalid") };
   }
 
   try {
@@ -40,20 +42,21 @@ export async function createExercise(input: ExerciseInput): Promise<ActionResult
     return { success: true };
   } catch (err) {
     console.error("[createExercise] error:", err);
-    return { success: false, error: "No se pudo crear el ejercicio." };
+    return { success: false, error: t("exActCreate") };
   }
 }
 
 export async function updateExercise(id: string, input: ExerciseInput): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminCatalog");
 
   if (!z.string().uuid().safeParse(id).success) {
-    return { success: false, error: "Ejercicio inválido." };
+    return { success: false, error: t("exActInvalidId") };
   }
 
   const parsed = exerciseSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos." };
+    return { success: false, error: parsed.error.issues[0]?.message ?? t("exActInvalid") };
   }
 
   try {
@@ -65,15 +68,16 @@ export async function updateExercise(id: string, input: ExerciseInput): Promise<
     return { success: true };
   } catch (err) {
     console.error("[updateExercise] error:", err);
-    return { success: false, error: "No se pudo guardar el ejercicio." };
+    return { success: false, error: t("exActUpdate") };
   }
 }
 
 export async function deleteExercise(id: string): Promise<ActionResult> {
   await requireAdmin();
+  const t = await getTranslations("adminCatalog");
 
   if (!z.string().uuid().safeParse(id).success) {
-    return { success: false, error: "Ejercicio inválido." };
+    return { success: false, error: t("exActInvalidId") };
   }
 
   try {
@@ -85,6 +89,6 @@ export async function deleteExercise(id: string): Promise<ActionResult> {
     return { success: true };
   } catch (err) {
     console.error("[deleteExercise] error:", err);
-    return { success: false, error: "No se pudo eliminar el ejercicio." };
+    return { success: false, error: t("exActDelete") };
   }
 }
