@@ -13,12 +13,17 @@
   /* Tamaños por defecto (variante md), sobreescritos por .sm */
   --logo-size: 96px;
   --monitor-w: 200px;
+  /* Escala global del loader (crece logo + línea de forma proporcional) */
+  transform: scale(1.3);
+  transform-origin: center;
 }
 
 .sm {
   gap: 0.5rem;
   --logo-size: 52px;
   --monitor-w: 140px;
+  /* En formularios se mantiene compacto */
+  transform: none;
 }
 
 /* ── Logo con latido (lub-dub) ── */
