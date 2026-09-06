@@ -45,7 +45,7 @@ export default function ShellFrame({ data, children }: ShellFrameProps) {
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Topbar — solo visible en móvil */}
-        <header className="flex items-center gap-3 px-4 py-4 bg-card border-b border-border lg:hidden">
+        <header className="sticky top-0 z-10 flex items-center gap-3 px-4 py-4 bg-card border-b border-border lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
             className="flex items-center justify-center p-2 rounded-lg text-primary hover:bg-secondary transition-colors"
