@@ -22,11 +22,6 @@
 
 /* ── Nav ── */
 .nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,7 +75,7 @@
   align-items: center;
   text-align: center;
   gap: 20px;
-  padding: clamp(104px, 13vw, 160px) 20px 90px;
+  padding: clamp(40px, 6vw, 72px) 20px 90px;
   overflow: hidden;
   /* Fondo oscuro fijo (no depende del tema): con ScrollSmoother el fondo del
      .page colapsa, así que cada sección lleva el suyo. */

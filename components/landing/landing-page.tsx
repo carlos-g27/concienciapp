@@ -116,21 +116,21 @@ export default function LandingPage() {
 
   return (
     <div className={styles.page}>
-      {/* Nav fijo, fuera del contenido suavizado */}
-      <nav className={styles.nav}>
-        <span className={styles.navBrand}>{t("brand")}</span>
-        <div className={styles.navLinks}>
-          <Link href="/auth/login" className={styles.navLogin}>
-            {t("signIn")}
-          </Link>
-          <Link href="/auth/sign-up" className={styles.navSignup}>
-            {t("signUp")}
-          </Link>
-        </div>
-      </nav>
-
       <div id="smooth-wrapper">
         <div id="smooth-content" className={styles.smoothContent}>
+          {/* Nav (en flujo: se desplaza con el contenido, no queda fijo) */}
+          <nav className={styles.nav}>
+            <span className={styles.navBrand}>{t("brand")}</span>
+            <div className={styles.navLinks}>
+              <Link href="/auth/login" className={styles.navLogin}>
+                {t("signIn")}
+              </Link>
+              <Link href="/auth/sign-up" className={styles.navSignup}>
+                {t("signUp")}
+              </Link>
+            </div>
+          </nav>
+
           {/* Hero */}
           <section className={styles.hero}>
             <div className={styles.heroGlow} aria-hidden="true" />
