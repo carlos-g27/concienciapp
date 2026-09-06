@@ -31,9 +31,15 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // IMPORTANTE: no poner código entre createServerClient y getClaims()
-  const { data } = await supabase.auth.getClaims();
-  const user = data?.claims;
+  // IMPORTANTE: no poner código entre createServerClient y getUser().
+  // Se usa getUser() (patrón oficial de @supabase/ssr para middleware) porque
+  // sí refresca la sesión y, vía setAll, escribe las cookies rotadas en
+  // supabaseResponse. Con getClaims() (solo verificación local) el token nunca
+  // se refrescaba desde el middleware y la sesión se desincronizaba (loop
+  // /admin ⇄ /auth/login en Vercel).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
 
@@ -71,7 +77,7 @@ export async function proxy(request: NextRequest) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
-      .eq("id", user.sub)
+      .eq("id", user.id)
       .single();
 
     return redirectTo(profile?.role === "admin" ? "/admin" : "/dashboard");
@@ -82,7 +88,7 @@ export async function proxy(request: NextRequest) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
-      .eq("id", user.sub)        // sub es el user id en los claims
+      .eq("id", user.id)
       .single();
 
     if (!profile || profile.role !== "admin") {
