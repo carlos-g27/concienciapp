@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
@@ -209,7 +210,12 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <footer className={styles.footer}>{t("footer")}</footer>
+          <footer className={styles.footer}>
+            <span>{t("footer")}</span>
+            <span className={styles.footerSwitcher}>
+              <ThemeSwitcher />
+            </span>
+          </footer>
         </div>
       </div>
     </div>
