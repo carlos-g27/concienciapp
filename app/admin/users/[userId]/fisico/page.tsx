@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getUserRoutineForAdmin } from "@/features/admin/fisico/queries";
 import { getExercises } from "@/features/admin/exercises/queries";
@@ -10,7 +11,7 @@ export default function AdminFisicoPage({
   params: Promise<{ userId: string }>;
 }) {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
       <AdminFisicoContent params={params} />
     </Suspense>
   );

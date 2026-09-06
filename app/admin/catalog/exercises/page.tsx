@@ -1,11 +1,12 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getExercises } from "@/features/admin/exercises/queries";
 import ExercisesCatalogView from "@/features/admin/exercises/components/exercises-catalog-view";
 
 export default function AdminExercisesPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
       <ExercisesCatalogContent />
     </Suspense>
   );

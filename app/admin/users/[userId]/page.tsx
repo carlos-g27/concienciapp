@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getUserDetail } from "@/features/admin/users/queries";
 import AdminUserProfileView from "@/features/admin/users/components/admin-user-profile-view";
@@ -9,7 +10,7 @@ export default function AdminUserProfilePage({
   params: Promise<{ userId: string }>;
 }) {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
       <AdminUserProfileContent params={params} />
     </Suspense>
   );

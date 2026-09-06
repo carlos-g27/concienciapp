@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getExercise } from "@/features/admin/exercises/queries";
 import ExerciseForm from "@/features/admin/exercises/components/exercise-form";
@@ -9,7 +10,7 @@ export default function AdminCreateExercisePage({
   searchParams: Promise<{ id?: string }>;
 }) {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
       <ExerciseFormContent searchParams={searchParams} />
     </Suspense>
   );
