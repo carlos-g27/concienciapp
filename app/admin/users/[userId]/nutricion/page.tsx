@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getUserMealsForAdmin, getRecipesForPicker } from "@/features/admin/nutricion/queries";
 import AdminNutricionView from "@/features/admin/nutricion/components/admin-nutricion-view";
@@ -9,7 +10,7 @@ export default function AdminNutricionPage({
   params: Promise<{ userId: string }>;
 }) {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
       <AdminNutricionContent params={params} />
     </Suspense>
   );

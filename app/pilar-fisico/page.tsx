@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireUser } from "@/lib/auth/require-user";
 import { getUserRoutine } from "@/features/fisico/queries";
 import { getPilarSettings } from "@/features/shell/queries";
@@ -7,7 +8,7 @@ import PilarMaintenance from "@/components/ui/pilar-maintenance";
 
 export default function PilarFisicoPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><BrandLoader /></div>}>
       <FisicoContent />
     </Suspense>
   );

@@ -2,7 +2,8 @@
   "common": {
     "language": "Idioma",
     "spanish": "Español",
-    "english": "Inglés"
+    "english": "Inglés",
+    "loading": "Cargando..."
   },
   "nav": {
     "home": "Home",

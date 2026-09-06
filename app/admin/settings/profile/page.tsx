@@ -1,11 +1,12 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getAdminOwnProfile } from "@/features/admin/settings/queries";
 import AdminProfileView from "@/features/admin/settings/components/admin-profile-view";
 
 export default function AdminProfilePage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
       <AdminProfileContent />
     </Suspense>
   );

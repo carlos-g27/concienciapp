@@ -1,0 +1,121 @@
+/* ================================================
+   brand-loader.module.css
+   Animación de carga: logo con latido + línea de
+   signos vitales tipo monitor.
+   ================================================ */
+
+.wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  /* Tamaños por defecto (variante md), sobreescritos por .sm */
+  --logo-size: 96px;
+  --monitor-w: 200px;
+  /* Escala global del loader (crece logo + línea de forma proporcional) */
+  transform: scale(1.3);
+  transform-origin: center;
+}
+
+.sm {
+  gap: 0.5rem;
+  --logo-size: 52px;
+  --monitor-w: 140px;
+  /* En formularios se mantiene compacto */
+  transform: none;
+}
+
+/* ── Logo con latido (lub-dub) ── */
+.logo {
+  width: var(--logo-size);
+  height: auto;
+  transform-origin: center;
+  animation: beat 1.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes beat {
+  0%,
+  38% {
+    transform: scale(1);
+  }
+  44% {
+    transform: scale(1.07);
+  }
+  50% {
+    transform: scale(1);
+  }
+  56% {
+    transform: scale(1.035);
+  }
+  64%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ── Monitor de signos vitales ── */
+.monitor {
+  width: var(--monitor-w);
+  height: 60px;
+  overflow: hidden;
+  /* Difuminado en los bordes: la traza aparece/desaparece suavemente */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+/* SVG intrínseco de 400×60 = 2 ciclos de 200px; el grupo se desplaza
+   200px (un ciclo) en bucle → efecto de papel de monitor sin costura. */
+.svg {
+  display: block;
+  width: 400px;
+  height: 60px;
+}
+
+.trace {
+  animation: scroll 1.4s linear infinite;
+  will-change: transform;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-200px);
+  }
+}
+
+.line {
+  fill: none;
+  stroke: hsl(var(--primary));
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dot {
+  fill: hsl(var(--primary));
+  filter: drop-shadow(0 0 5px hsl(var(--accent)));
+}
+
+/* Respeto por usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .logo,
+  .trace {
+    animation: none;
+  }
+}

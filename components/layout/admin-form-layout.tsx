@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import BrandLoader from "@/components/ui/brand-loader";
 
 interface AdminFormLayoutProps {
   title: string;
@@ -61,9 +62,9 @@ export default function AdminFormLayout({
       <Card>
         <CardContent className="pt-6">
           {isLoading ? (
-            <p className="text-center py-8 text-muted-foreground text-sm">
-              {loadingText ?? t("loading")}
-            </p>
+            <div className="flex justify-center py-8">
+              <BrandLoader size="sm" label={loadingText} />
+            </div>
           ) : (
             <form onSubmit={onSubmit} className="flex flex-col gap-5">
               

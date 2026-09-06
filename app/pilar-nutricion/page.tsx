@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import BrandLoader from "@/components/ui/brand-loader";
 import { requireUser } from "@/lib/auth/require-user";
 import { getUserMeals } from "@/features/nutricion/queries";
 import { getPilarSettings } from "@/features/shell/queries";
@@ -7,7 +8,7 @@ import PilarMaintenance from "@/components/ui/pilar-maintenance";
 
 export default function PilarNutricionPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Cargando...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><BrandLoader /></div>}>
       <NutricionContent />
     </Suspense>
   );
