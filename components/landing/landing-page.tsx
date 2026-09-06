@@ -1,167 +1,223 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import ThemeToggle from "./theme-toggle";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import styles from "./landing-page.module.css";
+import {
+  HomeMock,
+  NutricionMock,
+  EntrenamientoMock,
+  MentalMock,
+  ProgresoMock,
+  PerfilMock,
+} from "./screen-mocks";
 
-// --- Iconos de los pilares ---
-const IconFisico = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="5" r="1" />
-    <path d="M9 20l3-14 3 14" />
-    <path d="M7 10h10" />
-  </svg>
-);
+// --- Tipos ---
+interface Screen {
+  id: string;
+  Mock: React.ComponentType;
+  categoryKey: string;
+  titleKey: string;
+  blurbKey: string;
+}
 
-const IconNutricion = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-    <line x1="6" y1="1" x2="6" y2="4" />
-    <line x1="10" y1="1" x2="10" y2="4" />
-    <line x1="14" y1="1" x2="14" y2="4" />
-  </svg>
-);
-
-const IconMental = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
-  </svg>
-);
-
-const IconTrainer = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
-const IconProgress = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="20" x2="18" y2="10" />
-    <line x1="12" y1="20" x2="12" y2="4" />
-    <line x1="6" y1="20" x2="6" y2="14" />
-  </svg>
-);
-
-const IconDevice = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-    <line x1="12" y1="18" x2="12.01" y2="18" />
-  </svg>
-);
-
-const PILLARS = [
-  {
-    icon: <IconFisico />,
-    title: "Pilar Físico",
-    description: "Rutinas de ejercicio personalizadas, día a día, con videos, series y repeticiones diseñadas para ti.",
-  },
-  {
-    icon: <IconNutricion />,
-    title: "Pilar Nutrición",
-    description: "Planes de comida para desayuno, almuerzo y cena, con ingredientes, cantidades y calorías detalladas.",
-  },
-  {
-    icon: <IconMental />,
-    title: "Pilar Mental",
-    description: "Meditaciones guiadas para acompañarte en tu bienestar emocional, siempre a un clic de distancia.",
-  },
-];
-
-const STEPS = [
-  {
-    icon: <IconTrainer />,
-    title: "Tu entrenador arma tu plan",
-    description: "Un administrador diseña tu rutina, tu nutrición y tus meditaciones a la medida de tus objetivos.",
-  },
-  {
-    icon: <IconDevice />,
-    title: "Accede desde cualquier lugar",
-    description: "Consulta tu plan cuando quieras, desde el celular o la computadora, sin complicaciones.",
-  },
-  {
-    icon: <IconProgress />,
-    title: "Registra tu progreso",
-    description: "Guarda los pesos que usas en cada ejercicio y observa tu evolución con el tiempo.",
-  },
+// Pantallas de la galería, en orden. Cada una con su maqueta y claves i18n.
+const SCREENS: Screen[] = [
+  { id: "home", Mock: HomeMock, categoryKey: "cardHomeCategory", titleKey: "cardHomeTitle", blurbKey: "cardHomeBlurb" },
+  { id: "nutricion", Mock: NutricionMock, categoryKey: "cardNutricionCategory", titleKey: "cardNutricionTitle", blurbKey: "cardNutricionBlurb" },
+  { id: "entrenamiento", Mock: EntrenamientoMock, categoryKey: "cardEntrenamientoCategory", titleKey: "cardEntrenamientoTitle", blurbKey: "cardEntrenamientoBlurb" },
+  { id: "mental", Mock: MentalMock, categoryKey: "cardMentalCategory", titleKey: "cardMentalTitle", blurbKey: "cardMentalBlurb" },
+  { id: "progreso", Mock: ProgresoMock, categoryKey: "cardProgresoCategory", titleKey: "cardProgresoTitle", blurbKey: "cardProgresoBlurb" },
+  { id: "perfil", Mock: PerfilMock, categoryKey: "cardPerfilCategory", titleKey: "cardPerfilTitle", blurbKey: "cardPerfilBlurb" },
 ];
 
 export default function LandingPage() {
+  const t = useTranslations("landing");
+  const galleryRef = useRef<HTMLElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const cardsRef = useRef<Array<HTMLDivElement | null>>([]);
+  // Cuando GSAP no anima (reduced-motion o error), la galería usa scroll nativo.
+  const [animated, setAnimated] = useState(true);
+
+  useEffect(() => {
+    const reduceMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const track = trackRef.current;
+    const section = galleryRef.current;
+
+    if (reduceMotion || !track || !section) {
+      setAnimated(false);
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+    let smoother: ScrollSmoother | undefined;
+
+    const ctx = gsap.context(() => {
+      smoother = ScrollSmoother.create({
+        wrapper: "#smooth-wrapper",
+        content: "#smooth-content",
+        smooth: 1.2,
+        effects: true,
+      });
+
+      const getDistance = () => Math.max(0, track.scrollWidth - section.clientWidth);
+
+      // Track horizontal anclado (pin) que avanza con el scroll vertical.
+      const tween = gsap.to(track, {
+        x: () => -getDistance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => "+=" + (getDistance() + window.innerHeight * 0.6),
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Cada tarjeta entra con escala/opacidad al cruzar el viewport horizontal.
+      cardsRef.current.filter(Boolean).forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          { scale: 0.92, opacity: 0.55, y: i % 2 === 0 ? 18 : -18 },
+          {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card as Element,
+              containerAnimation: tween,
+              start: "left 88%",
+              end: "left 45%",
+              scrub: true,
+            },
+          }
+        );
+      });
+    });
+
+    const onResize = () => ScrollTrigger.refresh();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      ctx.revert();
+      smoother?.kill();
+    };
+  }, []);
+
   return (
     <div className={styles.page}>
-
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div className={styles.heroGlow} />
-        <span className={styles.heroBadge}>Bienestar integral</span>
-        <h1 className={styles.heroTitle}>
-          Tu cuerpo, tu nutrición y tu mente,<br className={styles.heroBreak} /> en un solo lugar
-        </h1>
-        <p className={styles.heroSubtitle}>
-          Concienciapp acompaña tu bienestar con rutinas de ejercicio, planes de nutrición
-          y meditaciones guiadas, diseñados especialmente para ti por tu entrenador.
-        </p>
-        <div className={styles.heroActions}>
-          <Link href="/auth/sign-up" className={styles.ctaPrimary}>
-            Crear cuenta gratis
+      {/* Nav fijo, fuera del contenido suavizado */}
+      <nav className={styles.nav}>
+        <span className={styles.navBrand}>{t("brand")}</span>
+        <div className={styles.navLinks}>
+          <Link href="/auth/login" className={styles.navLogin}>
+            {t("signIn")}
           </Link>
-          <Link href="/auth/login" className={styles.ctaSecondary}>
-            Ya tengo cuenta
+          <Link href="/auth/sign-up" className={styles.navSignup}>
+            {t("signUp")}
           </Link>
         </div>
-      </section>
+      </nav>
 
-      {/* ── Los 3 pilares ── */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionEyebrow}>Qué encontrarás</span>
-          <h2 className={styles.sectionTitle}>Tres pilares, un solo bienestar</h2>
-          <p className={styles.sectionSubtitle}>
-            Cada aspecto de tu salud, cuidado de forma consciente y personalizada.
-          </p>
-        </div>
-
-        <div className={styles.pillarsGrid}>
-          {PILLARS.map((pillar) => (
-            <div key={pillar.title} className={styles.pillarCard}>
-              <div className={styles.pillarIconWrapper}>{pillar.icon}</div>
-              <h3 className={styles.pillarTitle}>{pillar.title}</h3>
-              <p className={styles.pillarDescription}>{pillar.description}</p>
+      <div id="smooth-wrapper">
+        <div id="smooth-content" className={styles.smoothContent}>
+          {/* Hero */}
+          <section className={styles.hero}>
+            <div className={styles.heroGlow} aria-hidden="true" />
+            <span className={styles.heroBadge}>{t("badge")}</span>
+            <h1 className={styles.heroTitle}>
+              {t("titleL1")}
+              <br />
+              {t("titleL2")}
+            </h1>
+            <p className={styles.heroSubtitle}>{t("subtitle")}</p>
+            <div className={styles.heroActions}>
+              <Link href="/auth/login" className={styles.finalBtnOutline}>
+                {t("signIn")}
+              </Link>
+              <Link href="/auth/sign-up" className={styles.finalBtnFilled}>
+                {t("signUp")}
+              </Link>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Cómo funciona ── */}
-      <section className={styles.sectionAlt}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionEyebrow}>Cómo funciona</span>
-          <h2 className={styles.sectionTitle}>Simple, personal y siempre contigo</h2>
-        </div>
-
-        <div className={styles.stepsGrid}>
-          {STEPS.map((step, i) => (
-            <div key={step.title} className={styles.stepCard}>
-              <div className={styles.stepNumber}>{i + 1}</div>
-              <div className={styles.stepIconWrapper}>{step.icon}</div>
-              <h3 className={styles.stepTitle}>{step.title}</h3>
-              <p className={styles.stepDescription}>{step.description}</p>
+            <div className={styles.scrollCue}>
+              <span className={styles.scrollCueLine} />
+              <span className={styles.scrollCueText}>{t("scrollCue")}</span>
             </div>
-          ))}
+          </section>
+
+          {/* Galería con scroll horizontal */}
+          <section
+            ref={galleryRef}
+            className={`${styles.gallery} ${animated ? "" : styles.galleryStatic}`}
+          >
+            <div className={styles.galleryHead}>
+              <span className={styles.galleryEyebrow}>{t("galleryEyebrow")}</span>
+              <h2 className={styles.galleryHeading}>{t("galleryHeading")}</h2>
+            </div>
+            <div className={styles.trackViewport}>
+              <div
+                ref={trackRef}
+                className={`${styles.track} ${animated ? "" : styles.trackStatic}`}
+              >
+                {SCREENS.map((screen, i) => {
+                  const Mock = screen.Mock;
+                  return (
+                    <div
+                      key={screen.id}
+                      ref={(el) => {
+                        cardsRef.current[i] = el;
+                      }}
+                      className={styles.card}
+                    >
+                      <div className={styles.cardFrame}>
+                        <div className={styles.cardScreen}>
+                          <Mock />
+                        </div>
+                      </div>
+                      <div className={styles.cardMeta}>
+                        <span className={styles.cardCategory}>{t(screen.categoryKey)}</span>
+                        <h3 className={styles.cardTitle}>{t(screen.titleKey)}</h3>
+                        <p className={styles.cardBlurb}>{t(screen.blurbKey)}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* CTA final */}
+          <section className={styles.finalCta}>
+            <h2 className={styles.finalCtaHeading}>{t("ctaHeading")}</h2>
+            <p className={styles.finalCtaSubtitle}>{t("ctaSubtitle")}</p>
+            <div className={styles.finalCtaActions}>
+              <Link href="/auth/login" className={styles.finalBtnOutline}>
+                {t("signIn")}
+              </Link>
+              <Link href="/auth/sign-up" className={styles.finalBtnFilled}>
+                {t("signUp")}
+              </Link>
+            </div>
+          </section>
+
+          <footer className={styles.footer}>
+            <span>{t("footer")}</span>
+            <span className={styles.footerSwitcher}>
+              <ThemeToggle />
+            </span>
+          </footer>
         </div>
-      </section>
-
-      {/* ── CTA final ── */}
-      <section className={styles.finalCta}>
-        <h2 className={styles.finalCtaTitle}>Empieza tu camino hoy</h2>
-        <p className={styles.finalCtaSubtitle}>
-          Únete a Concienciapp y deja que tu bienestar sea cuidado en cada detalle.
-        </p>
-        <Link href="/auth/sign-up" className={styles.finalCtaButton}>
-          Crear cuenta gratis
-        </Link>
-      </section>
-
+      </div>
     </div>
   );
 }

@@ -106,7 +106,10 @@ en código nuevo y, según R1/R3, al refactorizar:
 - **Organización por funcionalidad.** Agrupa componentes y lógica relacionados; mantén las acciones de
   servidor juntas.
 - **`proxy.ts` (middleware de Next 16).** Úsalo para sesión, redirecciones y protección de rutas; no pongas
-  código entre `createServerClient` y `getClaims()`, y retorna siempre `supabaseResponse` para no romper cookies.
+  código entre `createServerClient` y `supabase.auth.getUser()` (patrón oficial de `@supabase/ssr` para
+  middleware: refresca la sesión y persiste las cookies rotadas), y retorna siempre `supabaseResponse` para no
+  romper cookies. Además, toda redirección del middleware debe copiar las cookies de `supabaseResponse` en la
+  respuesta de redirect (si no, se pierde la rotación del refresh token y se produce el loop `/admin` ⇄ `/auth/login`).
 
 ---
 
