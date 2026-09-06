@@ -3,7 +3,8 @@
     "language": "Language",
     "spanish": "Spanish",
     "english": "English",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "hi": "Hi"
   },
   "nav": {
     "home": "Home",
