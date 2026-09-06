@@ -76,43 +76,16 @@ const settingsItem: NavItem = {
 
 // --- Props ---
 interface AdminSidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
   profile: ShellProfile;
 }
 
-export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarProps) {
+// --- Componente principal (solo escritorio) ---
+export default function AdminSidebar({ profile }: AdminSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("adminNav");
 
   return (
-    <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-20 lg:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
-
-      <aside className={`
-        fixed top-0 left-0 h-full z-30 flex flex-col
-        bg-card border-r border-border shadow-lg w-64
-        transition-transform duration-300 ease-in-out
-        lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:shadow-none lg:z-auto
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-      `}>
-
-        {/* Botón cerrar — móvil */}
-        <div className="flex items-center justify-between p-4 lg:hidden">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t("adminLabel")}</span>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors" aria-label={t("closeMenu")}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
+    <aside className="hidden lg:flex lg:flex-col lg:sticky lg:top-0 lg:h-screen w-64 bg-card border-r border-border">
         {/* Badge admin + perfil */}
         <div className="flex flex-col items-center gap-2 px-6 py-6 border-b border-border">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#528ACC] to-[#9BC7FF] flex items-center justify-center text-white text-lg font-bold shadow-md select-none overflow-hidden">
@@ -141,7 +114,6 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={onClose}
                 className={`
                   flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                   transition-all duration-150 group
@@ -169,7 +141,6 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
         <div className="px-3 py-4 border-t border-border">
           <Link
             href={settingsItem.href}
-            onClick={onClose}
             className={`
               flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
               transition-all duration-150 group
@@ -185,7 +156,6 @@ export default function AdminSidebar({ isOpen, onClose, profile }: AdminSidebarP
             <span>{t(settingsItem.key)}</span>
           </Link>
         </div>
-      </aside>
-    </>
+    </aside>
   );
 }
