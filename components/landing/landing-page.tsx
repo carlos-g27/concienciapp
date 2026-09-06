@@ -141,10 +141,10 @@ export default function LandingPage() {
             </h1>
             <p className={styles.heroSubtitle}>{t("subtitle")}</p>
             <div className={styles.heroActions}>
-              <Link href="/auth/login" className={styles.btnOutline}>
+              <Link href="/auth/login" className={styles.finalBtnOutline}>
                 {t("signIn")}
               </Link>
-              <Link href="/auth/sign-up" className={styles.btnFilled}>
+              <Link href="/auth/sign-up" className={styles.finalBtnFilled}>
                 {t("signUp")}
               </Link>
             </div>
