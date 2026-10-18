@@ -103,4 +103,52 @@
   .dark select {
     color-scheme: dark;
   }
+  /* Desplegable personalizable (Chrome/Edge 135+): borde, esquinas, sombra y
+     hover. En otros navegadores queda el menú nativo con los colores de arriba. */
+  @supports (appearance: base-select) {
+    select,
+    ::picker(select) {
+      appearance: base-select;
+    }
+    select {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    select::picker-icon {
+      color: hsl(var(--muted-foreground));
+      transition: rotate 0.2s;
+    }
+    select:open::picker-icon {
+      rotate: 180deg;
+    }
+    ::picker(select) {
+      margin-block: 6px;
+      padding: 4px;
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--radius);
+      background-color: hsl(var(--popover));
+      color: hsl(var(--popover-foreground));
+      box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.45);
+    }
+    select option {
+      padding: 8px 12px;
+      border-radius: calc(var(--radius) - 4px);
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    select option:hover,
+    select option:focus-visible {
+      @apply bg-accent text-accent-foreground;
+      outline: none;
+    }
+    /* Con el mouse encima de otra opción, solo se resalta esa. */
+    select:has(option:hover) option:focus-visible:not(:hover) {
+      @apply bg-transparent text-popover-foreground;
+    }
+    select option:checked {
+      font-weight: 600;
+    }
+  }
 }
