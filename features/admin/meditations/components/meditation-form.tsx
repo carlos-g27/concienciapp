@@ -7,7 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
 import { createMeditation, updateMeditation } from "../actions";
-import type { Meditation } from "../types";
+import {
+  MEDITATION_CATEGORIES,
+  MEDITATION_CATEGORY_LABEL_KEYS,
+  isMeditationCategory,
+  type Meditation,
+  type MeditationCategory,
+} from "../types";
 
 interface MeditationFormProps {
   initialMeditation: Meditation | null;
@@ -19,7 +25,9 @@ export default function MeditationForm({ initialMeditation }: MeditationFormProp
   const isEditMode = Boolean(initialMeditation);
 
   const [name, setName] = useState(initialMeditation?.name ?? "");
-  const [category, setCategory] = useState(initialMeditation?.category ?? "");
+  const [category, setCategory] = useState<MeditationCategory>(
+    isMeditationCategory(initialMeditation?.category) ? initialMeditation.category : "ansiedad"
+  );
   const [videoUrl, setVideoUrl] = useState(initialMeditation?.video_url ?? "");
   const [duration, setDuration] = useState(
     initialMeditation?.duration != null ? String(initialMeditation.duration) : ""
@@ -32,7 +40,7 @@ export default function MeditationForm({ initialMeditation }: MeditationFormProp
     e.preventDefault();
     setError(null);
 
-    if (!name.trim() || !category.trim() || !videoUrl.trim() || !duration.trim()) {
+    if (!name.trim() || !videoUrl.trim() || !duration.trim()) {
       setError(t("medReqError"));
       return;
     }
@@ -82,14 +90,11 @@ export default function MeditationForm({ initialMeditation }: MeditationFormProp
       {/* Categoría */}
       <div className="flex flex-col gap-2">
         <Label htmlFor="category">{t("medCategory")}</Label>
-        <Input
-          id="category"
-          type="text"
-          placeholder={t("medCategoryPh")}
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-        />
+        <select id="category" value={category} onChange={(e) => setCategory(e.target.value as MeditationCategory)} className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+          {MEDITATION_CATEGORIES.map((value) => (
+            <option key={value} value={value}>{t(MEDITATION_CATEGORY_LABEL_KEYS[value])}</option>
+          ))}
+        </select>
       </div>
 
       {/* Link de YouTube */}

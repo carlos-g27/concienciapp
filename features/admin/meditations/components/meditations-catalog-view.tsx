@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
 import { deleteMeditation } from "../actions";
-import type { Meditation } from "../types";
+import { MEDITATION_CATEGORY_LABEL_KEYS, isMeditationCategory, type Meditation } from "../types";
 
 interface MeditationsCatalogViewProps {
   initialItems: Meditation[];
@@ -20,7 +20,9 @@ export default function MeditationsCatalogView({ initialItems }: MeditationsCata
   const items: CatalogItem[] = initialItems.map((m) => ({
     id: m.id,
     title: m.name,
-    subtitle: [m.category, m.duration != null ? t("medMinutes", { n: m.duration }) : null]
+    subtitle: [
+      isMeditationCategory(m.category) ? t(MEDITATION_CATEGORY_LABEL_KEYS[m.category]) : m.category,
+      m.duration != null ? t("medMinutes", { n: m.duration }) : null]
       .filter(Boolean)
       .join(" • "),
   }));

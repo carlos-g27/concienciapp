@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { MEDITATION_CATEGORIES, type MeditationCategory } from "./types";
 
 /** Forma cruda que envía el formulario (antes de validar/coercer). */
 export interface MeditationFormInput {
   name: string;
-  category: string;
+  category: MeditationCategory;
   videoUrl: string;
   duration: string | number;
 }
@@ -11,7 +12,7 @@ export interface MeditationFormInput {
 // --- Esquema de validación de una meditación del catálogo ---
 export const meditationSchema = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio").max(150),
-  category: z.string().trim().min(1, "La categoría es obligatoria").max(80),
+  category: z.enum(MEDITATION_CATEGORIES, "La categoría no es válida"),
   videoUrl: z.string().trim().url("La URL del video no es válida").max(500),
   duration: z.coerce
     .number()
