@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
-import { getYoutubeThumbnail } from "@/lib/youtube";
 import { deleteMeditation } from "../actions";
 import type { Meditation } from "../types";
 
@@ -24,7 +23,6 @@ export default function MeditationsCatalogView({ initialItems }: MeditationsCata
     subtitle: [m.category, m.duration != null ? t("medMinutes", { n: m.duration }) : null]
       .filter(Boolean)
       .join(" • "),
-    imageUrl: getYoutubeThumbnail(m.video_url),
   }));
 
   const filtered = items.filter((m) =>

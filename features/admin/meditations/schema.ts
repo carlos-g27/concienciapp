@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { getYoutubeId } from "@/lib/youtube";
 
 /** Forma cruda que envía el formulario (antes de validar/coercer). */
 export interface MeditationFormInput {
@@ -13,11 +12,7 @@ export interface MeditationFormInput {
 export const meditationSchema = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio").max(150),
   category: z.string().trim().min(1, "La categoría es obligatoria").max(80),
-  videoUrl: z
-    .string()
-    .trim()
-    .max(500)
-    .refine((v) => getYoutubeId(v) !== null, "El link debe ser un video de YouTube válido"),
+  videoUrl: z.string().trim().url("La URL del video no es válida").max(500),
   duration: z.coerce
     .number()
     .int("La duración debe ser un número entero de minutos")
