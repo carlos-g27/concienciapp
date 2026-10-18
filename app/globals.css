@@ -95,4 +95,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* El menú nativo de <select> no hereda el fondo transparente: sin esto, en
+     modo oscuro las opciones quedan con texto claro sobre fondo blanco. */
+  select option {
+    @apply bg-popover text-popover-foreground;
+  }
+  .dark select {
+    color-scheme: dark;
+  }
 }
