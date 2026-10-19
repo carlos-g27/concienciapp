@@ -46,6 +46,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.titleWrap {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
 
 .headerRight {
   display: flex;

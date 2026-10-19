@@ -4,6 +4,8 @@ import styles from "./accordion-wrapper.module.css";
 interface AccordionWrapperProps {
   title: string;
   badgeText?: string;
+  /** Muestra el título completo en varias líneas en lugar de cortarlo con "…". */
+  wrapTitle?: boolean;
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
@@ -12,6 +14,7 @@ interface AccordionWrapperProps {
 export default function AccordionWrapper({
   title,
   badgeText,
+  wrapTitle = false,
   isOpen,
   onToggle,
   children,
@@ -21,7 +24,7 @@ export default function AccordionWrapper({
       
       {/* Header — trigger del acordeón */}
       <button className={styles.header} onClick={onToggle} aria-expanded={isOpen}>
-        <span className={styles.title}>{title}</span>
+        <span className={`${styles.title} ${wrapTitle ? styles.titleWrap : ""}`}>{title}</span>
         <div className={styles.headerRight}>
           {badgeText?.trim() ? <span className={styles.badge}>{badgeText}</span> : null}
           <svg
