@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import BrandLoader from "@/components/ui/brand-loader";
+import { confirmLeave, useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 
 interface AdminFormLayoutProps {
   title: string;
@@ -16,6 +17,8 @@ interface AdminFormLayoutProps {
   submitText?: string;
   savingText?: string;
   error?: string | null;
+  /** Hay cambios sin guardar: avisa antes de salir. */
+  isDirty?: boolean;
   onSubmit: (e: React.FormEvent) => void;
   children: ReactNode;
 }
@@ -29,17 +32,19 @@ export default function AdminFormLayout({
   submitText,
   savingText,
   error,
+  isDirty = false,
   onSubmit,
   children,
 }: AdminFormLayoutProps) {
   const router = useRouter();
   const t = useTranslations("adminCommon");
+  useUnsavedChangesWarning(isDirty);
 
   return (
     <div className="max-w-[680px] mx-auto flex flex-col gap-5 w-full">
       {/* Botón Volver */}
       <button
-        onClick={() => router.back()}
+        onClick={() => confirmLeave() && router.back()}
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors w-fit cursor-pointer bg-transparent border-none p-0"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

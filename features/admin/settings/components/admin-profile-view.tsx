@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/hooks/use-profile";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { uploadAvatar } from "@/features/profile/actions";
 import { updateAdminProfile } from "../actions";
 import type { AdminOwnProfile } from "../types";
@@ -63,6 +64,11 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
     e.target.value = "";
   };
 
+  // Cambios sin guardar: nombre y correo vs. últimos guardados (el avatar se sube al instante).
+  const currentValues = JSON.stringify({ name, email });
+  const [savedValues, setSavedValues] = useState(currentValues);
+  useUnsavedChangesWarning(currentValues !== savedValues);
+
   // --- Guardar nombre y correo ---
   const handleSave = async () => {
     setIsSaving(true);
@@ -73,6 +79,7 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
     const res = await updateAdminProfile({ name, email });
 
     if (res.success) {
+      setSavedValues(currentValues);
       if (res.emailPending) {
         setEmailPendingMsg(t("emailPending", { email: email.trim() }));
       }

@@ -12,3 +12,14 @@ export const winLabelSchema = z
   .max(80, "Máximo 80 caracteres.");
 
 export type WinLabelInput = z.infer<typeof winLabelSchema>;
+
+// --- Guardado de la lista completa de victorias ---
+// Las victorias existentes llevan su id (se actualizan y conservan su historial);
+// las nuevas van sin id.
+export const saveWinsSchema = z.object({
+  wins: z
+    .array(z.object({ id: z.string().uuid().optional(), label: winLabelSchema }))
+    .max(MAX_DAILY_WINS),
+});
+
+export type SaveWinsInput = z.infer<typeof saveWinsSchema>;

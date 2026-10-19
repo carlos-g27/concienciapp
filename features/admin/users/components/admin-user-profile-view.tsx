@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CategoryCard from "@/components/ui/category-card";
+import { confirmLeave, useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { updateUserProfile } from "../actions";
 import type { AdminUserCounts, AdminUserDetail } from "../types";
 import styles from "./admin-user-profile.module.css";
@@ -60,6 +61,15 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Cambios sin guardar: datos editados vs. últimos guardados.
+  const currentValues = JSON.stringify(draft);
+  const [savedValues, setSavedValues] = useState(currentValues);
+  useUnsavedChangesWarning(currentValues !== savedValues);
+
+  const goTo = (path: string) => {
+    if (confirmLeave()) router.push(path);
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
@@ -68,6 +78,7 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
     const res = await updateUserProfile(userId, draft);
 
     if (res.success) {
+      setSavedValues(currentValues);
       setSuccessMsg(t("savedInfo"));
       setTimeout(() => setSuccessMsg(null), 3000);
       router.refresh();
@@ -165,21 +176,21 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
           icon={<IconFisico />}
           footerPrimaryText={t("exercisesCount", { count: counts.exercises })}
           footerSecondaryText={t("editRoutine")}
-          onClick={() => router.push(`/admin/users/${userId}/fisico`)}
+          onClick={() => goTo(`/admin/users/${userId}/fisico`)}
         />
         <CategoryCard
           title={t("pillarNutricion")}
           icon={<IconNutricion />}
           footerPrimaryText={t("recipesCount", { count: counts.recipes })}
           footerSecondaryText={t("editPlan")}
-          onClick={() => router.push(`/admin/users/${userId}/nutricion`)}
+          onClick={() => goTo(`/admin/users/${userId}/nutricion`)}
         />
         <CategoryCard
           title={t("pillarMental")}
           icon={<IconMental />}
           footerPrimaryText={t("meditationsCount", { count: counts.meditations })}
           footerSecondaryText={t("editMeditations")}
-          onClick={() => router.push(`/admin/users/${userId}/mental`)}
+          onClick={() => goTo(`/admin/users/${userId}/mental`)}
         />
       </div>
 

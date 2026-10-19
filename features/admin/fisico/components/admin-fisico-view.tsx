@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import TabbedCard, { TabItem } from "@/components/ui/tabbed-card";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import ExercisePickerModal from "./exercise-picker-modal";
 import { saveUserRoutine } from "../actions";
 import type { AssignedExercise, CatalogExercise, Day, FocusByDay, RoutineByDay } from "../types";
@@ -31,6 +32,11 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Cambios sin guardar: rutina y enfoques actuales vs. últimos guardados.
+  const currentValues = JSON.stringify({ routine, dayFocus });
+  const [savedValues, setSavedValues] = useState(currentValues);
+  useUnsavedChangesWarning(currentValues !== savedValues);
 
   const handleSelectExercise = (exercise: CatalogExercise) => {
     setRoutine((prev) => ({
@@ -76,6 +82,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
     const res = await saveUserRoutine(userId, { routine: routineRows, focus: focusRows });
 
     if (res.success) {
+      setSavedValues(currentValues);
       setSuccessMsg(t("savedChanges"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {
