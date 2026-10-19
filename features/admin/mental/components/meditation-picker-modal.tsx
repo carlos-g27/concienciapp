@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
+import { confirmLeave } from "@/hooks/use-unsaved-changes";
 import { deleteMeditation } from "@/features/admin/meditations/actions";
 import type { MeditationCategory } from "@/features/admin/meditations/types";
 import type { CatalogMeditation } from "../types";
@@ -49,7 +50,7 @@ export default function MeditationPickerModal({
   }));
 
   const handleEdit = (meditationId: string) => {
-    router.push(`/admin/meditations?id=${meditationId}`);
+    if (confirmLeave()) router.push(`/admin/meditations?id=${meditationId}`);
   };
 
   const handleDelete = async (item: PickerItem & { original: CatalogMeditation }) => {

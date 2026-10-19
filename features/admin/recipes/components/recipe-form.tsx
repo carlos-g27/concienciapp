@@ -54,6 +54,14 @@ export default function RecipeForm({ initialRecipe, initialType }: RecipeFormPro
   const [error, setError] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
 
+  // Cambios sin guardar: valores actuales vs. iniciales (al guardar se vuelve atrás).
+  const currentValues = JSON.stringify({
+    name, calories, imageUrl, mealType,
+    ingredients: ingredients.map((i) => ({ name: i.name, quantity: i.quantity })),
+  });
+  const [initialValues] = useState(currentValues);
+  const isDirty = currentValues !== initialValues;
+
   const addIngredient = () =>
     setIngredients((prev) => [...prev, { id: crypto.randomUUID(), name: "", quantity: "" }]);
   const updateIngredient = (id: string, field: "name" | "quantity", value: string) =>
@@ -102,6 +110,7 @@ export default function RecipeForm({ initialRecipe, initialType }: RecipeFormPro
       loadingText={t("recFormLoading")}
       submitText={isEditMode ? t("recFormSaveBtn") : t("recFormCreateBtn")}
       error={error}
+      isDirty={isDirty}
       onSubmit={handleSubmit}
     >
       {/* Preview de imagen */}

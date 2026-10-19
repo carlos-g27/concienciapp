@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
+import { confirmLeave } from "@/hooks/use-unsaved-changes";
 import { deleteExercise } from "@/features/admin/exercises/actions";
 import type { CatalogExercise } from "../types";
 
@@ -46,7 +47,7 @@ export default function ExercisePickerModal({
 
   // --- Editar: navega a /admin/exercises con el id, para precargar el formulario ---
   const handleEdit = (exerciseId: string) => {
-    router.push(`/admin/exercises?id=${exerciseId}`);
+    if (confirmLeave()) router.push(`/admin/exercises?id=${exerciseId}`);
   };
 
   // --- Eliminar del catálogo vía Server Action (reutilizada de la Fase 6B) ---

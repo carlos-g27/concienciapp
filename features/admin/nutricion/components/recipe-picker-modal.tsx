@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
+import { confirmLeave } from "@/hooks/use-unsaved-changes";
 import { deleteRecipe } from "@/features/admin/recipes/actions";
 import type { CatalogRecipe, MealType } from "../types";
 
@@ -41,7 +42,7 @@ export default function RecipePickerModal({
   }));
 
   const handleEdit = (recipeId: string) => {
-    router.push(`/admin/recipes?id=${recipeId}`);
+    if (confirmLeave()) router.push(`/admin/recipes?id=${recipeId}`);
   };
 
   const handleDelete = async (item: PickerItem & { original: CatalogRecipe }) => {

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { getInitials } from "@/hooks/use-profile";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { updateProfile, uploadAvatar } from "../actions";
 import type { UserProfileData } from "../types";
 import styles from "./profile.module.css";
@@ -38,6 +39,11 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Cambios sin guardar: en modo edición, borrador distinto del perfil guardado.
+  useUnsavedChangesWarning(
+    isEditing && draft !== null && JSON.stringify(draft) !== JSON.stringify(profile),
+  );
 
   const handleEdit = () => {
     setDraft({ ...profile });

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import TabbedCard, { TabItem } from "@/components/ui/tabbed-card";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import RecipePickerModal from "./recipe-picker-modal";
 import { saveUserMeals } from "../actions";
 import type { CatalogRecipe, MealsByType, MealType } from "../types";
@@ -27,6 +28,11 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Cambios sin guardar: plan actual vs. último guardado.
+  const currentValues = JSON.stringify(meals);
+  const [savedValues, setSavedValues] = useState(currentValues);
+  useUnsavedChangesWarning(currentValues !== savedValues);
 
   const handleSelectRecipe = (recipe: CatalogRecipe) => {
     setMeals((prev) => ({
@@ -56,6 +62,7 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
     const res = await saveUserMeals(userId, { recipeIds });
 
     if (res.success) {
+      setSavedValues(currentValues);
       setSuccessMsg(t("savedMeals"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {

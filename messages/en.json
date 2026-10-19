@@ -4,7 +4,8 @@
     "spanish": "Spanish",
     "english": "English",
     "loading": "Loading...",
-    "hi": "Hi"
+    "hi": "Hi",
+    "unsavedChanges": "You have unsaved changes. Leave without saving?"
   },
   "nav": {
     "home": "Home",
@@ -125,13 +126,15 @@
     "newWin": "New win",
     "newWinPlaceholder": "e.g. Drink 2L of water",
     "add": "Add",
-    "adding": "Adding...",
+    "backToHome": "Back to home",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saved": "Daily wins saved successfully.",
     "limitReached": "You've reached the maximum of {max} daily wins.",
     "editAria": "Edit win",
     "deleteAria": "Delete win",
-    "errAdd": "Couldn't add the win.",
-    "errUpdate": "Couldn't save the win.",
-    "errDelete": "Couldn't delete the win.",
+    "errSave": "Couldn't save the wins.",
+    "errEmpty": "No win can be left empty.",
     "errToggle": "Couldn't update the win.",
     "errLimit": "You can only have up to {max} daily wins.",
     "errInvalid": "Invalid win."

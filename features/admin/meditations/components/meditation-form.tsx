@@ -40,6 +40,11 @@ export default function MeditationForm({ initialMeditation, initialCategory }: M
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Cambios sin guardar: valores actuales vs. iniciales (al guardar se vuelve atrás).
+  const currentValues = JSON.stringify({ name, category, videoUrl, duration });
+  const [initialValues] = useState(currentValues);
+  const isDirty = currentValues !== initialValues;
+
   // --- Guardar (crear o actualizar) meditación vía Server Action ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +82,7 @@ export default function MeditationForm({ initialMeditation, initialCategory }: M
       submitText={isEditMode ? t("medFormSaveBtn") : t("medFormCreateBtn")}
       savingText={isEditMode ? t("medFormSaving") : t("medFormCreating")}
       error={error}
+      isDirty={isDirty}
       onSubmit={handleSubmit}
     >
       {/* Nombre */}

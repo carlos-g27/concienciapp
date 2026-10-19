@@ -5,123 +5,104 @@ import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth/require-user";
 import { createClient } from "@/lib/supabase/server";
-import { winLabelSchema, MAX_DAILY_WINS } from "./schema";
+import { saveWinsSchema, MAX_DAILY_WINS, type SaveWinsInput } from "./schema";
 import { appToday } from "./queries";
+import type { DailyWin } from "./types";
 
 export interface ActionResult {
   success: boolean;
   error?: string;
 }
 
-export interface AddWinResult extends ActionResult {
-  id?: string;
+export interface SaveWinsResult extends ActionResult {
+  /** Lista guardada (con los ids generados para las nuevas). */
+  wins?: DailyWin[];
 }
 
 const idSchema = z.string().uuid();
 
 /**
- * Crea una victoria para el usuario autenticado. Devuelve el id generado para
- * que la UI pueda reflejar el cambio sin recargar.
+ * Guarda la lista completa de victorias del usuario autenticado comparándola
+ * con la de la base: elimina las quitadas, actualiza las editadas e inserta las
+ * nuevas. Las existentes conservan su id, así no se pierde su historial
+ * (daily_win_logs cae por ON DELETE CASCADE solo en las eliminadas).
  */
-export async function addWin(label: string): Promise<AddWinResult> {
+export async function saveWins(input: SaveWinsInput): Promise<SaveWinsResult> {
   const user = await requireUser();
   const t = await getTranslations("victorias");
 
-  const parsed = winLabelSchema.safeParse(label);
+  const parsed = saveWinsSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: t("errInvalid") };
+    const tooMany = parsed.error.issues.some((i) => i.code === "too_big" && i.path.length === 1);
+    return {
+      success: false,
+      error: tooMany ? t("errLimit", { max: MAX_DAILY_WINS }) : t("errInvalid"),
+    };
   }
 
   try {
     const supabase = await createClient();
 
-    // Tope de victorias por usuario (barrera autoritativa en servidor).
-    const { count, error: countErr } = await supabase
+    const { data: current, error: readErr } = await supabase
       .from("daily_wins")
-      .select("id", { count: "exact", head: true })
+      .select("id, label")
       .eq("user_id", user.id);
-    if (countErr) throw countErr;
-    if ((count ?? 0) >= MAX_DAILY_WINS) {
-      return { success: false, error: t("errLimit", { max: MAX_DAILY_WINS }) };
+    if (readErr) throw readErr;
+
+    const existing = new Map((current ?? []).map((w) => [w.id as string, w.label as string]));
+    const wins = parsed.data.wins;
+
+    // Un id que no sea del usuario no se acepta (defensa en profundidad).
+    if (wins.some((w) => w.id && !existing.has(w.id))) {
+      return { success: false, error: t("errInvalid") };
     }
 
-    const { data, error } = await supabase
+    const keptIds = new Set(wins.map((w) => w.id).filter(Boolean));
+    const toDelete = [...existing.keys()].filter((id) => !keptIds.has(id));
+
+    if (toDelete.length > 0) {
+      const { error } = await supabase
+        .from("daily_wins")
+        .delete()
+        .in("id", toDelete)
+        .eq("user_id", user.id);
+      if (error) throw error;
+    }
+
+    for (const w of wins) {
+      if (w.id && existing.get(w.id) !== w.label) {
+        const { error } = await supabase
+          .from("daily_wins")
+          .update({ label: w.label })
+          .eq("id", w.id)
+          .eq("user_id", user.id);
+        if (error) throw error;
+      }
+    }
+
+    // Una por una para conservar el orden por created_at.
+    for (const w of wins) {
+      if (!w.id) {
+        const { error } = await supabase
+          .from("daily_wins")
+          .insert({ user_id: user.id, label: w.label });
+        if (error) throw error;
+      }
+    }
+
+    const { data: saved, error: savedErr } = await supabase
       .from("daily_wins")
-      .insert({ user_id: user.id, label: parsed.data })
-      .select("id")
-      .single();
-    if (error) throw error;
+      .select("id, label")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: true });
+    if (savedErr) throw savedErr;
 
     revalidatePath("/victorias");
     revalidatePath("/dashboard");
-    return { success: true, id: data.id as string };
+    return { success: true, wins: (saved ?? []) as DailyWin[] };
   } catch (err) {
-    console.error("[addWin] error:", err);
-    return { success: false, error: t("errAdd") };
-  }
-}
-
-/**
- * Actualiza el texto de una victoria del usuario autenticado.
- */
-export async function updateWin(id: string, label: string): Promise<ActionResult> {
-  const user = await requireUser();
-  const t = await getTranslations("victorias");
-
-  if (!idSchema.safeParse(id).success) {
-    return { success: false, error: t("errInvalid") };
-  }
-
-  const parsed = winLabelSchema.safeParse(label);
-  if (!parsed.success) {
-    return { success: false, error: t("errInvalid") };
-  }
-
-  try {
-    const supabase = await createClient();
-    const { error } = await supabase
-      .from("daily_wins")
-      .update({ label: parsed.data })
-      .eq("id", id)
-      .eq("user_id", user.id);
-    if (error) throw error;
-
-    revalidatePath("/victorias");
-    revalidatePath("/dashboard");
-    return { success: true };
-  } catch (err) {
-    console.error("[updateWin] error:", err);
-    return { success: false, error: t("errUpdate") };
-  }
-}
-
-/**
- * Elimina una victoria del usuario autenticado (los logs asociados caen por
- * ON DELETE CASCADE).
- */
-export async function deleteWin(id: string): Promise<ActionResult> {
-  const user = await requireUser();
-  const t = await getTranslations("victorias");
-
-  if (!idSchema.safeParse(id).success) {
-    return { success: false, error: t("errInvalid") };
-  }
-
-  try {
-    const supabase = await createClient();
-    const { error } = await supabase
-      .from("daily_wins")
-      .delete()
-      .eq("id", id)
-      .eq("user_id", user.id);
-    if (error) throw error;
-
-    revalidatePath("/victorias");
-    revalidatePath("/dashboard");
-    return { success: true };
-  } catch (err) {
-    console.error("[deleteWin] error:", err);
-    return { success: false, error: t("errDelete") };
+    console.error("[saveWins] error:", err);
+    return { success: false, error: t("errSave") };
   }
 }
 

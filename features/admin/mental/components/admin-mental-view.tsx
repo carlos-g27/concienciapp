@@ -10,6 +10,7 @@ import {
   MEDITATION_CATEGORY_LABEL_KEYS,
   type MeditationCategory,
 } from "@/features/admin/meditations/types";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import MeditationPickerModal from "./meditation-picker-modal";
 import { saveUserMeditations } from "../actions";
 import type { CatalogMeditation, MeditationsByCategory } from "../types";
@@ -31,6 +32,11 @@ export default function AdminMentalView({ userId, initialMeditations, catalog }:
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Cambios sin guardar: asignaciones actuales vs. últimas guardadas.
+  const currentValues = JSON.stringify(meditations);
+  const [savedValues, setSavedValues] = useState(currentValues);
+  useUnsavedChangesWarning(currentValues !== savedValues);
 
   const handleSelectMeditation = (meditation: CatalogMeditation) => {
     setMeditations((prev) => ({
@@ -60,6 +66,7 @@ export default function AdminMentalView({ userId, initialMeditations, catalog }:
     const res = await saveUserMeditations(userId, { meditationIds });
 
     if (res.success) {
+      setSavedValues(currentValues);
       setSuccessMsg(t("savedMeditations"));
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {

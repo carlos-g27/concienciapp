@@ -29,6 +29,11 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Cambios sin guardar: valores actuales vs. últimos guardados.
+  const currentValues = JSON.stringify({ name, muscle, description, instructions, videoUrl, isMainLift });
+  const [savedValues, setSavedValues] = useState(currentValues);
+  const isDirty = currentValues !== savedValues;
+
   // --- Pasos dinámicos ---
   const handleStepChange = (index: number, value: string) => {
     setInstructions((prev) => prev.map((step, i) => (i === index ? value : step)));
@@ -61,7 +66,9 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
         ? await updateExercise(initialExercise.id, input)
         : await createExercise(input);
 
-    if (!res.success) {
+    if (res.success) {
+      setSavedValues(currentValues);
+    } else {
       setError(res.error ?? t("exSaveError"));
     }
 
@@ -78,6 +85,7 @@ export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
       submitText={isEditMode ? t("exFormSaveBtn") : t("exFormCreateBtn")}
       savingText={isEditMode ? t("exFormSaving") : t("exFormCreating")}
       error={error}
+      isDirty={isDirty}
       onSubmit={handleSubmit}
     >
       {/* Nombre */}
