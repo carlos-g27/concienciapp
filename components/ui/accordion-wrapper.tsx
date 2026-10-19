@@ -3,7 +3,7 @@ import styles from "./accordion-wrapper.module.css";
 
 interface AccordionWrapperProps {
   title: string;
-  badgeText: string;
+  badgeText?: string;
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
@@ -23,7 +23,7 @@ export default function AccordionWrapper({
       <button className={styles.header} onClick={onToggle} aria-expanded={isOpen}>
         <span className={styles.title}>{title}</span>
         <div className={styles.headerRight}>
-          <span className={styles.badge}>{badgeText}</span>
+          {badgeText?.trim() ? <span className={styles.badge}>{badgeText}</span> : null}
           <svg
             width="16" height="16"
             viewBox="0 0 24 24"
