@@ -17,12 +17,12 @@
   gap: 0.4rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   text-decoration: none;
   transition: color 0.15s;
   width: fit-content;
 }
-.backBtn:hover { color: var(--foreground); }
+.backBtn:hover { color: hsl(var(--foreground)); }
 
 /* Header */
 .pageHeader {
@@ -36,13 +36,13 @@
 .pageTitle {
   font-size: 1.3rem;
   font-weight: 800;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
 }
 
 .pageSubtitle {
   font-size: 0.85rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-top: 0.25rem;
 }
 
@@ -60,7 +60,7 @@
   padding: 0.75rem 1rem;
   border-radius: 10px;
   background-color: rgba(220, 38, 38, 0.1);
-  color: var(--destructive);
+  color: hsl(var(--destructive));
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -95,8 +95,8 @@
   gap: 0.875rem;
   padding: 0.875rem;
   border-radius: 14px;
-  background-color: var(--secondary);
-  border: 1.5px solid var(--border);
+  background-color: hsl(var(--secondary));
+  border: 1.5px solid hsl(var(--border));
 }
 
 .exerciseThumb {
@@ -122,12 +122,12 @@
 .exerciseName {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
 }
 
 .exerciseMuscle {
   font-size: 0.75rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
 }
 
 .exerciseFields {
@@ -152,7 +152,7 @@
 
 .fieldSuffix {
   font-size: 0.72rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
 }
 
 .deleteBtn {
@@ -164,7 +164,7 @@
   border-radius: 10px;
   border: none;
   background-color: rgba(220, 38, 38, 0.1);
-  color: var(--destructive);
+  color: hsl(var(--destructive));
   cursor: pointer;
   flex-shrink: 0;
   transition: background-color 0.15s;
@@ -206,7 +206,7 @@
 .skeletonRow {
   height: 76px;
   border-radius: 14px;
-  background-color: var(--secondary);
+  background-color: hsl(var(--secondary));
   animation: pulse 1.5s ease-in-out infinite;
 }
 
