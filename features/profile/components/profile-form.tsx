@@ -138,7 +138,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
 
           {/* Header con gradiente y avatar */}
-          <div className="bg-gradient-to-br from-primary to-muted-foreground pt-8 pb-16 flex justify-center">
+          <div className="bg-gradient-to-br from-primary to-muted-foreground pt-8 pb-8 flex justify-center">
             <div className="relative">
               {/* Avatar */}
               <div className="w-24 h-24 rounded-full border-4 border-background shadow-lg overflow-hidden bg-accent flex items-center justify-center">
@@ -189,7 +189,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
 
           {/* Info y botón editar */}
-          <div className="-mt-10 flex flex-col items-center gap-1 px-6 pb-6">
+          <div className="pt-4 flex flex-col items-center gap-1 px-6 pb-6">
             <p className="text-lg font-bold text-foreground">{profile.name || t("noName")}</p>
 
             {/* Botón editar / guardar / cancelar */}
