@@ -24,25 +24,25 @@
   gap: 0.4rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   text-decoration: none;
   padding: 0.4rem 0;
   transition: color 0.15s;
   width: fit-content;
   margin-bottom: 0.5rem;
 }
-.backBtn:hover { color: var(--foreground); }
+.backBtn:hover { color: hsl(var(--foreground)); }
 
 .pageTitle {
   font-size: 1.4rem;
   font-weight: 800;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
 }
 
 .pageSubtitle {
   font-size: 0.875rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
 }
 
 /* FAQ list */
@@ -53,8 +53,8 @@
 }
 
 .faqItem {
-  background-color: var(--card);
-  border: 1.5px solid var(--border);
+  background-color: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
   border-radius: 14px;
   padding: 1.125rem 1.25rem;
   display: flex;
@@ -65,13 +65,13 @@
 .faqQuestion {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   line-height: 1.4;
 }
 
 .faqAnswer {
   font-size: 0.85rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   line-height: 1.6;
 }
 
@@ -83,8 +83,8 @@
 }
 
 .helpCard {
-  background-color: var(--card);
-  border: 1.5px solid var(--border);
+  background-color: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
   border-radius: 14px;
   padding: 1.25rem;
   display: flex;
@@ -95,27 +95,27 @@
 .helpCardTitle {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .helpCardIcon {
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   flex-shrink: 0;
 }
 
 .helpCardText {
   font-size: 0.85rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   line-height: 1.6;
 }
 
 .helpCardLink {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--primary);
+  color: hsl(var(--primary));
   text-decoration: none;
   width: fit-content;
   margin-top: 0.25rem;
