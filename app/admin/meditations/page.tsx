@@ -7,7 +7,7 @@ import MeditationForm from "@/features/admin/meditations/components/meditation-f
 export default function AdminCreateMeditationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; category?: string }>;
 }) {
   return (
     <Suspense fallback={<div className="flex items-center justify-center h-full"><BrandLoader /></div>}>
@@ -19,11 +19,11 @@ export default function AdminCreateMeditationPage({
 async function MeditationFormContent({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; category?: string }>;
 }) {
   await requireAdmin();
-  const { id } = await searchParams;
+  const { id, category } = await searchParams;
   const initialMeditation = id ? await getMeditation(id) : null;
 
-  return <MeditationForm initialMeditation={initialMeditation} />;
+  return <MeditationForm initialMeditation={initialMeditation} initialCategory={category} />;
 }
