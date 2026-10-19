@@ -7,18 +7,18 @@
     "hi": "Hola"
   },
   "nav": {
-    "home": "Home",
-    "profile": "Profile",
+    "home": "Inicio",
+    "profile": "Perfil",
     "fisico": "Físico",
     "nutricion": "Nutrición",
     "mental": "Mental",
-    "settings": "Settings",
+    "settings": "Configuración",
     "maintenance": "Mantenimiento",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú"
   },
   "pageTitles": {
-    "dashboard": "Progress",
+    "dashboard": "Progreso",
     "victorias": "Victorias",
     "profile": "Perfil",
     "fisico": "Físico",
@@ -105,8 +105,8 @@
     "signIn": "Iniciar sesión"
   },
   "dashboard": {
-    "progress": "Progress",
-    "tabImprovement": "Improvement",
+    "progress": "Progreso",
+    "tabImprovement": "Mejora",
     "tabGeneral": "General",
     "rmTitle": "Progreso de RM (kg)",
     "rmNoMainLifts": "Aún no hay ejercicios principales configurados.",
