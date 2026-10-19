@@ -171,6 +171,7 @@
     "title": "My routine",
     "backToRoutine": "Back to routine",
     "currentWeek": "Current week · {day} is your training day",
+    "weekendRest": "Current week · It's the weekend, a rest day",
     "today": "Today",
     "noFocus": "No focus assigned",
     "exercisesCount": "{count, plural, one {# exercise} other {# exercises}}",

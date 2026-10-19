@@ -7,7 +7,8 @@ import ExercisePanel from "./exercise-panel";
 import type { Day, Exercise, WorkoutDay } from "../types";
 import styles from "./fisico.module.css";
 
-function getTodayKey(): Day {
+// Sábado y domingo no son días de rutina: devuelve null.
+function getTodayKey(): Day | null {
   const map: Record<number, Day> = {
     1: "lunes",
     2: "martes",
@@ -15,7 +16,7 @@ function getTodayKey(): Day {
     4: "jueves",
     5: "viernes",
   };
-  return map[new Date().getDay()] ?? "lunes";
+  return map[new Date().getDay()] ?? null;
 }
 
 interface FisicoViewProps {
@@ -24,15 +25,16 @@ interface FisicoViewProps {
 
 export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
   const t = useTranslations("fisico");
-  const [todayKey, setTodayKey] = useState<Day>("lunes");
-  const [expandedDay, setExpandedDay] = useState<Day | "">("lunes");
+  // undefined = aún sin calcular (SSR / primer render); null = fin de semana.
+  const [todayKey, setTodayKey] = useState<Day | null | undefined>(undefined);
+  const [expandedDay, setExpandedDay] = useState<Day | "">("");
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
   // Calcular el día actual solo en el cliente (evita desajustes de zona en SSR)
   useEffect(() => {
     const calculatedToday = getTodayKey();
     setTodayKey(calculatedToday);
-    setExpandedDay(calculatedToday);
+    setExpandedDay(calculatedToday ?? "");
   }, []);
 
   const handleSelectExercise = (exercise: Exercise) => {
@@ -74,7 +76,11 @@ export default function FisicoView({ initialWorkoutDays }: FisicoViewProps) {
             <div className={styles.pageHeader}>
               <h1 className={styles.pageTitle}>{t("title")}</h1>
               <p className={styles.pageSubtitle}>
-                {t("currentWeek", { day: t(`days.${todayKey}`) })}
+                {todayKey === undefined
+                  ? " "
+                  : todayKey === null
+                    ? t("weekendRest")
+                    : t("currentWeek", { day: t(`days.${todayKey}`) })}
               </p>
             </div>
 
