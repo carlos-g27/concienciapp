@@ -71,6 +71,7 @@ export default function Help() {
             <AccordionWrapper
               key={i}
               title={item.title}
+              wrapTitle
               isOpen={openIndex === i}
               onToggle={() => handleToggle(i)}
             >
