@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { getVideoEmbedInfo } from "@/lib/video";
 import { listWeightLogs, addWeightLog, deleteWeightLog } from "../actions";
 import type { Exercise, WeightLog } from "../types";
 import styles from "./exercise-panel.module.css";
@@ -9,24 +10,6 @@ import styles from "./exercise-panel.module.css";
 interface ExercisePanelProps {
   exercise: Exercise | null;
   onClose: () => void;
-}
-
-// --- Helper: detecta el tipo de video y arma la URL de embed ---
-function getVideoEmbedInfo(url: string): { type: "youtube" | "vimeo" | "file"; src: string } {
-  const youtubeMatch = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-  );
-  if (youtubeMatch) {
-    return { type: "youtube", src: `https://www.youtube.com/embed/${youtubeMatch[1]}` };
-  }
-
-  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  if (vimeoMatch) {
-    return { type: "vimeo", src: `https://player.vimeo.com/video/${vimeoMatch[1]}` };
-  }
-
-  // Cualquier otra URL se trata como archivo de video directo
-  return { type: "file", src: url };
 }
 
 // --- Helper: calcula en qué "semana del ciclo" cae una fecha, contando

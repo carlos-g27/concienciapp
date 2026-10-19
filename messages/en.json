@@ -215,6 +215,21 @@
     "totalCalories": "Total calories",
     "ingredients": "Ingredients"
   },
+  "mental": {
+    "title": "My Mental Wellbeing",
+    "subtitle": "Select a category to see your meditations",
+    "backToCategories": "Back to categories",
+    "ansiedad": "Anxiety",
+    "gratitud": "Gratitude",
+    "dormir": "Sleep",
+    "meditationsCount": "{count, plural, one {# meditation} other {# meditations}}",
+    "meditationsAvailable": "{count, plural, one {# meditation available} other {# meditations available}}",
+    "minTotal": "~{min} min total",
+    "minutes": "{n} min",
+    "emptyCategory": "You don't have any meditations assigned in this category yet.",
+    "noVideo": "This meditation doesn't have a video yet.",
+    "duration": "Duration"
+  },
   "adminNav": {
     "users": "Users",
     "catalogExercises": "Exercise catalog",
