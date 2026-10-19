@@ -1,0 +1,94 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
+import { deleteMeditation } from "@/features/admin/meditations/actions";
+import type { MeditationCategory } from "@/features/admin/meditations/types";
+import type { CatalogMeditation } from "../types";
+
+interface MeditationPickerModalProps {
+  catalog: CatalogMeditation[];
+  category: MeditationCategory;
+  excludeIds: string[];
+  onSelect: (meditation: CatalogMeditation) => void;
+  onClose: () => void;
+}
+
+const MOON_ICON = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
+  </svg>
+);
+
+export default function MeditationPickerModal({
+  catalog,
+  category,
+  excludeIds,
+  onSelect,
+  onClose,
+}: MeditationPickerModalProps) {
+  const router = useRouter();
+  const t = useTranslations("adminAssign");
+  const tc = useTranslations("adminCatalog");
+  const [search, setSearch] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const filtered = catalog
+    .filter((m) => m.category === category)
+    .filter((m) => !excludeIds.includes(m.id))
+    .filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));
+
+  const pickerItems: (PickerItem & { original: CatalogMeditation })[] = filtered.map((meditation) => ({
+    id: meditation.id,
+    title: meditation.name,
+    subtitle: meditation.duration != null ? tc("medMinutes", { n: meditation.duration }) : undefined,
+    icon: MOON_ICON,
+    original: meditation,
+  }));
+
+  const handleEdit = (meditationId: string) => {
+    router.push(`/admin/meditations?id=${meditationId}`);
+  };
+
+  const handleDelete = async (item: PickerItem & { original: CatalogMeditation }) => {
+    const meditation = item.original;
+    const confirmed = window.confirm(t("pickerDeleteConfirmMed", { name: meditation.name }));
+    if (!confirmed) return;
+
+    setDeletingId(meditation.id);
+    const res = await deleteMeditation(meditation.id);
+    if (res.success) {
+      router.refresh();
+    } else {
+      console.error("Error eliminando meditación:", res.error);
+      alert(t("pickerDeleteErrorMed"));
+    }
+    setDeletingId(null);
+  };
+
+  return (
+    <PickerModal
+      title={t("pickerAddMeditation")}
+      searchPlaceholder={t("pickerSearchMeditation")}
+      search={search}
+      onSearchChange={setSearch}
+      items={pickerItems}
+      isLoading={false}
+      emptyMessage={
+        catalog.filter((m) => m.category === category).length === 0
+          ? t("pickerEmptyNoneMed")
+          : t("pickerEmptyNoResultsMed")
+      }
+      deletingId={deletingId}
+      onSelect={(item) => onSelect(item.original)}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onClose={onClose}
+      footerPrompt={t("pickerFooterMed")}
+      createLinkHref={`/admin/meditations?category=${category}`}
+      createLinkLabel={t("pickerCreateMed")}
+    />
+  );
+}

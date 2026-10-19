@@ -17,16 +17,21 @@ import {
 
 interface MeditationFormProps {
   initialMeditation: Meditation | null;
+  initialCategory?: string;
 }
 
-export default function MeditationForm({ initialMeditation }: MeditationFormProps) {
+export default function MeditationForm({ initialMeditation, initialCategory }: MeditationFormProps) {
   const router = useRouter();
   const t = useTranslations("adminCatalog");
   const isEditMode = Boolean(initialMeditation);
 
   const [name, setName] = useState(initialMeditation?.name ?? "");
   const [category, setCategory] = useState<MeditationCategory>(
-    isMeditationCategory(initialMeditation?.category) ? initialMeditation.category : "ansiedad"
+    isMeditationCategory(initialMeditation?.category)
+      ? initialMeditation.category
+      : isMeditationCategory(initialCategory)
+        ? initialCategory
+        : "ansiedad"
   );
   const [videoUrl, setVideoUrl] = useState(initialMeditation?.video_url ?? "");
   const [duration, setDuration] = useState(
