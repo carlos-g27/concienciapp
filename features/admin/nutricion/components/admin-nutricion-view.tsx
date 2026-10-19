@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import TabbedCard, { TabItem } from "@/components/ui/tabbed-card";
+import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import RecipePickerModal from "./recipe-picker-modal";
 import { saveUserMeals } from "../actions";
@@ -32,7 +33,8 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
   // Cambios sin guardar: plan actual vs. último guardado.
   const currentValues = JSON.stringify(meals);
   const [savedValues, setSavedValues] = useState(currentValues);
-  useUnsavedChangesWarning(currentValues !== savedValues);
+  const isDirty = currentValues !== savedValues;
+  useUnsavedChangesWarning(isDirty);
 
   const handleSelectRecipe = (recipe: CatalogRecipe) => {
     setMeals((prev) => ({
@@ -98,13 +100,14 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
             {t("assignedTotalRecipes", { count: totalAssigned })}
           </p>
         </div>
-        <Button onClick={handleSaveMeals} disabled={isSaving}>
+        {/* En móvil el botón va en la barra inferior (MobileSaveBar) */}
+        <Button onClick={handleSaveMeals} disabled={isSaving || !isDirty} className="hidden lg:inline-flex">
           {isSaving ? t("saving") : t("save")}
         </Button>
       </div>
 
-      {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
-      {error && <div className={styles.errorBanner}>{error}</div>}
+      {successMsg && <div className={`${styles.successBanner} hidden lg:block`}>{successMsg}</div>}
+      {error && <div className={`${styles.errorBanner} hidden lg:block`}>{error}</div>}
 
       <TabbedCard
         tabs={tabItems}
@@ -161,6 +164,16 @@ export default function AdminNutricionView({ userId, initialMeals, catalog }: Ad
           {t("addRecipe")}
         </button>
       </TabbedCard>
+
+      <MobileSaveBar
+        onSave={handleSaveMeals}
+        disabled={isSaving || !isDirty}
+        isSaving={isSaving}
+        label={t("save")}
+        savingLabel={t("saving")}
+        successMsg={successMsg}
+        error={error}
+      />
 
       {/* Modal picker */}
       {isPickerOpen && (

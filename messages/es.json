@@ -20,14 +20,14 @@
   },
   "pageTitles": {
     "dashboard": "Progreso",
-    "victorias": "Victorias",
-    "profile": "Perfil",
-    "fisico": "Físico",
-    "nutricion": "Nutrición",
-    "mental": "Mental",
+    "victorias": "Victorias diarias",
+    "profile": "Mi perfil",
+    "fisico": "Mi Rutina",
+    "nutricion": "Mi Nutrición",
+    "mental": "Mi Bienestar Mental",
     "settings": "Configuración",
-    "faq": "FAQ",
-    "help": "Ayuda"
+    "faq": "Preguntas frecuentes",
+    "help": "Centro de ayuda"
   },
   "settings": {
     "title": "Configuración",
@@ -187,6 +187,13 @@
       "miercoles": "Miércoles",
       "jueves": "Jueves",
       "viernes": "Viernes"
+    },
+    "daysShort": {
+      "lunes": "Lun",
+      "martes": "Mar",
+      "miercoles": "Mié",
+      "jueves": "Jue",
+      "viernes": "Vie"
     },
     "closePanel": "Cerrar panel",
     "videoPreview": "Vista previa del ejercicio",
