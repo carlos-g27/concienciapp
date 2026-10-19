@@ -112,6 +112,16 @@
     "rmTitle": "1RM progress (kg)",
     "rmNoMainLifts": "No main lifts have been set up yet.",
     "rmNoData": "Once you log your first 1RM, you'll see it here.",
+    "rmNoDataRange": "No 1RM records in this period.",
+    "rangeLabel": "Period",
+    "range_3m": "3M",
+    "range_6m": "6M",
+    "range_1y": "1Y",
+    "range_all": "All",
+    "range_3m_full": "Last 3 months",
+    "range_6m_full": "Last 6 months",
+    "range_1y_full": "Last year",
+    "range_all_full": "All time",
     "kgUnit": " kg"
   },
   "victorias": {

@@ -112,6 +112,16 @@
     "rmTitle": "Progreso de RM (kg)",
     "rmNoMainLifts": "Aún no hay ejercicios principales configurados.",
     "rmNoData": "Cuando marques tu primer RM, lo podrás ver aquí.",
+    "rmNoDataRange": "No hay registros de RM en este periodo.",
+    "rangeLabel": "Periodo",
+    "range_3m": "3M",
+    "range_6m": "6M",
+    "range_1y": "1A",
+    "range_all": "Todo",
+    "range_3m_full": "Últimos 3 meses",
+    "range_6m_full": "Últimos 6 meses",
+    "range_1y_full": "Último año",
+    "range_all_full": "Todo el historial",
     "kgUnit": " kg"
   },
   "victorias": {
