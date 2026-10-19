@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import TabbedCard, { TabItem } from "@/components/ui/tabbed-card";
+import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import ExercisePickerModal from "./exercise-picker-modal";
 import { saveUserRoutine } from "../actions";
@@ -36,7 +37,8 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
   // Cambios sin guardar: rutina y enfoques actuales vs. últimos guardados.
   const currentValues = JSON.stringify({ routine, dayFocus });
   const [savedValues, setSavedValues] = useState(currentValues);
-  useUnsavedChangesWarning(currentValues !== savedValues);
+  const isDirty = currentValues !== savedValues;
+  useUnsavedChangesWarning(isDirty);
 
   const handleSelectExercise = (exercise: CatalogExercise) => {
     setRoutine((prev) => ({
@@ -98,6 +100,7 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
   const tabItems: TabItem[] = DAY_KEYS.map((key) => ({
     key,
     label: tf(`days.${key}`),
+    shortLabel: tf(`daysShort.${key}`),
     badge: routine[key].length,
   }));
 
@@ -118,13 +121,14 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
             {t("assignedTotal", { count: totalAssigned })}
           </p>
         </div>
-        <Button onClick={handleSaveRoutine} disabled={isSaving}>
+        {/* En móvil el botón va en la barra inferior (MobileSaveBar) */}
+        <Button onClick={handleSaveRoutine} disabled={isSaving || !isDirty} className="hidden lg:inline-flex">
           {isSaving ? t("saving") : t("save")}
         </Button>
       </div>
 
-      {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
-      {error && <div className={styles.errorBanner}>{error}</div>}
+      {successMsg && <div className={`${styles.successBanner} hidden lg:block`}>{successMsg}</div>}
+      {error && <div className={`${styles.errorBanner} hidden lg:block`}>{error}</div>}
 
       <TabbedCard
         tabs={tabItems}
@@ -212,6 +216,16 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
           {t("addExercise")}
         </button>
       </TabbedCard>
+
+      <MobileSaveBar
+        onSave={handleSaveRoutine}
+        disabled={isSaving || !isDirty}
+        isSaving={isSaving}
+        label={t("save")}
+        savingLabel={t("saving")}
+        successMsg={successMsg}
+        error={error}
+      />
 
       {/* Modal picker */}
       {isPickerOpen && (

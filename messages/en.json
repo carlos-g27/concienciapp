@@ -20,14 +20,14 @@
   },
   "pageTitles": {
     "dashboard": "Progress",
-    "victorias": "Daily Wins",
-    "profile": "Profile",
-    "fisico": "Physical",
-    "nutricion": "Nutrition",
-    "mental": "Mental",
+    "victorias": "Daily wins",
+    "profile": "My profile",
+    "fisico": "My routine",
+    "nutricion": "My nutrition",
+    "mental": "My Mental Wellbeing",
     "settings": "Settings",
-    "faq": "FAQ",
-    "help": "Help"
+    "faq": "Frequently asked questions",
+    "help": "Help center"
   },
   "settings": {
     "title": "Settings",
@@ -187,6 +187,13 @@
       "miercoles": "Wednesday",
       "jueves": "Thursday",
       "viernes": "Friday"
+    },
+    "daysShort": {
+      "lunes": "Mon",
+      "martes": "Tue",
+      "miercoles": "Wed",
+      "jueves": "Thu",
+      "viernes": "Fri"
     },
     "closePanel": "Close panel",
     "videoPreview": "Exercise preview",

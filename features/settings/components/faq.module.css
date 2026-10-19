@@ -34,10 +34,14 @@
 .backBtn:hover { color: hsl(var(--foreground)); }
 
 .pageTitle {
+  display: none; /* en móvil el título está en el topbar */
   font-size: 1.4rem;
   font-weight: 800;
   color: hsl(var(--foreground));
   letter-spacing: -0.02em;
+}
+@media (min-width: 1024px) {
+  .pageTitle { display: block; }
 }
 
 .pageSubtitle {

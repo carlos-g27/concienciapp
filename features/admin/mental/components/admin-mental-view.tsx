@@ -10,6 +10,7 @@ import {
   MEDITATION_CATEGORY_LABEL_KEYS,
   type MeditationCategory,
 } from "@/features/admin/meditations/types";
+import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import MeditationPickerModal from "./meditation-picker-modal";
 import { saveUserMeditations } from "../actions";
@@ -36,7 +37,8 @@ export default function AdminMentalView({ userId, initialMeditations, catalog }:
   // Cambios sin guardar: asignaciones actuales vs. últimas guardadas.
   const currentValues = JSON.stringify(meditations);
   const [savedValues, setSavedValues] = useState(currentValues);
-  useUnsavedChangesWarning(currentValues !== savedValues);
+  const isDirty = currentValues !== savedValues;
+  useUnsavedChangesWarning(isDirty);
 
   const handleSelectMeditation = (meditation: CatalogMeditation) => {
     setMeditations((prev) => ({
@@ -102,13 +104,14 @@ export default function AdminMentalView({ userId, initialMeditations, catalog }:
             {t("assignedTotalMeditations", { count: totalAssigned })}
           </p>
         </div>
-        <Button onClick={handleSaveMeditations} disabled={isSaving}>
+        {/* En móvil el botón va en la barra inferior (MobileSaveBar) */}
+        <Button onClick={handleSaveMeditations} disabled={isSaving || !isDirty} className="hidden lg:inline-flex">
           {isSaving ? t("saving") : t("save")}
         </Button>
       </div>
 
-      {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
-      {error && <div className={styles.errorBanner}>{error}</div>}
+      {successMsg && <div className={`${styles.successBanner} hidden lg:block`}>{successMsg}</div>}
+      {error && <div className={`${styles.errorBanner} hidden lg:block`}>{error}</div>}
 
       <TabbedCard
         tabs={tabItems}
@@ -163,6 +166,16 @@ export default function AdminMentalView({ userId, initialMeditations, catalog }:
           {t("addMeditation")}
         </button>
       </TabbedCard>
+
+      <MobileSaveBar
+        onSave={handleSaveMeditations}
+        disabled={isSaving || !isDirty}
+        isSaving={isSaving}
+        label={t("save")}
+        savingLabel={t("saving")}
+        successMsg={successMsg}
+        error={error}
+      />
 
       {/* Modal picker */}
       {isPickerOpen && (
