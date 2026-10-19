@@ -215,6 +215,21 @@
     "totalCalories": "Calorías totales",
     "ingredients": "Ingredientes"
   },
+  "mental": {
+    "title": "Mi Bienestar Mental",
+    "subtitle": "Selecciona una categoría para ver tus meditaciones",
+    "backToCategories": "Volver a categorías",
+    "ansiedad": "Ansiedad",
+    "gratitud": "Gratitud",
+    "dormir": "Dormir",
+    "meditationsCount": "{count, plural, one {# meditación} other {# meditaciones}}",
+    "meditationsAvailable": "{count, plural, one {# meditación disponible} other {# meditaciones disponibles}}",
+    "minTotal": "~{min} min totales",
+    "minutes": "{n} min",
+    "emptyCategory": "Aún no tienes meditaciones asignadas en esta categoría.",
+    "noVideo": "Esta meditación aún no tiene video.",
+    "duration": "Duración"
+  },
   "adminNav": {
     "users": "Usuarios",
     "catalogExercises": "Catálogo ejercicios",
