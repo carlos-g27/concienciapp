@@ -20,12 +20,12 @@
   gap: 0.4rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   text-decoration: none;
   transition: color 0.15s;
   width: fit-content;
 }
-.backBtn:hover { color: var(--foreground); }
+.backBtn:hover { color: hsl(var(--foreground)); }
 
 /* Header del perfil: avatar + nombre + email */
 .profileHeader {
@@ -33,7 +33,7 @@
   align-items: center;
   gap: 1.25rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid hsl(var(--border));
   margin-bottom: 1.5rem;
 }
 
@@ -65,12 +65,12 @@
 .profileName {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
 }
 
 .profileEmail {
   font-size: 0.85rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
 }
 
 /* Grid de campos editables */
@@ -106,7 +106,7 @@
 
 .errorMsg {
   font-size: 0.8rem;
-  color: var(--destructive);
+  color: hsl(var(--destructive));
   font-weight: 500;
 }
 
@@ -124,7 +124,7 @@
 .skeletonHeader {
   height: 140px;
   border-radius: 16px;
-  background-color: var(--secondary);
+  background-color: hsl(var(--secondary));
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -140,7 +140,7 @@
 .skeletonCard {
   height: 160px;
   border-radius: 20px;
-  background-color: var(--secondary);
+  background-color: hsl(var(--secondary));
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -152,6 +152,6 @@
 .notFound {
   text-align: center;
   padding: 3rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   font-size: 0.9rem;
 }

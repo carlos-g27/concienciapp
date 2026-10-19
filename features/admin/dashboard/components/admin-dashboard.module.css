@@ -25,13 +25,13 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
 }
 
 .pageSubtitle {
   font-size: 0.875rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-top: 0.25rem;
 }
 
@@ -75,8 +75,8 @@
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background-color: var(--secondary);
-  color: var(--primary);
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--primary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,7 +86,7 @@
 .filterCardValue {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   line-height: 1;
 }
 
@@ -97,7 +97,7 @@
   gap: 0.25rem;
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
 }
 
 /* ── Grid de contenido: lista + leaderboard ── */
@@ -130,7 +130,7 @@
 .searchIcon {
   position: absolute;
   left: 0.875rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   pointer-events: none;
   flex-shrink: 0;
 }
@@ -139,15 +139,15 @@
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
   border-radius: 12px;
-  border: 1.5px solid var(--border);
-  background-color: var(--background);
-  color: var(--foreground);
+  border: 1.5px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-size: 0.875rem;
   outline: none;
   transition: border-color 0.15s;
 }
-.searchInput:focus { border-color: var(--ring); }
-.searchInput::placeholder { color: var(--muted-foreground); }
+.searchInput:focus { border-color: hsl(var(--ring)); }
+.searchInput::placeholder { color: hsl(var(--muted-foreground)); }
 
 /* Lista de usuarios */
 .userList {
@@ -165,13 +165,13 @@
   text-decoration: none;
   transition: background-color 0.15s;
   cursor: pointer;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid hsl(var(--border));
 }
 .userCard:last-child {
   border-bottom: none;
 }
 .userCard:hover {
-  background-color: var(--background);
+  background-color: hsl(var(--background));
 }
 
 /* Avatar */
@@ -205,7 +205,7 @@
 .userName {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -213,7 +213,7 @@
 
 .userEmail {
   font-size: 0.78rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -229,8 +229,8 @@
 
 .userMetaItem {
   font-size: 0.7rem;
-  color: var(--muted-foreground);
-  background-color: var(--secondary);
+  color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--secondary));
   padding: 0.1rem 0.5rem;
   border-radius: 99px;
 }
@@ -248,19 +248,19 @@
 }
 
 .userBadgeActive {
-  background-color: var(--secondary);
-  color: var(--primary);
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--primary));
 }
 
 .userBadgePending {
-  background-color: var(--background);
-  color: var(--muted-foreground);
-  border: 1px solid var(--border);
+  background-color: hsl(var(--background));
+  color: hsl(var(--muted-foreground));
+  border: 1px solid hsl(var(--border));
 }
 
 /* Chevron */
 .userChevron {
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   opacity: 0.5;
   flex-shrink: 0;
 }
@@ -269,6 +269,6 @@
 .emptyState {
   text-align: center;
   padding: 3rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   font-size: 0.875rem;
 }

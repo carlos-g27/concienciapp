@@ -57,7 +57,6 @@ export default function Faq() {
             <AccordionWrapper
               key={i}
               title={faq.question}
-              badgeText=" "
               isOpen={openIndex === i}
               onToggle={() => handleToggle(i)}
             >

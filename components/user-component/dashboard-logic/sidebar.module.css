@@ -15,10 +15,10 @@
 }
 
 .navScroll::-webkit-scrollbar-thumb {
-  background-color: var(--secondary);
+  background-color: hsl(var(--secondary));
   border-radius: 99px;
 }
 
 .navScroll::-webkit-scrollbar-thumb:hover {
-  background-color: var(--accent);
+  background-color: hsl(var(--accent));
 }

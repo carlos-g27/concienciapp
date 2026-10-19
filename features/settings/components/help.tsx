@@ -71,7 +71,6 @@ export default function Help() {
             <AccordionWrapper
               key={i}
               title={item.title}
-              badgeText=""
               isOpen={openIndex === i}
               onToggle={() => handleToggle(i)}
             >
