@@ -14,6 +14,15 @@ export default function VictoriasDeHoyCard({ data }: { data: TodayWins }) {
   const [wins, setWins] = useState<WinToday[]>(data.wins);
   const [, startTransition] = useTransition();
 
+  // Next conserva el estado de la página al navegar (Activity), así que al
+  // volver al dashboard llegan datos nuevos del servidor pero `wins` seguiría
+  // con la lista anterior. Si cambian los datos, se reemplaza la copia local.
+  const [prevData, setPrevData] = useState(data);
+  if (data !== prevData) {
+    setPrevData(data);
+    setWins(data.wins);
+  }
+
   const percent =
     wins.length === 0
       ? 0
