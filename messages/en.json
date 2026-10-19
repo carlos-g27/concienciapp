@@ -258,7 +258,9 @@
     "noName": "No name",
     "badgeWithPlan": "With plan",
     "badgeWithoutPlan": "No plan",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "activeFilter": "Filter: {name}",
+    "clearFilter": "Clear filter"
   },
   "adminProfile": {
     "backToSettings": "Back to settings",
