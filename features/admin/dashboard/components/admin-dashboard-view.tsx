@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -41,7 +41,7 @@ function AvatarInitials({ initials }: { initials: string }) {
 function TotalUsersCard({ total }: { total: number }) {
   const t = useTranslations("adminDashboard");
   return (
-    <Link href="/admin?filter=all">
+    <Link href="/admin?filter=all" scroll={false}>
       <Card className="rounded-[20px] border-0 bg-gradient-to-br from-[#223966] to-[#061A33] text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
         <CardHeader className="flex flex-row items-center gap-3 space-y-0 p-6 pb-0">
           <div className={styles.totalCardIconWrapper}>
@@ -73,16 +73,22 @@ function FilterMetricCard({
   value,
   filter,
   icon,
+  isActive,
 }: {
   label: string;
   value: number;
   filter: string;
   icon: React.ReactNode;
+  isActive: boolean;
 }) {
   const t = useTranslations("adminDashboard");
   return (
-    <Link href={`/admin?filter=${filter}`}>
-      <Card className="rounded-[20px] hover:border-ring hover:-translate-y-0.5 transition-all">
+    <Link href={`/admin?filter=${filter}`} scroll={false} aria-current={isActive ? "true" : undefined}>
+      <Card
+        className={`rounded-[20px] hover:border-ring hover:-translate-y-0.5 transition-all ${
+          isActive ? "border-primary ring-2 ring-primary/40 bg-secondary" : ""
+        }`}
+      >
         <CardHeader className="flex flex-row items-center gap-2.5 space-y-0 p-5 pb-2">
           <div className={styles.filterCardIcon}>{icon}</div>
           <CardTitle className="text-sm font-bold text-foreground leading-snug">
@@ -115,6 +121,27 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
   const activeFilter = searchParams.get("filter") ?? "all";
 
   const [search, setSearch] = useState("");
+  const listRef = useRef<HTMLDivElement>(null);
+  const prevFilter = useRef(activeFilter);
+
+  // Al elegir "Con plan" / "Sin plan", bajar hasta la lista si no está a la vista
+  // (en móvil queda debajo de las tarjetas y parecía que no pasaba nada).
+  useEffect(() => {
+    if (prevFilter.current === activeFilter) return;
+    prevFilter.current = activeFilter;
+    if (activeFilter === "all" || !listRef.current) return;
+
+    const top = listRef.current.getBoundingClientRect().top;
+    if (top < 0 || top > window.innerHeight * 0.5) {
+      listRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeFilter]);
+
+  const filterLabels: Record<string, string> = {
+    "with-routine": t("badgeWithPlan"),
+    "without-routine": t("badgeWithoutPlan"),
+  };
+  const activeFilterLabel = filterLabels[activeFilter];
 
   const formatDate = (iso: string): string =>
     new Date(iso).toLocaleDateString(locale === "en" ? "en-US" : "es-ES", {
@@ -158,6 +185,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
           label={t("withPlan")}
           value={withRoutine}
           filter="with-routine"
+          isActive={activeFilter === "with-routine"}
           icon={
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
@@ -169,6 +197,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
           label={t("withoutPlan")}
           value={withoutRoutine}
           filter="without-routine"
+          isActive={activeFilter === "without-routine"}
           icon={
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
@@ -183,9 +212,28 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
       <div className={styles.contentGrid}>
 
         {/* Columna izquierda: buscador + lista, dentro de un Card */}
-        <div className={styles.leftColumn}>
+        <div ref={listRef} className={styles.leftColumn}>
           <Card>
             <CardContent className="pt-6 flex flex-col gap-4">
+
+              {/* Filtro activo, con botón para quitarlo */}
+              {activeFilterLabel && (
+                <div className={styles.filterChip}>
+                  <span>{t("activeFilter", { name: activeFilterLabel })}</span>
+                  <Link
+                    href="/admin"
+                    scroll={false}
+                    className={styles.filterChipClear}
+                    aria-label={t("clearFilter")}
+                    title={t("clearFilter")}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </Link>
+                </div>
+              )}
 
               <div className={styles.searchWrapper}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.searchIcon}>

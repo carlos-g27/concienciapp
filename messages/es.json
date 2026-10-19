@@ -258,7 +258,9 @@
     "noName": "Sin nombre",
     "badgeWithPlan": "Con plan",
     "badgeWithoutPlan": "Sin plan",
-    "leaderboard": "Clasificación"
+    "leaderboard": "Clasificación",
+    "activeFilter": "Filtro: {name}",
+    "clearFilter": "Quitar filtro"
   },
   "adminProfile": {
     "backToSettings": "Volver a configuración",
