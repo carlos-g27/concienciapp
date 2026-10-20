@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CategoryCard from "@/components/ui/category-card";
 import { confirmLeave, useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
-import { updateUserProfile } from "../actions";
+import DangerDeleteZone from "@/components/ui/danger-delete-zone";
+import { adminDeleteUser, updateUserProfile } from "../actions";
 import type { AdminUserCounts, AdminUserDetail } from "../types";
 import styles from "./admin-user-profile.module.css";
 
@@ -193,6 +194,13 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
           onClick={() => goTo(`/admin/users/${userId}/mental`)}
         />
       </div>
+
+      {/* Zona de peligro: eliminar al usuario (hay que escribir su correo) */}
+      <DangerDeleteZone
+        namespace="adminDeleteUser"
+        confirmText={profile.email}
+        onConfirm={(typedEmail) => adminDeleteUser(userId, typedEmail)}
+      />
 
     </div>
   );

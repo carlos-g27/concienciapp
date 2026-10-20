@@ -41,24 +41,20 @@ begin
 end;
 $$;
 
--- === Eliminar la cuenta y todos sus datos ===
+-- === Borrado interno de todos los datos de un usuario ===
+-- Lo usan delete_my_account() y admin_delete_user(). NO se puede llamar desde
+-- la app (sin grant): solo desde otras funciones security definer.
 
-create or replace function public.delete_my_account()
+create or replace function public.delete_user_data(p_uid uuid)
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_uid uuid := auth.uid();
-  v_check text;
+  v_uid uuid := p_uid;
   r record;
 begin
-  v_check := public.can_delete_my_account();
-  if v_check <> 'ok' then
-    raise exception using message = v_check, errcode = 'P0001';
-  end if;
-
   -- 1) Tablas conocidas del usuario (hijas antes que padres).
   delete from public.daily_win_logs     where user_id = v_uid;
   delete from public.daily_wins         where user_id = v_uid;
@@ -85,6 +81,28 @@ begin
   -- 3) Perfil y cuenta de acceso (sesiones e identidades caen en cascada en auth).
   delete from public.profiles where id = v_uid;
   delete from auth.users      where id = v_uid;
+end;
+$$;
+
+revoke all on function public.delete_user_data(uuid) from public, anon, authenticated;
+
+-- === Eliminar la propia cuenta ===
+
+create or replace function public.delete_my_account()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_check text;
+begin
+  v_check := public.can_delete_my_account();
+  if v_check <> 'ok' then
+    raise exception using message = v_check, errcode = 'P0001';
+  end if;
+
+  perform public.delete_user_data(auth.uid());
 end;
 $$;
 
