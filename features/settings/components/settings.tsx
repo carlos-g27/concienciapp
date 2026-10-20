@@ -6,6 +6,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import Card from "@/components/ui/new-card"; // Asegúrate de que esta ruta sea correcta
+import DeleteAccountZone from "@/features/account/components/delete-account-zone";
 
 // --- Tipos ---
 interface SettingsItem {
@@ -184,6 +185,9 @@ export default function Settings() {
             />
           </div>
         </section>
+
+        {/* Zona de peligro: eliminar cuenta */}
+        <DeleteAccountZone />
 
         {/* Botón cerrar sesión */}
         <section className="mt-4">

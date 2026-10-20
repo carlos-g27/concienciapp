@@ -8,6 +8,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import PilarTogglePanel, { PilarToggleItem } from "@/components/ui/pilar-toggle-panel";
+import DeleteAccountZone from "@/features/account/components/delete-account-zone";
 import { togglePilar } from "../actions";
 import type { PilarKey, PilarSettingItem } from "../types";
 import styles from "./admin-settings.module.css";
@@ -198,6 +199,9 @@ export default function AdminSettingsView({ initialPilares }: AdminSettingsViewP
           </CardContent>
         </Card>
       </section>
+
+      {/* Zona de peligro: eliminar cuenta */}
+      <DeleteAccountZone />
 
       {/* Botón cerrar sesión */}
       <section className="mt-4">
