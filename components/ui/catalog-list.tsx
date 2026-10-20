@@ -66,7 +66,8 @@ export default function CatalogList<T extends CatalogItem>({
       {/* Header + botón crear */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="flex flex-col gap-1">
-          <h1 className="text-[1.3rem] font-extrabold text-foreground tracking-tight">{title}</h1>
+          {/* En móvil el título ya está en el topbar */}
+          <h1 className="hidden lg:block text-[1.3rem] font-extrabold text-foreground tracking-tight">{title}</h1>
           <p className="text-[0.85rem] text-muted-foreground">{subtitle}</p>
         </div>
         <Link

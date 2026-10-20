@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { saveWins } from "../actions";
 import { MAX_DAILY_WINS } from "../schema";
@@ -99,21 +100,22 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
         {t("backToHome")}
       </Link>
 
-      {/* Título (solo desktop; en móvil ya está en el topbar) + Guardar cambios */}
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="hidden lg:block text-2xl font-bold text-foreground tracking-tight">{t("title")}</h1>
-        <Button onClick={handleSave} disabled={isSaving || !isDirty} className="ml-auto">
+      {/* Título + Guardar cambios (solo escritorio; en móvil el título está en
+          el topbar y el botón en la barra inferior) */}
+      <div className="hidden lg:flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-foreground tracking-tight">{t("title")}</h1>
+        <Button onClick={handleSave} disabled={isSaving || !isDirty}>
           {isSaving ? t("saving") : t("save")}
         </Button>
       </div>
 
       {successMsg && (
-        <div className="px-4 py-3 rounded-[10px] bg-green-600/10 text-green-600 text-[0.85rem] font-medium">
+        <div className="hidden lg:block px-4 py-3 rounded-[10px] bg-green-600/10 text-green-600 text-[0.85rem] font-medium">
           {successMsg}
         </div>
       )}
       {error && (
-        <div className="px-4 py-3 rounded-[10px] bg-red-600/10 text-destructive text-[0.85rem] font-medium">
+        <div className="hidden lg:block px-4 py-3 rounded-[10px] bg-red-600/10 text-destructive text-[0.85rem] font-medium">
           {error}
         </div>
       )}
@@ -198,6 +200,16 @@ export default function VictoriasManager({ initialWins }: VictoriasManagerProps)
 
         </CardContent>
       </Card>
+
+      <MobileSaveBar
+        onSave={handleSave}
+        disabled={isSaving || !isDirty}
+        isSaving={isSaving}
+        label={t("save")}
+        savingLabel={t("saving")}
+        successMsg={successMsg}
+        error={error}
+      />
     </div>
   );
 }

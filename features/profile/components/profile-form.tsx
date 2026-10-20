@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
+import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { getInitials } from "@/hooks/use-profile";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { updateProfile, uploadAvatar } from "../actions";
@@ -198,8 +199,9 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           <div className="pt-4 flex flex-col items-center gap-1 px-6 pb-6">
             <p className="text-lg font-bold text-foreground">{profile.name || t("noName")}</p>
 
-            {/* Botón editar / guardar / cancelar */}
-            <div className="flex gap-3 mt-4">
+            {/* Botón editar / guardar / cancelar (escritorio; en móvil van en
+                la barra inferior) */}
+            <div className="hidden lg:flex gap-3 mt-4">
               {!isEditing ? (
                 <button
                   onClick={handleEdit}
@@ -243,10 +245,10 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
 
             {/* Mensajes de feedback */}
             {error && (
-              <p className="mt-3 text-sm text-destructive text-center">{error}</p>
+              <p className="hidden lg:block mt-3 text-sm text-destructive text-center">{error}</p>
             )}
             {successMsg && (
-              <p className="mt-3 text-sm text-green-600 text-center">{successMsg}</p>
+              <p className="hidden lg:block mt-3 text-sm text-green-600 text-center">{successMsg}</p>
             )}
           </div>
 
@@ -282,6 +284,18 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
 
         </div>
+
+        {/* Móvil: acción principal al alcance del pulgar */}
+        <MobileSaveBar
+          onSave={isEditing ? handleSave : handleEdit}
+          disabled={isSaving}
+          isSaving={isSaving}
+          label={isEditing ? t("save") : t("editBtn")}
+          savingLabel={t("saving")}
+          successMsg={successMsg}
+          error={error}
+          secondary={isEditing ? { label: t("cancel"), onClick: handleCancel, disabled: isSaving } : undefined}
+        />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import MobileTopbar from "@/components/layout/mobile-topbar";
 import AppSidebar from "./app-sidebar";
 import BottomNav from "./bottom-nav";
 import AccountMenu from "./account-menu";
@@ -41,20 +42,14 @@ export default function ShellFrame({ data, children }: ShellFrameProps) {
 
       <div className="flex-1 flex flex-col min-w-0">
 
-        {/* Topbar — solo móvil, no anclado. Muestra la sección actual (en
-            escritorio cada página tiene su propio título); en el dashboard,
-            además, el saludo. */}
-        <header className="flex items-center justify-between gap-3 px-4 py-4 lg:hidden">
-          <div className="flex flex-col min-w-0">
-            {sectionKey === "dashboard" && (
-              <span className="text-xs font-medium text-muted-foreground truncate">{greeting}</span>
-            )}
-            <p className="text-xl font-bold text-foreground tracking-tight truncate">
-              {sectionKey ? tTitles(sectionKey) : greeting}
-            </p>
-          </div>
+        {/* Topbar móvil: la sección actual (en escritorio cada página tiene su
+            propio título); en el dashboard, además, el saludo. */}
+        <MobileTopbar
+          title={sectionKey ? tTitles(sectionKey) : greeting}
+          greeting={sectionKey === "dashboard" ? greeting : undefined}
+        >
           <AccountMenu profile={data.profile} />
-        </header>
+        </MobileTopbar>
 
         {/* Contenido de cada página */}
         <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 lg:pb-8 overflow-y-auto">

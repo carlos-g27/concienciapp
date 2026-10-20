@@ -10,6 +10,8 @@ interface MobileSaveBarProps {
   savingLabel: string;
   successMsg?: string | null;
   error?: string | null;
+  /** Botón secundario a la izquierda (ej. "Cancelar"). */
+  secondary?: { label: string; onClick: () => void; disabled?: boolean };
 }
 
 /**
@@ -26,6 +28,7 @@ export default function MobileSaveBar({
   savingLabel,
   successMsg,
   error,
+  secondary,
 }: MobileSaveBarProps) {
   return (
     <>
@@ -42,9 +45,21 @@ export default function MobileSaveBar({
         {error && (
           <p role="alert" className="text-[0.8rem] font-medium text-destructive text-center">{error}</p>
         )}
-        <Button onClick={onSave} disabled={disabled} className="w-full h-11">
-          {isSaving ? savingLabel : label}
-        </Button>
+        <div className="flex gap-3">
+          {secondary && (
+            <Button
+              variant="outline"
+              onClick={secondary.onClick}
+              disabled={secondary.disabled}
+              className="flex-1 h-11"
+            >
+              {secondary.label}
+            </Button>
+          )}
+          <Button onClick={onSave} disabled={disabled} className={`h-11 ${secondary ? "flex-[2]" : "w-full"}`}>
+            {isSaving ? savingLabel : label}
+          </Button>
+        </div>
       </div>
     </>
   );
