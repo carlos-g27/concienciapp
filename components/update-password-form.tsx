@@ -33,10 +33,17 @@ export function UpdatePasswordForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { data, error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
+
+      // El usuario ya tiene sesión: llevarlo a su inicio según el rol (igual que el login).
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
+      router.push(profile?.role === "admin" ? "/admin" : "/dashboard");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : t("errorGeneric"));
     } finally {
