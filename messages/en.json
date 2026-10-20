@@ -29,6 +29,15 @@
     "faq": "Frequently asked questions",
     "help": "Help center"
   },
+  "adminPageTitles": {
+    "dashboard": "Admin panel",
+    "users": "Users",
+    "exercises": "Exercise catalog",
+    "recipes": "Recipe catalog",
+    "meditations": "Meditation catalog",
+    "settings": "Settings",
+    "profile": "My profile"
+  },
   "settings": {
     "title": "Settings",
     "accountSection": "Account management",

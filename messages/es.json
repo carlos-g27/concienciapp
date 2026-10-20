@@ -29,6 +29,15 @@
     "faq": "Preguntas frecuentes",
     "help": "Centro de ayuda"
   },
+  "adminPageTitles": {
+    "dashboard": "Panel de administrador",
+    "users": "Usuarios",
+    "exercises": "Catálogo de ejercicios",
+    "recipes": "Catálogo de recetas",
+    "meditations": "Catálogo de meditaciones",
+    "settings": "Configuración",
+    "profile": "Mi perfil"
+  },
   "settings": {
     "title": "Configuración",
     "accountSection": "Gestión de cuenta",
