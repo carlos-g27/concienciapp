@@ -131,7 +131,7 @@ export default function DeleteAccountZone() {
             <p className="text-sm font-semibold text-red-600">{t("irreversible")}</p>
 
             {error && (
-              <p role="alert" className="px-3 py-2 rounded-[10px] bg-red-600/10 text-destructive text-[0.85rem] font-medium">
+              <p role="alert" className="px-3 py-2 rounded-[10px] bg-red-600/10 text-red-600 dark:text-red-400 text-[0.85rem] font-medium">
                 {error}
               </p>
             )}
