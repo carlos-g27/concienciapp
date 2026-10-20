@@ -116,6 +116,7 @@ interface AdminDashboardViewProps {
 // --- Componente principal ---
 export default function AdminDashboardView({ initialUsers }: AdminDashboardViewProps) {
   const t = useTranslations("adminDashboard");
+  const tDel = useTranslations("adminDeleteUser");
   const locale = useLocale();
   const searchParams = useSearchParams();
   const activeFilter = searchParams.get("filter") ?? "all";
@@ -176,6 +177,13 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
           <p className={styles.pageSubtitle}>{t("subtitle")}</p>
         </div>
       </div>
+
+      {/* Aviso tras eliminar un usuario (adminDeleteUser redirige con ?deleted=1) */}
+      {searchParams.get("deleted") === "1" && (
+        <div role="status" className="px-4 py-3 rounded-[10px] bg-green-600/10 text-green-600 text-[0.85rem] font-medium">
+          {tDel("deletedNotice")}
+        </div>
+      )}
 
       {/* Métricas: Total (oscura) + Con plan + Sin plan */}
       <div className={styles.metricsGrid}>

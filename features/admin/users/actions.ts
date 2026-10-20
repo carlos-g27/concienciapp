@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
@@ -54,4 +55,67 @@ export async function updateUserProfile(
     console.error("[updateUserProfile] error:", err);
     return { success: false, error: t("actUserSaveError") };
   }
+}
+
+/**
+ * El admin elimina la cuenta de un usuario y TODOS sus datos: foto en Storage,
+ * filas de cada tabla y la cuenta en auth.users (función SQL
+ * `admin_delete_user`, atómica). Exige escribir el correo del usuario.
+ * No permite borrarse a uno mismo ni a otro admin.
+ */
+export async function adminDeleteUser(userId: string, typedEmail: string): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  const t = await getTranslations("adminDeleteUser");
+
+  if (!z.string().uuid().safeParse(userId).success) {
+    return { success: false, error: t("errNotFound") };
+  }
+  if (userId === admin.id) {
+    return { success: false, error: t("errSelf") };
+  }
+
+  const supabase = await createClient();
+
+  try {
+    // 1) Comprobaciones ANTES de borrar nada.
+    const { data: target, error: targetErr } = await supabase
+      .from("profiles")
+      .select("id, email, role")
+      .eq("id", userId)
+      .maybeSingle();
+    if (targetErr) throw targetErr;
+    if (!target) return { success: false, error: t("errNotFound") };
+    if (target.role === "admin") return { success: false, error: t("errTargetAdmin") };
+    if ((target.email ?? "").trim().toLowerCase() !== typedEmail.trim().toLowerCase()) {
+      return { success: false, error: t("errEmailMismatch") };
+    }
+
+    // 2) Foto(s) de perfil del usuario: avatars/<uid>/…
+    const { data: files, error: listErr } = await supabase.storage.from("avatars").list(userId);
+    if (listErr) throw listErr;
+    if (files && files.length > 0) {
+      const paths = files.map((f) => `${userId}/${f.name}`);
+      const { data: removed, error: removeErr } = await supabase.storage.from("avatars").remove(paths);
+      if (removeErr) throw removeErr;
+      // Sin permiso de borrado, Storage responde OK pero sin borrar nada.
+      if ((removed ?? []).length !== paths.length) {
+        throw new Error("No se pudo borrar la foto de perfil (¿falta la política de borrado del admin?)");
+      }
+    }
+
+    // 3) Datos y cuenta, en una sola transacción.
+    const { error: deleteErr } = await supabase.rpc("admin_delete_user", { p_user_id: userId });
+    if (deleteErr) {
+      if (deleteErr.message === "target_is_admin") return { success: false, error: t("errTargetAdmin") };
+      if (deleteErr.message === "self") return { success: false, error: t("errSelf") };
+      if (deleteErr.message === "not_found") return { success: false, error: t("errNotFound") };
+      throw deleteErr;
+    }
+  } catch (err) {
+    console.error("[adminDeleteUser] error:", err);
+    return { success: false, error: t("errGeneric") };
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin?deleted=1");
 }
