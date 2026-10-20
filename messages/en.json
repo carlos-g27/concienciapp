@@ -38,6 +38,27 @@
     "settings": "Settings",
     "profile": "My profile"
   },
+  "deleteAccount": {
+    "zoneTitle": "Danger zone",
+    "title": "Delete account",
+    "description": "Permanently delete your account and all your data.",
+    "button": "Delete account",
+    "modalTitle": "Delete your account?",
+    "modalBody": "Everything related to your account will be permanently deleted:",
+    "itemProfile": "Your profile and access to the app",
+    "itemPhoto": "Your profile photo",
+    "itemPlans": "Your routine, meal plan and meditations",
+    "itemWeights": "Your weight and 1RM logs",
+    "itemWins": "Your daily wins and their history",
+    "irreversible": "This action can't be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete account",
+    "confirmIn": "Delete account ({n})",
+    "deleting": "Deleting...",
+    "errLastAdmin": "You can't delete the only admin account.",
+    "errGeneric": "Couldn't delete the account. Please try again.",
+    "deletedNotice": "Your account has been deleted."
+  },
   "settings": {
     "title": "Settings",
     "accountSection": "Account management",

@@ -38,6 +38,27 @@
     "settings": "Configuración",
     "profile": "Mi perfil"
   },
+  "deleteAccount": {
+    "zoneTitle": "Zona de peligro",
+    "title": "Eliminar cuenta",
+    "description": "Borra tu cuenta y todos tus datos de forma permanente.",
+    "button": "Eliminar cuenta",
+    "modalTitle": "¿Eliminar tu cuenta?",
+    "modalBody": "Se borrará de forma permanente todo lo relacionado con tu cuenta:",
+    "itemProfile": "Tu perfil y tu acceso a la app",
+    "itemPhoto": "Tu foto de perfil",
+    "itemPlans": "Tu rutina, plan de comidas y meditaciones",
+    "itemWeights": "Tus registros de peso y RM",
+    "itemWins": "Tus victorias diarias y su historial",
+    "irreversible": "Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirm": "Eliminar cuenta",
+    "confirmIn": "Eliminar cuenta ({n})",
+    "deleting": "Eliminando...",
+    "errLastAdmin": "No puedes eliminar la única cuenta de administrador.",
+    "errGeneric": "No se pudo eliminar la cuenta. Intenta de nuevo.",
+    "deletedNotice": "Tu cuenta fue eliminada."
+  },
   "settings": {
     "title": "Configuración",
     "accountSection": "Gestión de cuenta",
