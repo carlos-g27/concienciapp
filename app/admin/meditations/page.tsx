@@ -25,5 +25,5 @@ async function MeditationFormContent({
   const { id, category } = await searchParams;
   const initialMeditation = id ? await getMeditation(id) : null;
 
-  return <MeditationForm initialMeditation={initialMeditation} initialCategory={category} />;
+  return <MeditationForm key={`${id ?? "nuevo"}-${category ?? ""}`} initialMeditation={initialMeditation} initialCategory={category} />;
 }

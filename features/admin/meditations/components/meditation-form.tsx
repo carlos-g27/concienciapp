@@ -20,7 +20,14 @@ interface MeditationFormProps {
   initialCategory?: string;
 }
 
-export default function MeditationForm({ initialMeditation, initialCategory }: MeditationFormProps) {
+export default function MeditationForm(props: MeditationFormProps) {
+  // Next conserva la página oculta (Activity): cada visita nueva empieza con el
+  // formulario limpio; atrás/adelante del navegador mantiene lo escrito.
+  const { bfcacheId } = useRouter();
+  return <MeditationFormContent key={bfcacheId} {...props} />;
+}
+
+function MeditationFormContent({ initialMeditation, initialCategory }: MeditationFormProps) {
   const router = useRouter();
   const t = useTranslations("adminCatalog");
   const isEditMode = Boolean(initialMeditation);

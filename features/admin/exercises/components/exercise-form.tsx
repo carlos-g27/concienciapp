@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,14 @@ interface ExerciseFormProps {
   initialExercise: ExerciseFull | null;
 }
 
-export default function ExerciseForm({ initialExercise }: ExerciseFormProps) {
+export default function ExerciseForm(props: ExerciseFormProps) {
+  // Next conserva la página oculta (Activity): cada visita nueva empieza con el
+  // formulario limpio; atrás/adelante del navegador mantiene lo escrito.
+  const { bfcacheId } = useRouter();
+  return <ExerciseFormContent key={bfcacheId} {...props} />;
+}
+
+function ExerciseFormContent({ initialExercise }: ExerciseFormProps) {
   const t = useTranslations("adminCatalog");
   const isEditMode = Boolean(initialExercise);
 

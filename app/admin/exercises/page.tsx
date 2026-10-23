@@ -25,5 +25,5 @@ async function ExerciseFormContent({
   const { id } = await searchParams;
   const initialExercise = id ? await getExercise(id) : null;
 
-  return <ExerciseForm initialExercise={initialExercise} />;
+  return <ExerciseForm key={id ?? "nuevo"} initialExercise={initialExercise} />;
 }

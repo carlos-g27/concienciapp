@@ -25,5 +25,5 @@ async function RecipeFormContent({
   const { id, type } = await searchParams;
   const initialRecipe = id ? await getRecipe(id) : null;
 
-  return <RecipeForm initialRecipe={initialRecipe} initialType={type} />;
+  return <RecipeForm key={`${id ?? "nuevo"}-${type ?? ""}`} initialRecipe={initialRecipe} initialType={type} />;
 }
