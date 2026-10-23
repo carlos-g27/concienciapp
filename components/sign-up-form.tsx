@@ -13,8 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 export function SignUpForm({
@@ -44,11 +44,11 @@ export function SignUpForm({
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/login`,
           data: { 
             name,
             phone,
@@ -58,7 +58,8 @@ export function SignUpForm({
 
       if (error) throw error;
 
-      router.push("/auth/sign-up-success");
+      // El id permite a la página de éxito saber cuándo se confirmó el correo.
+      router.push(`/auth/sign-up-success?uid=${data.user?.id ?? ""}`);
 
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : t("errorGeneric"));
@@ -150,4 +151,39 @@ export function SignUpForm({
       </Card>
     </div>
   );
+}
+
+const INTERVALO_CONFIRMACION_MS = 3000;
+
+/**
+ * En la página "Revisa tu correo": consulta cada pocos segundos si el usuario
+ * ya confirmó su correo (aunque lo haga desde otro dispositivo) y, en cuanto
+ * lo hace, lleva esta pestaña al inicio de sesión.
+ */
+export function SignUpSuccessRedirect() {
+  const uid = useSearchParams().get("uid");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!uid) return;
+    const supabase = createClient();
+    let activo = true;
+
+    const revisar = async () => {
+      const { data } = await supabase.rpc("correo_confirmado", { p_user_id: uid });
+      if (activo && data === true) {
+        activo = false;
+        clearInterval(id);
+        router.replace("/auth/login");
+      }
+    };
+
+    const id = setInterval(revisar, INTERVALO_CONFIRMACION_MS);
+    return () => {
+      activo = false;
+      clearInterval(id);
+    };
+  }, [uid, router]);
+
+  return null;
 }

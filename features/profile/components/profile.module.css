@@ -15,8 +15,9 @@
   transition: border-color 0.15s;
 }
 
-.fieldCard:focus-within {
-  border-color: hsl(var(--muted-foreground));
+/* En edición el input ya tiene su propio borde: sin borde exterior */
+.fieldCard:has(.fieldInput) {
+  border-color: transparent;
 }
 
 /* Etiqueta del campo */

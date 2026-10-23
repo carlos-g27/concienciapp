@@ -6,6 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
+import { SignUpSuccessRedirect } from "@/components/sign-up-form";
 
 export default async function Page() {
   const t = await getTranslations("auth");
@@ -27,6 +29,9 @@ export default async function Page() {
               </p>
             </CardContent>
           </Card>
+          <Suspense fallback={null}>
+            <SignUpSuccessRedirect />
+          </Suspense>
         </div>
       </div>
     </div>
