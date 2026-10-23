@@ -31,7 +31,14 @@ interface RecipeFormProps {
   initialType?: string;
 }
 
-export default function RecipeForm({ initialRecipe, initialType }: RecipeFormProps) {
+export default function RecipeForm(props: RecipeFormProps) {
+  // Next conserva la página oculta (Activity): cada visita nueva empieza con el
+  // formulario limpio; atrás/adelante del navegador mantiene lo escrito.
+  const { bfcacheId } = useRouter();
+  return <RecipeFormContent key={bfcacheId} {...props} />;
+}
+
+function RecipeFormContent({ initialRecipe, initialType }: RecipeFormProps) {
   const router = useRouter();
   const t = useTranslations("adminCatalog");
   const tn = useTranslations("nutricion");
