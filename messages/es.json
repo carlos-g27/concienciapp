@@ -145,6 +145,7 @@
     "haveAccount": "¿Ya tienes una cuenta?",
     "login": "Iniciar sesión",
     "passwordsNoMatch": "Las contraseñas no coinciden",
+    "passwordTooLong": "La contraseña puede tener máximo {max} caracteres.",
     "phoneInvalid": "El teléfono debe tener 10 dígitos (solo números).",
     "nameInvalid": "El nombre solo puede tener letras y espacios.",
     "resetTitle": "Restablecer contraseña",
