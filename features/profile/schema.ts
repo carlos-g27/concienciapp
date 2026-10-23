@@ -17,6 +17,12 @@ const optionalInt = (min: number, max: number) =>
 const optionalNumber = (min: number, max: number) =>
   z.preprocess(emptyToUndefined, z.coerce.number().min(min).max(max).optional());
 
+// --- Nombre: solo letras (con acentos y ñ) y espacios ---
+export const NAME_REGEX = /^[\p{L}\p{M} ]+$/u;
+
+/** Quita números y símbolos del nombre (deja letras, acentos, ñ y espacios). */
+export const onlyNameLetters = (value: string) => value.replace(/[^\p{L}\p{M} ]/gu, "");
+
 // --- Teléfono: exactamente 10 dígitos, solo números ---
 export const PHONE_DIGITS = 10;
 export const PHONE_REGEX = /^\d{10}$/;
@@ -26,7 +32,7 @@ export const onlyPhoneDigits = (value: string) =>
   value.replace(/\D/g, "").slice(0, PHONE_DIGITS);
 
 export const profileUpdateSchema = z.object({
-  name: optionalText(80),
+  name: z.preprocess(emptyToUndefined, z.string().trim().max(80).regex(NAME_REGEX).optional()),
   phone: z.preprocess(emptyToUndefined, z.string().trim().regex(PHONE_REGEX).optional()),
   goal: optionalText(120),
   age: optionalInt(1, 120),

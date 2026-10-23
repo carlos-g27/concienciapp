@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NAME_REGEX } from "@/features/profile/schema";
 
 const emptyToUndefined = (v: unknown) =>
   v == null || (typeof v === "string" && v.trim() === "") ? undefined : v;
@@ -9,7 +10,10 @@ export const pilarToggleSchema = z.object({
 });
 
 export const adminProfileSchema = z.object({
-  name: z.preprocess(emptyToUndefined, z.string().trim().max(80).optional()),
+  name: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().max(80).regex(NAME_REGEX, "El nombre solo puede tener letras y espacios").optional(),
+  ),
   email: z.string().trim().email("Correo inválido").max(255),
 });
 
