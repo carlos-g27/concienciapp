@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { PHONE_REGEX, onlyPhoneDigits } from "@/features/profile/schema";
 
 export function SignUpForm({
   className,
@@ -36,6 +37,12 @@ export function SignUpForm({
     const supabase = createClient();
     setIsLoading(true);
     setError(null);
+
+    if (!PHONE_REGEX.test(phone)) {
+      setError(t("phoneInvalid"));
+      setIsLoading(false);
+      return;
+    }
 
     if (password !== repeatPassword) {
       setError(t("passwordsNoMatch"));
@@ -94,10 +101,11 @@ export function SignUpForm({
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="123-456-7890"
+                  inputMode="numeric"
+                  placeholder="5512345678"
                   required
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(onlyPhoneDigits(e.target.value))}
                 />
               </div>
               <div className="grid gap-2">
