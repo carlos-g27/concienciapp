@@ -17,9 +17,17 @@ const optionalInt = (min: number, max: number) =>
 const optionalNumber = (min: number, max: number) =>
   z.preprocess(emptyToUndefined, z.coerce.number().min(min).max(max).optional());
 
+// --- Teléfono: exactamente 10 dígitos, solo números ---
+export const PHONE_DIGITS = 10;
+export const PHONE_REGEX = /^\d{10}$/;
+
+/** Deja solo los números (sin letras ni símbolos), hasta 10 dígitos. */
+export const onlyPhoneDigits = (value: string) =>
+  value.replace(/\D/g, "").slice(0, PHONE_DIGITS);
+
 export const profileUpdateSchema = z.object({
   name: optionalText(80),
-  phone: optionalText(30),
+  phone: z.preprocess(emptyToUndefined, z.string().trim().regex(PHONE_REGEX).optional()),
   goal: optionalText(120),
   age: optionalInt(1, 120),
   weight: optionalNumber(1, 500),
