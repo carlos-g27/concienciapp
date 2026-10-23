@@ -5,7 +5,9 @@
     "english": "English",
     "loading": "Loading...",
     "hi": "Hi",
-    "unsavedChanges": "You have unsaved changes. Leave without saving?"
+    "unsavedChanges": "You have unsaved changes. Leave without saving?",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "nav": {
     "home": "Home",
