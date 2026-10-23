@@ -5,7 +5,9 @@
     "english": "Inglés",
     "loading": "Cargando...",
     "hi": "Hola",
-    "unsavedChanges": "Tienes cambios sin guardar. ¿Quieres salir sin guardarlos?"
+    "unsavedChanges": "Tienes cambios sin guardar. ¿Quieres salir sin guardarlos?",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "nav": {
     "home": "Inicio",
