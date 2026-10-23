@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
 import { createRecipe, updateRecipe } from "../actions";
+import { onlyCalorieDigits } from "../schema";
 import type { MealType, RecipeFull } from "../types";
 
 interface IngredientRow {
@@ -143,7 +144,7 @@ function RecipeFormContent({ initialRecipe, initialType }: RecipeFormProps) {
         </div>
         <div className="flex flex-col gap-2 w-[140px]">
           <Label htmlFor="calories">{t("recCalories")}</Label>
-          <Input id="calories" type="number" min="0" placeholder={t("recCaloriesPh")} value={calories} onChange={(e) => setCalories(e.target.value)} required />
+          <Input id="calories" type="text" inputMode="numeric" placeholder={t("recCaloriesPh")} value={calories} onChange={(e) => setCalories(onlyCalorieDigits(e.target.value))} required />
         </div>
       </div>
 
