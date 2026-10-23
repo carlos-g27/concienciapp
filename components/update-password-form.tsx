@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { PASSWORD_MAX_LENGTH } from "@/features/profile/schema";
 
 export function UpdatePasswordForm({
   className,
@@ -29,8 +30,14 @@ export function UpdatePasswordForm({
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
-    setIsLoading(true);
     setError(null);
+
+    if (password.length > PASSWORD_MAX_LENGTH) {
+      setError(t("passwordTooLong", { max: PASSWORD_MAX_LENGTH }));
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const { data, error } = await supabase.auth.updateUser({ password });

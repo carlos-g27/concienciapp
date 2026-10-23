@@ -145,6 +145,7 @@
     "haveAccount": "Already have an account?",
     "login": "Login",
     "passwordsNoMatch": "Passwords do not match",
+    "passwordTooLong": "The password can have at most {max} characters.",
     "phoneInvalid": "The phone number must have 10 digits (numbers only).",
     "nameInvalid": "The name can only contain letters and spaces.",
     "resetTitle": "Reset Your Password",

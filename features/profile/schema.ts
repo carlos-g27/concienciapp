@@ -17,6 +17,9 @@ const optionalInt = (min: number, max: number) =>
 const optionalNumber = (min: number, max: number) =>
   z.preprocess(emptyToUndefined, z.coerce.number().min(min).max(max).optional());
 
+// --- Contraseña: máximo 15 caracteres (registro y nueva contraseña) ---
+export const PASSWORD_MAX_LENGTH = 15;
+
 // --- Nombre: solo letras (con acentos y ñ) y espacios ---
 export const NAME_REGEX = /^[\p{L}\p{M} ]+$/u;
 

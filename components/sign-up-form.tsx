@@ -16,7 +16,13 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { NAME_REGEX, PHONE_REGEX, onlyNameLetters, onlyPhoneDigits } from "@/features/profile/schema";
+import {
+  NAME_REGEX,
+  PASSWORD_MAX_LENGTH,
+  PHONE_REGEX,
+  onlyNameLetters,
+  onlyPhoneDigits,
+} from "@/features/profile/schema";
 
 export function SignUpForm({
   className,
@@ -46,6 +52,12 @@ export function SignUpForm({
 
     if (!PHONE_REGEX.test(phone)) {
       setError(t("phoneInvalid"));
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length > PASSWORD_MAX_LENGTH) {
+      setError(t("passwordTooLong", { max: PASSWORD_MAX_LENGTH }));
       setIsLoading(false);
       return;
     }
