@@ -65,6 +65,14 @@ export function SignUpForm({
 
       if (error) throw error;
 
+      // Si "Confirm email" está apagado en Supabase, el registro ya abre sesión:
+      // se cierra para que el usuario siempre entre por el inicio de sesión.
+      if (data.session) {
+        await supabase.auth.signOut();
+        router.replace("/auth/login");
+        return;
+      }
+
       // El id permite a la página de éxito saber cuándo se confirmó el correo.
       router.push(`/auth/sign-up-success?uid=${data.user?.id ?? ""}`);
 
