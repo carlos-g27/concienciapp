@@ -122,6 +122,10 @@
   },
   "auth": {
     "logout": "Log out",
+    "logoutConfirmTitle": "Log out?",
+    "logoutConfirmBody": "You'll need to sign in again with your email and password.",
+    "loggingOut": "Logging out...",
+    "cancel": "Cancel",
     "email": "Email",
     "password": "Password",
     "errorGeneric": "An error occurred",
