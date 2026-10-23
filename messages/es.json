@@ -122,6 +122,10 @@
   },
   "auth": {
     "logout": "Cerrar sesión",
+    "logoutConfirmTitle": "¿Cerrar sesión?",
+    "logoutConfirmBody": "Tendrás que volver a ingresar con tu correo y contraseña.",
+    "loggingOut": "Cerrando sesión...",
+    "cancel": "Cancelar",
     "email": "Correo",
     "password": "Contraseña",
     "errorGeneric": "Ocurrió un error",
