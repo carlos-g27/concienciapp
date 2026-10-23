@@ -11,7 +11,8 @@ export function LogoutButton() {
 
   const logout = async () => {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    // Solo este dispositivo: no cierra la sesión de la misma cuenta en otros.
+    await supabase.auth.signOut({ scope: "local" });
     router.push("/auth/login");
   };
 
