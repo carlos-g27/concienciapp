@@ -12,6 +12,7 @@ import { getInitials } from "@/hooks/use-profile";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { uploadAvatar } from "@/features/profile/actions";
 import { updateAdminProfile } from "../actions";
+import { onlyNameLetters } from "@/features/profile/schema";
 import type { AdminOwnProfile } from "../types";
 import styles from "./admin-profile.module.css";
 
@@ -165,7 +166,7 @@ export default function AdminProfileView({ initialProfile }: AdminProfileViewPro
               type="text"
               placeholder={t("namePlaceholder")}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setName(onlyNameLetters(e.target.value))}
             />
           </div>
 

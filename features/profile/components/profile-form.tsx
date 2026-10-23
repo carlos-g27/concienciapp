@@ -9,7 +9,7 @@ import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { getInitials } from "@/hooks/use-profile";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { updateProfile, uploadAvatar } from "../actions";
-import { PHONE_REGEX, onlyPhoneDigits } from "../schema";
+import { NAME_REGEX, PHONE_REGEX, onlyNameLetters, onlyPhoneDigits } from "../schema";
 import type { UserProfileData } from "../types";
 import styles from "./profile.module.css";
 
@@ -53,8 +53,9 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   };
 
   const handleChange = (key: keyof UserProfileData, value: string) => {
-    // Teléfono: solo números, máximo 10.
-    const clean = key === "phone" ? onlyPhoneDigits(value) : value;
+    // Teléfono: solo números, máximo 10. Nombre: solo letras y espacios.
+    const clean =
+      key === "phone" ? onlyPhoneDigits(value) : key === "name" ? onlyNameLetters(value) : value;
     setDraft((prev) => (prev ? { ...prev, [key]: clean } : prev));
   };
 
@@ -67,6 +68,10 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   // --- Guardar cambios vía Server Action ---
   const handleSave = async () => {
     if (!draft) return;
+    if (draft.name.trim() && !NAME_REGEX.test(draft.name.trim())) {
+      setError(t("errName"));
+      return;
+    }
     if (draft.phone && !PHONE_REGEX.test(draft.phone)) {
       setError(t("errPhone"));
       return;

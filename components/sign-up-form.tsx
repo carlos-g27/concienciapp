@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { PHONE_REGEX, onlyPhoneDigits } from "@/features/profile/schema";
+import { NAME_REGEX, PHONE_REGEX, onlyNameLetters, onlyPhoneDigits } from "@/features/profile/schema";
 
 export function SignUpForm({
   className,
@@ -38,6 +38,12 @@ export function SignUpForm({
     setIsLoading(true);
     setError(null);
 
+    if (!NAME_REGEX.test(name.trim())) {
+      setError(t("nameInvalid"));
+      setIsLoading(false);
+      return;
+    }
+
     if (!PHONE_REGEX.test(phone)) {
       setError(t("phoneInvalid"));
       setIsLoading(false);
@@ -57,7 +63,7 @@ export function SignUpForm({
         options: {
           emailRedirectTo: `${window.location.origin}/auth/login`,
           data: { 
-            name,
+            name: name.trim(),
             phone,
            },
         },
@@ -101,7 +107,7 @@ export function SignUpForm({
                   placeholder="Daniela Alvarez"
                   required
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setName(onlyNameLetters(e.target.value))}
                 />
               </div>
               <div className="grid gap-2">
