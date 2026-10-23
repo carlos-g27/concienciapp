@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { LogoutButton } from "@/components/logout-button";
 import { getInitials } from "@/hooks/use-profile";
 import type { ShellPilares, ShellProfile } from "./types";
 
@@ -181,12 +182,12 @@ export default function AppSidebar({ profile, pilares }: AppSidebarProps) {
           })}
         </nav>
 
-        {/* Settings — fijo al fondo */}
-        <div className="px-3 py-4 border-t border-border">
+        {/* Settings + cerrar sesión — fijo al fondo */}
+        <div className="px-3 py-4 border-t border-border flex items-center gap-1">
           <Link
             href={settingsItem.href}
             className={`
-              flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+              flex flex-1 min-w-0 items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
               transition-all duration-150 group
               ${
                 pathname === settingsItem.href
@@ -202,6 +203,7 @@ export default function AppSidebar({ profile, pilares }: AppSidebarProps) {
             </span>
             <span>{t(settingsItem.key)}</span>
           </Link>
+          <LogoutButton variant="icon" />
         </div>
     </aside>
   );

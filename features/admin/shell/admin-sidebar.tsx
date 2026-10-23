@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { LogoutButton } from "@/components/logout-button";
 import { getInitials } from "@/hooks/use-profile";
 import type { ShellProfile } from "@/features/shell/types";
 
@@ -137,12 +138,12 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
           })}
         </nav>
 
-        {/* Settings */}
-        <div className="px-3 py-4 border-t border-border">
+        {/* Settings + cerrar sesión */}
+        <div className="px-3 py-4 border-t border-border flex items-center gap-1">
           <Link
             href={settingsItem.href}
             className={`
-              flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+              flex flex-1 min-w-0 items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
               transition-all duration-150 group
               ${pathname === settingsItem.href
                 ? "bg-secondary text-primary font-semibold"
@@ -155,6 +156,7 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
             </span>
             <span>{t(settingsItem.key)}</span>
           </Link>
+          <LogoutButton variant="icon" />
         </div>
     </aside>
   );
