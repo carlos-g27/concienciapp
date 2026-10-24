@@ -413,6 +413,8 @@
     "exFormSaving": "Saving...",
     "exReqError": "Name and muscle group are required.",
     "exSaveError": "Couldn't save the exercise.",
+    "exCreatedOk": "Exercise created successfully.",
+    "exSavedOk": "Changes saved successfully.",
     "exName": "Exercise name",
     "exNamePh": "Bench Press",
     "exMuscle": "Muscle group",

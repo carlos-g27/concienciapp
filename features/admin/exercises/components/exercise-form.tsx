@@ -21,6 +21,7 @@ export default function ExerciseForm(props: ExerciseFormProps) {
 }
 
 function ExerciseFormContent({ initialExercise }: ExerciseFormProps) {
+  const router = useRouter();
   const t = useTranslations("adminCatalog");
   const isEditMode = Boolean(initialExercise);
 
@@ -36,6 +37,8 @@ function ExerciseFormContent({ initialExercise }: ExerciseFormProps) {
   const [videoUrl, setVideoUrl] = useState(initialExercise?.video_url ?? "");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [isCreated, setIsCreated] = useState(false);
 
   // Cambios sin guardar: valores actuales vs. últimos guardados.
   const currentValues = JSON.stringify({ name, muscle, description, instructions, videoUrl, isMainLift });
@@ -58,7 +61,9 @@ function ExerciseFormContent({ initialExercise }: ExerciseFormProps) {
   // --- Guardar (crear o actualizar) ejercicio vía Server Action ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isCreated) return; // ya se creó: evita duplicados mientras vuelve al catálogo
     setError(null);
+    setSuccessMsg(null);
 
     if (!name.trim() || !muscle.trim()) {
       setError(t("exReqError"));
@@ -76,6 +81,17 @@ function ExerciseFormContent({ initialExercise }: ExerciseFormProps) {
 
     if (res.success) {
       setSavedValues(currentValues);
+      if (isEditMode) {
+        setSuccessMsg(t("exSavedOk"));
+        setTimeout(() => setSuccessMsg(null), 3000);
+      } else {
+        // Creado: se ve el aviso y vuelve al catálogo (si sigue en el formulario).
+        setIsCreated(true);
+        setSuccessMsg(t("exCreatedOk"));
+        setTimeout(() => {
+          if (window.location.pathname === "/admin/exercises") router.back();
+        }, 1500);
+      }
     } else {
       setError(res.error ?? t("exSaveError"));
     }
@@ -93,6 +109,7 @@ function ExerciseFormContent({ initialExercise }: ExerciseFormProps) {
       submitText={isEditMode ? t("exFormSaveBtn") : t("exFormCreateBtn")}
       savingText={isEditMode ? t("exFormSaving") : t("exFormCreating")}
       error={error}
+      successMsg={successMsg}
       isDirty={isDirty}
       onSubmit={handleSubmit}
     >

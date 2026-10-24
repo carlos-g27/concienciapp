@@ -413,6 +413,8 @@
     "exFormSaving": "Guardando...",
     "exReqError": "El nombre y el grupo muscular son obligatorios.",
     "exSaveError": "Error al guardar el ejercicio.",
+    "exCreatedOk": "Ejercicio creado exitosamente.",
+    "exSavedOk": "Cambios guardados correctamente.",
     "exName": "Nombre del ejercicio",
     "exNamePh": "Press de Banca",
     "exMuscle": "Grupo muscular",
