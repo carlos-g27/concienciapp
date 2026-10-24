@@ -17,6 +17,8 @@ interface AdminFormLayoutProps {
   submitText?: string;
   savingText?: string;
   error?: string | null;
+  /** Aviso verde de éxito (ej. "Ejercicio creado exitosamente"). */
+  successMsg?: string | null;
   /** Hay cambios sin guardar: avisa antes de salir. */
   isDirty?: boolean;
   onSubmit: (e: React.FormEvent) => void;
@@ -32,6 +34,7 @@ export default function AdminFormLayout({
   submitText,
   savingText,
   error,
+  successMsg,
   isDirty = false,
   onSubmit,
   children,
@@ -75,6 +78,13 @@ export default function AdminFormLayout({
               
               {/* Aquí se inyectan los campos específicos (receta o ejercicio) */}
               {children}
+
+              {/* Aviso de éxito (mismo estilo verde que el resto de la app) */}
+              {successMsg && (
+                <p role="status" className="px-4 py-3 rounded-[10px] bg-green-600/10 text-green-600 text-[0.85rem] font-medium">
+                  {successMsg}
+                </p>
+              )}
 
               {/* Manejo de errores global del formulario */}
               {error && (
