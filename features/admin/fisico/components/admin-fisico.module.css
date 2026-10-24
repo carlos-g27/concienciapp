@@ -99,6 +99,32 @@
   border: 1.5px solid hsl(var(--border));
 }
 
+/* Arrastrar para reordenar: el recuadro se puede mantener presionado */
+.sortableRow {
+  cursor: grab;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Recuadro que se está arrastrando: elevado sobre los demás */
+.dragging {
+  cursor: grabbing;
+  position: relative;
+  z-index: 10;
+  border-color: hsl(var(--ring));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  scale: 1.02;
+}
+
+/* Los campos siguen siendo seleccionables y editables */
+.sortableRow input {
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
 .exerciseThumb {
   width: 44px;
   height: 44px;
