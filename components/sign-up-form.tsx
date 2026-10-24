@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { authErrorKey, cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -95,7 +95,7 @@ export function SignUpForm({
       router.push(`/auth/sign-up-success?uid=${data.user?.id ?? ""}`);
 
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : t("errorGeneric"));
+      setError(t(authErrorKey(error)));
     } finally {
       setIsLoading(false);
     }
