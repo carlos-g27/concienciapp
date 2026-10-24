@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LogoutConfirmDialog } from "@/components/logout-button";
 import { confirmLeave } from "@/hooks/use-unsaved-changes";
@@ -30,10 +30,15 @@ export default function AccountMenu({ profile }: AccountMenuProps) {
   const tAuth = useTranslations("auth");
 
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const logoutChosen = useRef(false);
 
   // Pide confirmación (aviso de la app) antes de cerrar sesión.
   const handleLogout = () => {
-    if (confirmLeave()) setConfirmLogout(true);
+    logoutChosen.current = true;
+    void confirmLeave().then((ok) => {
+      logoutChosen.current = false;
+      if (ok) setConfirmLogout(true);
+    });
   };
 
   return (
@@ -62,8 +67,8 @@ export default function AccountMenu({ profile }: AccountMenuProps) {
       <DropdownMenuContent
         align="end"
         className="w-56"
-        // Si se abre el aviso de cerrar sesión, el foco se queda en él (no vuelve al avatar).
-        onCloseAutoFocus={(e) => confirmLogout && e.preventDefault()}
+        // Si se abre un aviso (cerrar sesión o cambios sin guardar), el foco se queda en él.
+        onCloseAutoFocus={(e) => (confirmLogout || logoutChosen.current) && e.preventDefault()}
       >
         <DropdownMenuLabel className="flex flex-col gap-0.5">
           <span className="text-sm font-bold text-foreground">

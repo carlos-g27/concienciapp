@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { alertDialog, confirmDialog } from "@/components/ui/confirm-dialog";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
 import { deleteMeditation } from "../actions";
 import { MEDITATION_CATEGORY_LABEL_KEYS, isMeditationCategory, type Meditation } from "../types";
@@ -14,6 +15,7 @@ interface MeditationsCatalogViewProps {
 export default function MeditationsCatalogView({ initialItems }: MeditationsCatalogViewProps) {
   const router = useRouter();
   const t = useTranslations("adminCatalog");
+  const tc = useTranslations("common");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -36,7 +38,12 @@ export default function MeditationsCatalogView({ initialItems }: MeditationsCata
   };
 
   const handleDelete = async (item: CatalogItem) => {
-    const confirmed = window.confirm(t("medDeleteConfirm", { title: item.title }));
+    const confirmed = await confirmDialog({
+      tone: "danger",
+      title: tc("deleteTitle"),
+      description: t("medDeleteConfirm", { title: item.title }),
+      confirmLabel: tc("delete"),
+    });
     if (!confirmed) return;
 
     setDeletingId(item.id);
@@ -45,7 +52,7 @@ export default function MeditationsCatalogView({ initialItems }: MeditationsCata
       router.refresh();
     } else {
       console.error("Error eliminando meditación:", res.error);
-      alert(t("medDeleteError"));
+      void alertDialog({ title: t("medDeleteError") });
     }
     setDeletingId(null);
   };

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { alertDialog, confirmDialog } from "@/components/ui/confirm-dialog";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
 import { confirmLeave } from "@/hooks/use-unsaved-changes";
 import { deleteRecipe } from "@/features/admin/recipes/actions";
@@ -25,6 +26,7 @@ export default function RecipePickerModal({
 }: RecipePickerModalProps) {
   const router = useRouter();
   const t = useTranslations("adminAssign");
+  const tc = useTranslations("common");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -41,12 +43,17 @@ export default function RecipePickerModal({
   }));
 
   const handleEdit = (recipeId: string) => {
-    if (confirmLeave()) router.push(`/admin/recipes?id=${recipeId}`);
+    void confirmLeave().then((ok) => ok && router.push(`/admin/recipes?id=${recipeId}`));
   };
 
   const handleDelete = async (item: PickerItem & { original: CatalogRecipe }) => {
     const recipe = item.original;
-    const confirmed = window.confirm(t("pickerDeleteConfirmRec", { name: recipe.name }));
+    const confirmed = await confirmDialog({
+      tone: "danger",
+      title: tc("deleteTitle"),
+      description: t("pickerDeleteConfirmRec", { name: recipe.name }),
+      confirmLabel: tc("delete"),
+    });
     if (!confirmed) return;
 
     setDeletingId(recipe.id);
@@ -55,7 +62,7 @@ export default function RecipePickerModal({
       router.refresh();
     } else {
       console.error("Error eliminando receta:", res.error);
-      alert(t("pickerDeleteErrorRec"));
+      void alertDialog({ title: t("pickerDeleteErrorRec") });
     }
     setDeletingId(null);
   };

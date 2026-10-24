@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { alertDialog, confirmDialog } from "@/components/ui/confirm-dialog";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
 import { confirmLeave } from "@/hooks/use-unsaved-changes";
 import { deleteExercise } from "@/features/admin/exercises/actions";
@@ -23,6 +24,7 @@ export default function ExercisePickerModal({
 }: ExercisePickerModalProps) {
   const router = useRouter();
   const t = useTranslations("adminAssign");
+  const tc = useTranslations("common");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -47,13 +49,18 @@ export default function ExercisePickerModal({
 
   // --- Editar: navega a /admin/exercises con el id, para precargar el formulario ---
   const handleEdit = (exerciseId: string) => {
-    if (confirmLeave()) router.push(`/admin/exercises?id=${exerciseId}`);
+    void confirmLeave().then((ok) => ok && router.push(`/admin/exercises?id=${exerciseId}`));
   };
 
   // --- Eliminar del catálogo vía Server Action (reutilizada de la Fase 6B) ---
   const handleDelete = async (item: PickerItem & { original: CatalogExercise }) => {
     const exercise = item.original;
-    const confirmed = window.confirm(t("pickerDeleteConfirmEx", { name: exercise.name }));
+    const confirmed = await confirmDialog({
+      tone: "danger",
+      title: tc("deleteTitle"),
+      description: t("pickerDeleteConfirmEx", { name: exercise.name }),
+      confirmLabel: tc("delete"),
+    });
     if (!confirmed) return;
 
     setDeletingId(exercise.id);
@@ -62,7 +69,7 @@ export default function ExercisePickerModal({
       router.refresh();
     } else {
       console.error("Error eliminando ejercicio:", res.error);
-      alert(t("pickerDeleteErrorEx"));
+      void alertDialog({ title: t("pickerDeleteErrorEx") });
     }
     setDeletingId(null);
   };
