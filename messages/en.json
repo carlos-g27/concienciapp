@@ -437,6 +437,7 @@
     "recFormCreateBtn": "Create recipe",
     "recFormSaveBtn": "Save changes",
     "recReqError": "Name and calories are required.",
+    "recIngredientIncomplete": "Fill in both the ingredient and the quantity in every row.",
     "recSaveError": "Couldn't save the recipe.",
     "recPreviewAlt": "Preview",
     "recName": "Recipe name",

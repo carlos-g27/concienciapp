@@ -437,6 +437,7 @@
     "recFormCreateBtn": "Crear receta",
     "recFormSaveBtn": "Guardar cambios",
     "recReqError": "El nombre y las calorías son obligatorios.",
+    "recIngredientIncomplete": "Completa el ingrediente y la cantidad en todas las filas.",
     "recSaveError": "Error al guardar la receta.",
     "recPreviewAlt": "Vista previa",
     "recName": "Nombre de la receta",

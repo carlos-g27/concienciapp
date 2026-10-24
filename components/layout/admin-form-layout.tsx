@@ -88,7 +88,7 @@ export default function AdminFormLayout({
 
               {/* Manejo de errores global del formulario */}
               {error && (
-                <p className="text-[0.85rem] text-destructive font-medium">
+                <p role="alert" className="px-4 py-3 rounded-[10px] bg-red-600/10 text-red-600 dark:text-red-400 text-[0.85rem] font-medium">
                   {error}
                 </p>
               )}

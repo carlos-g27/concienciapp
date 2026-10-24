@@ -17,6 +17,12 @@ export const CALORIES_MAX_DIGITS = 5;
 export const onlyCalorieDigits = (value: string) =>
   value.replace(/\D/g, "").slice(0, CALORIES_MAX_DIGITS);
 
+const INGREDIENT_INCOMPLETE = "Completa el ingrediente y la cantidad en todas las filas.";
+
+/** Fila a medio llenar: tiene ingrediente o cantidad, pero no ambos. */
+export const isIncompleteIngredient = (row: { name: string; quantity: string }) =>
+  Boolean(row.name.trim()) !== Boolean(row.quantity.trim());
+
 const emptyToUndefined = (v: unknown) =>
   v == null || (typeof v === "string" && v.trim() === "") ? undefined : v;
 
@@ -41,9 +47,17 @@ export const recipeSchema = z.object({
               name: typeof i?.name === "string" ? i.name.trim() : "",
               quantity: typeof i?.quantity === "string" ? i.quantity.trim() : "",
             }))
-            .filter((i) => i.name)
+            // Las filas totalmente vacías se ignoran; las incompletas dan error.
+            .filter((i) => i.name || i.quantity)
         : [],
-    z.array(z.object({ name: z.string().max(200), quantity: z.string().max(100) })).max(100),
+    z
+      .array(
+        z.object({
+          name: z.string().min(1, INGREDIENT_INCOMPLETE).max(200),
+          quantity: z.string().min(1, INGREDIENT_INCOMPLETE).max(100),
+        }),
+      )
+      .max(100),
   ),
 });
 
