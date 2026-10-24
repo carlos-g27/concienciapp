@@ -28,10 +28,9 @@ export default function RecipePickerModal({
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const filtered = catalog
-    .filter((r) => r.meal_type === mealType)
-    .filter((r) => !excludeIds.includes(r.id))
-    .filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
+  // Recetas de esta comida sin asignar aún (si es 0, ya se asignaron todas).
+  const available = catalog.filter((r) => r.meal_type === mealType).filter((r) => !excludeIds.includes(r.id));
+  const filtered = available.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
 
   const pickerItems: (PickerItem & { original: CatalogRecipe })[] = filtered.map((recipe) => ({
     id: recipe.id,
@@ -72,7 +71,9 @@ export default function RecipePickerModal({
       emptyMessage={
         catalog.filter((r) => r.meal_type === mealType).length === 0
           ? t("pickerEmptyNoneRec")
-          : t("pickerEmptyNoResultsRec")
+          : available.length === 0
+            ? t("pickerEmptyAllAssignedRec")
+            : t("pickerEmptyNoResultsRec")
       }
       deletingId={deletingId}
       onSelect={(item) => onSelect(item.original)}

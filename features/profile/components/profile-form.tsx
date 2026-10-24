@@ -286,8 +286,8 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           {/* Campos del perfil */}
           <div className="px-6 pb-8 flex flex-col gap-3">
 
-            {/* Email — siempre solo lectura */}
-            <div className={styles.fieldCard}>
+            {/* Email — siempre solo lectura (en edición no parece un campo) */}
+            <div className={`${styles.fieldCard} ${isEditing ? styles.fieldCardReadonly : ""}`}>
               <span className={styles.fieldLabel}>{t("email")}</span>
               <span className={styles.fieldValue}>{profile.email || "—"}</span>
             </div>

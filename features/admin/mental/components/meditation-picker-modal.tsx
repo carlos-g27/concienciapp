@@ -36,10 +36,9 @@ export default function MeditationPickerModal({
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const filtered = catalog
-    .filter((m) => m.category === category)
-    .filter((m) => !excludeIds.includes(m.id))
-    .filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));
+  // Meditaciones de esta categoría sin asignar aún (si es 0, ya se asignaron todas).
+  const available = catalog.filter((m) => m.category === category).filter((m) => !excludeIds.includes(m.id));
+  const filtered = available.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));
 
   const pickerItems: (PickerItem & { original: CatalogMeditation })[] = filtered.map((meditation) => ({
     id: meditation.id,
@@ -80,7 +79,9 @@ export default function MeditationPickerModal({
       emptyMessage={
         catalog.filter((m) => m.category === category).length === 0
           ? t("pickerEmptyNoneMed")
-          : t("pickerEmptyNoResultsMed")
+          : available.length === 0
+            ? t("pickerEmptyAllAssignedMed")
+            : t("pickerEmptyNoResultsMed")
       }
       deletingId={deletingId}
       onSelect={(item) => onSelect(item.original)}

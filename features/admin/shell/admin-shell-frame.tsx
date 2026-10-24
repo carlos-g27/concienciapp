@@ -34,7 +34,9 @@ export default function AdminShellFrame({ profile, children }: AdminShellFramePr
   const sectionKey = SECTION_TITLES.find((s) => s.match(pathname))?.key;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    // Los ejemplos ("Ej.: …") de los formularios del admin se ven más tenues y en
+    // cursiva, para no confundirlos con un valor ya escrito.
+    <div className="flex min-h-screen bg-background [&_::placeholder]:italic [&_::placeholder]:opacity-60">
 
       {/* Sidebar — solo escritorio */}
       <AdminSidebar profile={profile} />

@@ -3,9 +3,20 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import CategoryCard from "@/components/ui/category-card";
+import PilarMaintenance from "@/components/ui/pilar-maintenance";
 import MeditationDetail from "./meditation-detail";
 import type { Meditation, MeditationCategoryKey, MeditationsByCategory } from "../types";
 import styles from "./mental.module.css";
+
+// Icono del aviso "tu coach aún no te asignó…".
+const NO_PLAN_ICON = (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+    <line x1="9" y1="12" x2="15" y2="12" />
+    <line x1="9" y1="16" x2="13" y2="16" />
+  </svg>
+);
 
 interface MeditationCategory {
   id: MeditationCategoryKey;
@@ -125,6 +136,10 @@ export default function MentalView({ initialMeditations }: MentalViewProps) {
               <p className={styles.pageSubtitle}>{t("subtitle")}</p>
             </div>
 
+            {/* Sin meditaciones asignadas: un aviso en vez de categorías con "0" */}
+            {categories.every((c) => c.meditations.length === 0) ? (
+              <PilarMaintenance title={t("noPlanTitle")} description={t("noPlanDesc")} icon={NO_PLAN_ICON} backLink={false} />
+            ) : (
             <div className={styles.categoriesGrid}>
               {categories.map((category) => (
                 <CategoryCard
@@ -139,6 +154,7 @@ export default function MentalView({ initialMeditations }: MentalViewProps) {
                 />
               ))}
             </div>
+            )}
           </>
         )}
 

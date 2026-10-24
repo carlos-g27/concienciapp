@@ -26,9 +26,9 @@ export default function ExercisePickerModal({
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const filtered = catalog
-    .filter((e) => !excludeIds.includes(e.id))
-    .filter((e) => e.name.toLowerCase().includes(search.toLowerCase()));
+  // Sin asignar aún en este día (si es 0, ya se asignaron todos).
+  const available = catalog.filter((e) => !excludeIds.includes(e.id));
+  const filtered = available.filter((e) => e.name.toLowerCase().includes(search.toLowerCase()));
 
   const pickerItems: (PickerItem & { original: CatalogExercise })[] = filtered.map((exercise) => ({
     id: exercise.id,
@@ -76,7 +76,11 @@ export default function ExercisePickerModal({
       items={pickerItems}
       isLoading={false}
       emptyMessage={
-        catalog.length === 0 ? t("pickerEmptyNoneEx") : t("pickerEmptyNoResultsEx")
+        catalog.length === 0
+          ? t("pickerEmptyNoneEx")
+          : available.length === 0
+            ? t("pickerEmptyAllAssignedEx")
+            : t("pickerEmptyNoResultsEx")
       }
       deletingId={deletingId}
       onSelect={(item) => onSelect(item.original)}
