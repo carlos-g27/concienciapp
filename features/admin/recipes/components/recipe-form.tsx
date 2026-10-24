@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminFormLayout from "@/components/layout/admin-form-layout";
 import { createRecipe, updateRecipe } from "../actions";
-import { onlyCalorieDigits } from "../schema";
+import { isIncompleteIngredient, onlyCalorieDigits } from "../schema";
 import type { MealType, RecipeFull } from "../types";
 
 interface IngredientRow {
@@ -61,6 +61,8 @@ function RecipeFormContent({ initialRecipe, initialType }: RecipeFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
+  // Filas de ingredientes a medio llenar (se marcan en rojo al intentar guardar).
+  const [incompleteRows, setIncompleteRows] = useState<string[]>([]);
 
   // Cambios sin guardar: valores actuales vs. iniciales (al guardar se vuelve atrás).
   const currentValues = JSON.stringify({
@@ -72,8 +74,10 @@ function RecipeFormContent({ initialRecipe, initialType }: RecipeFormProps) {
 
   const addIngredient = () =>
     setIngredients((prev) => [...prev, { id: crypto.randomUUID(), name: "", quantity: "" }]);
-  const updateIngredient = (id: string, field: "name" | "quantity", value: string) =>
+  const updateIngredient = (id: string, field: "name" | "quantity", value: string) => {
     setIngredients((prev) => prev.map((i) => (i.id === id ? { ...i, [field]: value } : i)));
+    setIncompleteRows((prev) => prev.filter((rowId) => rowId !== id));
+  };
   const removeIngredient = (id: string) =>
     setIngredients((prev) => prev.filter((i) => i.id !== id));
 
@@ -83,6 +87,14 @@ function RecipeFormContent({ initialRecipe, initialType }: RecipeFormProps) {
 
     if (!name.trim() || !calories.trim()) {
       setError(t("recReqError"));
+      return;
+    }
+
+    // Cada fila debe tener ingrediente y cantidad (las vacías se ignoran).
+    const incomplete = ingredients.filter(isIncompleteIngredient).map((i) => i.id);
+    setIncompleteRows(incomplete);
+    if (incomplete.length > 0) {
+      setError(t("recIngredientIncomplete"));
       return;
     }
 
@@ -178,9 +190,9 @@ function RecipeFormContent({ initialRecipe, initialType }: RecipeFormProps) {
             <span />
           </div>
           {ingredients.map((ing) => (
-            <div key={ing.id} className="grid grid-cols-[1fr_130px_32px] items-center gap-2 px-3.5 py-1 border-b border-border last:border-0">
-              <input type="text" placeholder={t("recIngredientPh")} value={ing.name} onChange={(e) => updateIngredient(ing.id, "name", e.target.value)} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground min-w-0" />
-              <input type="text" placeholder={t("recQuantityPh")} value={ing.quantity} onChange={(e) => updateIngredient(ing.id, "quantity", e.target.value)} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground min-w-0" />
+            <div key={ing.id} className={`grid grid-cols-[1fr_130px_32px] items-center gap-2 px-3.5 py-1 border-b border-border last:border-0 ${incompleteRows.includes(ing.id) ? "bg-red-600/10" : ""}`}>
+              <input type="text" placeholder={t("recIngredientPh")} value={ing.name} onChange={(e) => updateIngredient(ing.id, "name", e.target.value)} aria-invalid={incompleteRows.includes(ing.id) && !ing.name.trim()} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground aria-[invalid=true]:placeholder:text-red-500 min-w-0" />
+              <input type="text" placeholder={t("recQuantityPh")} value={ing.quantity} onChange={(e) => updateIngredient(ing.id, "quantity", e.target.value)} aria-invalid={incompleteRows.includes(ing.id) && !ing.quantity.trim()} className="bg-transparent border-none outline-none text-[0.85rem] text-foreground py-1.5 placeholder:text-muted-foreground aria-[invalid=true]:placeholder:text-red-500 min-w-0" />
               <button type="button" onClick={() => removeIngredient(ing.id)} className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="3 6 5 6 21 6" />
