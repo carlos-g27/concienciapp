@@ -15,9 +15,29 @@
   transition: border-color 0.15s;
 }
 
-/* En edición el input ya tiene su propio borde: sin borde exterior */
+/* En edición la tarjeta ES el campo: un solo borde, resaltado al escribir */
 .fieldCard:has(.fieldInput) {
+  border-color: hsl(var(--input));
+  cursor: text;
+}
+
+.fieldCard:has(.fieldInput):focus-within {
+  border-color: hsl(var(--ring));
+}
+
+/* Sin el anillo de foco del input (evita el doble borde) */
+.fieldCard .fieldInput:focus-visible {
+  box-shadow: none;
+}
+
+/* En edición, el correo (no editable) no parece un campo */
+.fieldCardReadonly {
   border-color: transparent;
+  background-color: transparent;
+}
+
+.fieldCardReadonly .fieldValue {
+  color: hsl(var(--muted-foreground));
 }
 
 /* Campo con datos incorrectos: borde rojo */
