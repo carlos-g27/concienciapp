@@ -43,6 +43,23 @@ export const profileUpdateSchema = z.object({
 });
 
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
+export type ProfileField = keyof ProfileUpdateInput;
+
+// Clave de traducción (namespace `profile`) del error de cada campo.
+export const PROFILE_FIELD_ERROR_KEYS: Record<ProfileField, string> = {
+  name: "errFieldName",
+  phone: "errFieldPhone",
+  age: "errFieldAge",
+  weight: "errFieldWeight",
+  goal: "errFieldGoal",
+};
+
+/** Campos inválidos de un resultado de `safeParse`, en el orden del formulario. */
+export function invalidProfileFields(result: { success: boolean; error?: z.ZodError }): ProfileField[] {
+  if (result.success || !result.error) return [];
+  const invalid = new Set(result.error.issues.map((issue) => issue.path[0]));
+  return (Object.keys(PROFILE_FIELD_ERROR_KEYS) as ProfileField[]).filter((f) => invalid.has(f));
+}
 
 // --- Restricciones del avatar ---
 export const AVATAR_MAX_BYTES = 2 * 1024 * 1024; // 2 MB

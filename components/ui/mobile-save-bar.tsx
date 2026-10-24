@@ -43,7 +43,7 @@ export default function MobileSaveBar({
           <p role="status" className="text-[0.8rem] font-medium text-green-600 text-center">{successMsg}</p>
         )}
         {error && (
-          <p role="alert" className="text-[0.8rem] font-medium text-destructive text-center">{error}</p>
+          <p role="alert" className="text-[0.8rem] font-medium text-red-600 dark:text-red-400 text-center whitespace-pre-line">{error}</p>
         )}
         <div className="flex gap-3">
           {secondary && (

@@ -13,6 +13,9 @@ import CategoryCard from "@/components/ui/category-card";
 import { confirmLeave, useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import DangerDeleteZone from "@/components/ui/danger-delete-zone";
 import { adminDeleteUser, updateUserProfile } from "../actions";
+import { userUpdateSchema } from "../schema";
+import { PROFILE_FIELD_ERROR_KEYS, invalidProfileFields, type ProfileField } from "@/features/profile/schema";
+import { cn } from "@/lib/utils";
 import type { AdminUserCounts, AdminUserDetail } from "../types";
 import styles from "./admin-user-profile.module.css";
 
@@ -61,6 +64,19 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Campos con datos incorrectos (se marcan en rojo y se listan en el aviso).
+  const tp = useTranslations("profile");
+  const [invalidFields, setInvalidFields] = useState<ProfileField[]>([]);
+  const shownError =
+    invalidFields.length > 0
+      ? invalidFields.map((f) => tp(PROFILE_FIELD_ERROR_KEYS[f])).join("\n")
+      : error;
+  const invalidClass = (field: ProfileField) =>
+    cn(invalidFields.includes(field) && "border-red-600 focus-visible:ring-red-600");
+  const editField = (field: "weight" | "age" | "goal", value: string) => {
+    setDraft((d) => ({ ...d, [field]: value }));
+    setInvalidFields((prev) => prev.filter((f) => f !== field));
+  };
 
   // Cambios sin guardar: datos editados vs. últimos guardados.
   const currentValues = JSON.stringify(draft);
@@ -72,6 +88,15 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
   };
 
   const handleSave = async () => {
+    // Valida con el mismo esquema del servidor y dice qué campos están mal.
+    const invalid = invalidProfileFields(userUpdateSchema.safeParse(draft));
+    setInvalidFields(invalid);
+    if (invalid.length > 0) {
+      setError(null);
+      setSuccessMsg(null);
+      return;
+    }
+
     setIsSaving(true);
     setError(null);
     setSuccessMsg(null);
@@ -131,7 +156,9 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
                 type="number"
                 placeholder={t("weightPh")}
                 value={draft.weight}
-                onChange={(e) => setDraft((d) => ({ ...d, weight: e.target.value }))}
+                onChange={(e) => editField("weight", e.target.value)}
+                aria-invalid={invalidFields.includes("weight")}
+                className={invalidClass("weight")}
               />
             </div>
 
@@ -142,7 +169,9 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
                 type="number"
                 placeholder={t("agePh")}
                 value={draft.age}
-                onChange={(e) => setDraft((d) => ({ ...d, age: e.target.value }))}
+                onChange={(e) => editField("age", e.target.value)}
+                aria-invalid={invalidFields.includes("age")}
+                className={invalidClass("age")}
               />
             </div>
 
@@ -153,7 +182,9 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
                 type="text"
                 placeholder={t("goalPh")}
                 value={draft.goal}
-                onChange={(e) => setDraft((d) => ({ ...d, goal: e.target.value }))}
+                onChange={(e) => editField("goal", e.target.value)}
+                aria-invalid={invalidFields.includes("goal")}
+                className={invalidClass("goal")}
               />
             </div>
           </div>
@@ -164,7 +195,11 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
               {isSaving ? t("saving") : t("save")}
             </Button>
             {successMsg && <span className={styles.successMsg}>{successMsg}</span>}
-            {error && <span className={styles.errorMsg}>{error}</span>}
+            {shownError && (
+              <span role="alert" className="text-[0.8rem] font-medium text-red-600 dark:text-red-400 whitespace-pre-line">
+                {shownError}
+              </span>
+            )}
           </div>
 
         </CardContent>

@@ -6,6 +6,8 @@ import { requireUser } from "@/lib/auth/require-user";
 import { createClient } from "@/lib/supabase/server";
 import {
   profileUpdateSchema,
+  PROFILE_FIELD_ERROR_KEYS,
+  invalidProfileFields,
   AVATAR_MAX_BYTES,
   AVATAR_ALLOWED_TYPES,
   AVATAR_EXT_BY_TYPE,
@@ -35,7 +37,11 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
   });
 
   if (!parsed.success) {
-    return { success: false, error: t("errInvalid") };
+    const invalid = invalidProfileFields(parsed);
+    return {
+      success: false,
+      error: invalid.length > 0 ? invalid.map((f) => t(PROFILE_FIELD_ERROR_KEYS[f])).join("\n") : t("errInvalid"),
+    };
   }
 
   const { name, phone, goal, age, weight } = parsed.data;

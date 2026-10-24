@@ -9,7 +9,14 @@ import MobileSaveBar from "@/components/ui/mobile-save-bar";
 import { getInitials } from "@/hooks/use-profile";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes";
 import { updateProfile, uploadAvatar } from "../actions";
-import { NAME_REGEX, PHONE_REGEX, onlyNameLetters, onlyPhoneDigits } from "../schema";
+import {
+  PROFILE_FIELD_ERROR_KEYS,
+  invalidProfileFields,
+  onlyNameLetters,
+  onlyPhoneDigits,
+  profileUpdateSchema,
+  type ProfileField,
+} from "../schema";
 import type { UserProfileData } from "../types";
 import styles from "./profile.module.css";
 
@@ -40,6 +47,12 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Campos con datos incorrectos (se marcan en rojo y se listan en el aviso).
+  const [invalidFields, setInvalidFields] = useState<ProfileField[]>([]);
+  const shownError =
+    invalidFields.length > 0
+      ? invalidFields.map((f) => t(PROFILE_FIELD_ERROR_KEYS[f])).join("\n")
+      : error;
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   // Cambios sin guardar: en modo edición, borrador distinto del perfil guardado.
@@ -57,23 +70,24 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
     const clean =
       key === "phone" ? onlyPhoneDigits(value) : key === "name" ? onlyNameLetters(value) : value;
     setDraft((prev) => (prev ? { ...prev, [key]: clean } : prev));
+    setInvalidFields((prev) => prev.filter((f) => f !== key));
   };
 
   const handleCancel = () => {
     setDraft(null);
     setIsEditing(false);
     setError(null);
+    setInvalidFields([]);
   };
 
   // --- Guardar cambios vía Server Action ---
   const handleSave = async () => {
     if (!draft) return;
-    if (draft.name.trim() && !NAME_REGEX.test(draft.name.trim())) {
-      setError(t("errName"));
-      return;
-    }
-    if (draft.phone && !PHONE_REGEX.test(draft.phone)) {
-      setError(t("errPhone"));
+    // Valida todos los campos con el esquema del servidor y dice cuáles están mal.
+    const invalid = invalidProfileFields(profileUpdateSchema.safeParse(draft));
+    setInvalidFields(invalid);
+    if (invalid.length > 0) {
+      setError(null);
       return;
     }
     setIsSaving(true);
@@ -256,8 +270,13 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
             </div>
 
             {/* Mensajes de feedback */}
-            {error && (
-              <p className="hidden lg:block mt-3 text-sm text-destructive text-center">{error}</p>
+            {shownError && (
+              <p
+                role="alert"
+                className="hidden lg:block mt-3 px-3 py-2 rounded-[10px] bg-red-600/10 text-red-600 dark:text-red-400 text-sm font-medium text-left whitespace-pre-line"
+              >
+                {shownError}
+              </p>
             )}
             {successMsg && (
               <p className="hidden lg:block mt-3 text-sm text-green-600 text-center">{successMsg}</p>
@@ -286,6 +305,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                     className={styles.fieldInput}
                     min={type === "number" ? "0" : undefined}
                     inputMode={key === "phone" ? "numeric" : undefined}
+                    aria-invalid={invalidFields.includes(key)}
                   />
                 ) : (
                   <span className={styles.fieldValue}>
@@ -306,7 +326,7 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           label={isEditing ? t("save") : t("editBtn")}
           savingLabel={t("saving")}
           successMsg={successMsg}
-          error={error}
+          error={shownError}
           secondary={isEditing ? { label: t("cancel"), onClick: handleCancel, disabled: isSaving } : undefined}
         />
     </div>

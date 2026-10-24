@@ -1,14 +1,9 @@
 import { z } from "zod";
-
-const emptyToUndefined = (v: unknown) =>
-  v == null || (typeof v === "string" && v.trim() === "") ? undefined : v;
+import { profileUpdateSchema } from "@/features/profile/schema";
 
 // --- Validación de la edición de un usuario (campos permitidos al admin) ---
-export const userUpdateSchema = z.object({
-  weight: z.preprocess(emptyToUndefined, z.coerce.number().min(0).max(500).optional()),
-  age: z.preprocess(emptyToUndefined, z.coerce.number().int().min(0).max(120).optional()),
-  goal: z.preprocess(emptyToUndefined, z.string().trim().max(120).optional()),
-});
+// Mismos límites que "Mi perfil" del usuario.
+export const userUpdateSchema = profileUpdateSchema.pick({ weight: true, age: true, goal: true });
 
 export type UserUpdateInput = z.infer<typeof userUpdateSchema>;
 
