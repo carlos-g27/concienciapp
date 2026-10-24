@@ -45,7 +45,8 @@ export async function getUserRoutine(userId: string): Promise<WorkoutDay[]> {
       .select(
         "day, sets, reps, created_at, exercises(id, name, muscle, description, instructions, video_url, is_main_lift)",
       )
-      .eq("user_id", userId),
+      .eq("user_id", userId)
+      .order("position"), // orden que dejó el admin al arrastrar
     supabase.from("user_routine_focus").select("day, focus").eq("user_id", userId),
   ]);
 

@@ -30,7 +30,8 @@ export async function getUserRoutineForAdmin(
       supabase
         .from("user_routines")
         .select("day, exercise_id, sets, reps, exercises(name, muscle)")
-        .eq("user_id", userId),
+        .eq("user_id", userId)
+        .order("position"),
       supabase.from("user_routine_focus").select("day, focus").eq("user_id", userId),
     ]);
 

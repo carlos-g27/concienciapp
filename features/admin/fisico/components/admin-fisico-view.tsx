@@ -2,6 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type Modifier,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +34,17 @@ import type { AssignedExercise, CatalogExercise, Day, FocusByDay, RoutineByDay }
 import styles from "./admin-fisico.module.css";
 
 const DAY_KEYS: Day[] = ["lunes", "martes", "miercoles", "jueves", "viernes"];
+
+// El recuadro solo se mueve hacia arriba o abajo mientras se arrastra.
+const soloVertical: Modifier = ({ transform }) => ({ ...transform, x: 0 });
+
+// Evita que arrastrar desde un campo o botón mueva el recuadro (se puede
+// escribir, seleccionar y borrar como siempre).
+const noArrastrar = {
+  onMouseDown: (e: React.SyntheticEvent) => e.stopPropagation(),
+  onTouchStart: (e: React.SyntheticEvent) => e.stopPropagation(),
+  onKeyDown: (e: React.SyntheticEvent) => e.stopPropagation(),
+};
 
 interface AdminFisicoViewProps {
   userId: string;
@@ -56,6 +86,25 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
       ...prev,
       [activeDay]: prev[activeDay].filter((e) => e.exerciseId !== exerciseId),
     }));
+  };
+
+  // --- Reordenar (arrastrar y soltar) ---
+  // PC: mantener el clic y mover. Celular: mantener presionado ~¼ s y mover
+  // (un deslizamiento normal sigue haciendo scroll). Teclado: Espacio + flechas.
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    setRoutine((prev) => {
+      const list = prev[activeDay];
+      const from = list.findIndex((e) => e.exerciseId === active.id);
+      const to = list.findIndex((e) => e.exerciseId === over.id);
+      return { ...prev, [activeDay]: arrayMove(list, from, to) };
+    });
   };
 
   const handleUpdateField = (exerciseId: string, field: "sets" | "reps", value: number) => {
@@ -152,58 +201,70 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
           {activeExercises.length === 0 ? (
             <p className={styles.emptyDay}>{t("emptyDay")}</p>
           ) : (
-            activeExercises.map((exercise) => (
-              <div key={exercise.exerciseId} className={styles.exerciseRow}>
-
-                <div className={styles.exerciseThumb}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="8" r="2" />
-                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1" />
-                    <path d="M7 21v-4" />
-                    <path d="M17 21v-4" />
-                  </svg>
-                </div>
-
-                <div className={styles.exerciseInfo}>
-                  <span className={styles.exerciseName}>{exercise.name}</span>
-                  <span className={styles.exerciseMuscle}>{exercise.muscle}</span>
-                  <div className={styles.exerciseFields}>
-                    <div className={styles.fieldGroup}>
-                      <Input
-                        type="number"
-                        min="1"
-                        value={exercise.sets}
-                        onChange={(e) => handleUpdateField(exercise.exerciseId, "sets", Number(e.target.value))}
-                        className={styles.fieldInput}
-                      />
-                      <span className={styles.fieldSuffix}>{t("seriesSuffix")}</span>
+            <DndContext
+              id="admin-routine-dnd"
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              modifiers={[soloVertical]}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={activeExercises.map((e) => e.exerciseId)}
+                strategy={verticalListSortingStrategy}
+              >
+                {activeExercises.map((exercise) => (
+                  <SortableExerciseRow key={exercise.exerciseId} id={exercise.exerciseId}>
+                    <div className={styles.exerciseThumb}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="8" r="2" />
+                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1" />
+                        <path d="M7 21v-4" />
+                        <path d="M17 21v-4" />
+                      </svg>
                     </div>
-                    <div className={styles.fieldGroup}>
-                      <Input
-                        type="number"
-                        min="1"
-                        value={exercise.reps}
-                        onChange={(e) => handleUpdateField(exercise.exerciseId, "reps", Number(e.target.value))}
-                        className={styles.fieldInput}
-                      />
-                      <span className={styles.fieldSuffix}>{t("repsSuffix")}</span>
+
+                    <div className={styles.exerciseInfo}>
+                      <span className={styles.exerciseName}>{exercise.name}</span>
+                      <span className={styles.exerciseMuscle}>{exercise.muscle}</span>
+                      <div className={styles.exerciseFields} {...noArrastrar}>
+                        <div className={styles.fieldGroup}>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={exercise.sets}
+                            onChange={(e) => handleUpdateField(exercise.exerciseId, "sets", Number(e.target.value))}
+                            className={styles.fieldInput}
+                          />
+                          <span className={styles.fieldSuffix}>{t("seriesSuffix")}</span>
+                        </div>
+                        <div className={styles.fieldGroup}>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={exercise.reps}
+                            onChange={(e) => handleUpdateField(exercise.exerciseId, "reps", Number(e.target.value))}
+                            className={styles.fieldInput}
+                          />
+                          <span className={styles.fieldSuffix}>{t("repsSuffix")}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                <button
-                  onClick={() => handleRemove(exercise.exerciseId)}
-                  className={styles.deleteBtn}
-                  aria-label={t("removeExercise")}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg>
-                </button>
-
-              </div>
-            ))
+                    <button
+                      {...noArrastrar}
+                      onClick={() => handleRemove(exercise.exerciseId)}
+                      className={styles.deleteBtn}
+                      aria-label={t("removeExercise")}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
+                    </button>
+                  </SortableExerciseRow>
+                ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
 
@@ -237,6 +298,23 @@ export default function AdminFisicoView({ userId, initialRoutine, initialFocus, 
         />
       )}
 
+    </div>
+  );
+}
+
+// --- Recuadro de ejercicio que se puede arrastrar para cambiar el orden ---
+function SortableExerciseRow({ id, children }: { id: string; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Translate.toString(transform), transition }}
+      className={`${styles.exerciseRow} ${styles.sortableRow} ${isDragging ? styles.dragging : ""}`}
+      {...attributes}
+      {...listeners}
+    >
+      {children}
     </div>
   );
 }
