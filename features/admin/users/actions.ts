@@ -7,6 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { userUpdateSchema, type UserUpdateFormInput } from "./schema";
+import { PROFILE_FIELD_ERROR_KEYS, invalidProfileFields } from "@/features/profile/schema";
 
 export interface ActionResult {
   success: boolean;
@@ -31,7 +32,12 @@ export async function updateUserProfile(
 
   const parsed = userUpdateSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: t("actUserInvalidData") };
+    const tp = await getTranslations("profile");
+    const invalid = invalidProfileFields(parsed);
+    return {
+      success: false,
+      error: invalid.length > 0 ? invalid.map((f) => tp(PROFILE_FIELD_ERROR_KEYS[f])).join("\n") : t("actUserInvalidData"),
+    };
   }
 
   const { weight, age, goal } = parsed.data;

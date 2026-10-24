@@ -20,6 +20,11 @@
   border-color: transparent;
 }
 
+/* Campo con datos incorrectos: borde rojo */
+.fieldCard:has(.fieldInput[aria-invalid="true"]) {
+  border-color: rgb(220 38 38);
+}
+
 /* Etiqueta del campo */
 .fieldLabel {
   font-size: 0.72rem;

@@ -104,12 +104,6 @@
   font-weight: 500;
 }
 
-.errorMsg {
-  font-size: 0.8rem;
-  color: hsl(var(--destructive));
-  font-weight: 500;
-}
-
 /* Grid de category cards */
 .categoryGrid {
   display: grid;
