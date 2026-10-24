@@ -84,7 +84,7 @@ export default function AdminUserProfileView({ profile, counts }: AdminUserProfi
   useUnsavedChangesWarning(currentValues !== savedValues);
 
   const goTo = (path: string) => {
-    if (confirmLeave()) router.push(path);
+    void confirmLeave().then((ok) => ok && router.push(path));
   };
 
   const handleSave = async () => {

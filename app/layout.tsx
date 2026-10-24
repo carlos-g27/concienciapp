@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { NextIntlClientProvider } from "next-intl";
+import { ConfirmDialogHost } from "@/components/ui/confirm-dialog";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
 
@@ -56,6 +57,8 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            {/* Avisos de la app (confirmDialog / alertDialog) */}
+            <ConfirmDialogHost />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

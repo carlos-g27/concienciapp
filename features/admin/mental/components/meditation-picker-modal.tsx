@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { alertDialog, confirmDialog } from "@/components/ui/confirm-dialog";
 import PickerModal, { PickerItem } from "@/components/ui/picker-modal";
 import { confirmLeave } from "@/hooks/use-unsaved-changes";
 import { deleteMeditation } from "@/features/admin/meditations/actions";
@@ -32,6 +33,7 @@ export default function MeditationPickerModal({
 }: MeditationPickerModalProps) {
   const router = useRouter();
   const t = useTranslations("adminAssign");
+  const tCommon = useTranslations("common");
   const tc = useTranslations("adminCatalog");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -49,12 +51,17 @@ export default function MeditationPickerModal({
   }));
 
   const handleEdit = (meditationId: string) => {
-    if (confirmLeave()) router.push(`/admin/meditations?id=${meditationId}`);
+    void confirmLeave().then((ok) => ok && router.push(`/admin/meditations?id=${meditationId}`));
   };
 
   const handleDelete = async (item: PickerItem & { original: CatalogMeditation }) => {
     const meditation = item.original;
-    const confirmed = window.confirm(t("pickerDeleteConfirmMed", { name: meditation.name }));
+    const confirmed = await confirmDialog({
+      tone: "danger",
+      title: tCommon("deleteTitle"),
+      description: t("pickerDeleteConfirmMed", { name: meditation.name }),
+      confirmLabel: tCommon("delete"),
+    });
     if (!confirmed) return;
 
     setDeletingId(meditation.id);
@@ -63,7 +70,7 @@ export default function MeditationPickerModal({
       router.refresh();
     } else {
       console.error("Error eliminando meditación:", res.error);
-      alert(t("pickerDeleteErrorMed"));
+      void alertDialog({ title: t("pickerDeleteErrorMed") });
     }
     setDeletingId(null);
   };

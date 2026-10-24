@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { alertDialog, confirmDialog } from "@/components/ui/confirm-dialog";
 import CatalogList, { CatalogItem } from "@/components/ui/catalog-list";
 import { deleteExercise } from "../actions";
 import type { ExerciseCatalogItem } from "../types";
@@ -14,6 +15,7 @@ interface ExercisesCatalogViewProps {
 export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogViewProps) {
   const router = useRouter();
   const t = useTranslations("adminCatalog");
+  const tc = useTranslations("common");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -32,7 +34,12 @@ export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogV
   };
 
   const handleDelete = async (item: CatalogItem) => {
-    const confirmed = window.confirm(t("exDeleteConfirm", { title: item.title }));
+    const confirmed = await confirmDialog({
+      tone: "danger",
+      title: tc("deleteTitle"),
+      description: t("exDeleteConfirm", { title: item.title }),
+      confirmLabel: tc("delete"),
+    });
     if (!confirmed) return;
 
     setDeletingId(item.id);
@@ -41,7 +48,7 @@ export default function ExercisesCatalogView({ initialItems }: ExercisesCatalogV
       router.refresh();
     } else {
       console.error("Error eliminando ejercicio:", res.error);
-      alert(t("exDeleteError"));
+      void alertDialog({ title: t("exDeleteError") });
     }
     setDeletingId(null);
   };

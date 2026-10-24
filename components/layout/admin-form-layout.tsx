@@ -47,7 +47,7 @@ export default function AdminFormLayout({
     <div className="max-w-[680px] mx-auto flex flex-col gap-5 w-full">
       {/* Botón Volver */}
       <button
-        onClick={() => confirmLeave() && router.back()}
+        onClick={() => void confirmLeave().then((ok) => ok && router.back())}
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors w-fit cursor-pointer bg-transparent border-none p-0"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
