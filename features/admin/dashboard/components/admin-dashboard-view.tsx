@@ -306,7 +306,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
         </div>
       
         {/* Columna derecha — Leaderboard, dentro de un Card */}
-        <div className={styles.rightColumn}>
+        {/*<div className={styles.rightColumn}>
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="text-base font-bold text-primary">{t("leaderboard")}</CardTitle>
@@ -333,7 +333,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
               ))}
             </CardContent>
           </Card>
-        </div>
+        </div>*/}
         
       </div>
     </div>
