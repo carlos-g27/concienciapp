@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { AdminUserRow } from "../types";
 import styles from "./admin-dashboard.module.css";
-/*
+
 interface LeaderboardEntry {
   name: string;
   score: number;
@@ -21,7 +21,7 @@ const leaderboard: LeaderboardEntry[] = [
   { name: "Mark Hopper",       score: 21, avatar: "MH" },
   { name: "Margaret Hamilton", score: 15, avatar: "MH" },
 ];
-*/
+
 // --- Helpers ---
 function getInitials(name: string): string {
   return name.trim().split(" ").filter(Boolean).slice(0, 2)
@@ -304,7 +304,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
             </CardContent>
           </Card>
         </div>
-
+      
         {/* Columna derecha — Leaderboard, dentro de un Card */}
         <div className={styles.rightColumn}>
           <Card className="h-full">
@@ -334,7 +334,7 @@ export default function AdminDashboardView({ initialUsers }: AdminDashboardViewP
             </CardContent>
           </Card>
         </div>
-
+        
       </div>
     </div>
   );
